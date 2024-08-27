@@ -124,7 +124,7 @@
 			return TRUE
 	return ..()
 
-/obj/item/weapon/reagent_containers/food/snacks/grown/dried_cannabis/attackby(obj/item/I, mob/user)
+/*/obj/reagent_containers/food/snacks/grown/dried_cannabis/attackby(obj/item/I, mob/user)
 	if(is_type_in_list(I, list(/obj/item/paper/cig/long, /obj/item/weapon/paper/, /obj/item/weapon/teleportation_scroll)))
 		if(!dry)
 			to_chat(user, SPAN_WARNING("You need to dry \the [src] first!"))
@@ -140,6 +140,8 @@
 			qdel(src)
 			return
 	..()
+seems to be a duplicate? I'll check without this included Noobetski
+*/
 
 /obj/reagent_containers/food/snacks/grown/dried_cannabis/attackby(obj/item/I, mob/user)
 	if(is_type_in_list(I, list(/obj/item/paper/cig/long, /obj/item/weapon/paper/, /obj/item/weapon/teleportation_scroll)))
@@ -147,7 +149,7 @@
 			to_chat(user, "<span class='warning'>You need to dry [src] first!</span>")
 			return
 		if(user.unEquip(I))
-			var/obj/item/clothing/mask/smokable/cigarette/rolled/joint/R = new(get_turf(src))T
+			var/obj/item/clothing/mask/smokable/cigarette/rolled/joint/R = new(get_turf(src))
 			R.chem_volume = reagents.total_volume
 			R.brand = "[src] handrolled in \the [I]."
 			reagents.trans_to_holder(R.reagents, R.chem_volume)

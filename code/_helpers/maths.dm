@@ -62,6 +62,8 @@
 /// The cotangent of degrees
 #define Cot(degrees) (1 / tan(degrees))
 
+#define Tan(degrees) (sin(degrees) / cos(degrees))
+
 
 /// The 2-argument arctangent of x and y
 // min is inclusive, max is exclusive
@@ -83,17 +85,15 @@
 #define RAND_DECIMAL(lower, upper) (rand(0, upper - lower) + lower)
 
 // Trigonometric functions.
-/proc/Tan(x)
-	return sin(x) / cos(x)
 
-/proc/Csc(x)
-	return 1 / sin(x)
 
-/proc/Sec(x)
-	return 1 / cos(x)
 
-/proc/Cot(x)
-	return 1 / Tan(x)
+/// The 2-argument arctangent of x and y
+/proc/Atan2(x, y)
+	if (!x && !y)
+		return 0
+	var/a = arccos(x / sqrt(x * x + y * y))
+	return y >= 0 ? a : -a
 
 /proc/Atan2(x, y)
 	if (!x && !y)

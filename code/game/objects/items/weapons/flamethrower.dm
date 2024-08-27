@@ -1,7 +1,7 @@
-/obj/item/weapon/flamethrower
+/obj/item/flamethrower
 	name = "flamethrower"
 	desc = "You are a firestarter!"
-	icon = 'icons/obj/flamethrower.dmi'
+	icon = 'icons/obj/weapons/flamethrower.dmi'
 	icon_state = "flamethrowerbase"
 	item_state = "flamethrower_0"
 	obj_flags = OBJ_FLAG_CONDUCTIBLE
@@ -12,197 +12,253 @@
 	w_class = ITEM_SIZE_LARGE
 	origin_tech = list(TECH_COMBAT = 1)
 	matter = list(MATERIAL_STEEL = 500)
+	var/complete = FALSE
 	var/status = 0
-	var/throw_amount = 100
 	var/lit = 0	//on or off
 	var/operating = 0//cooldown
 	var/turf/previousturf = null
-	var/obj/item/weapon/weldingtool/weldtool = null
+	var/obj/item/weldingtool/weldtool = null
 	var/obj/item/device/assembly/igniter/igniter = null
-	var/obj/item/weapon/tank/tank = null
+	var/obj/item/reagent_containers/beaker = null
+	var/range = 4
+	var/max_beaker = ITEM_SIZE_SMALL
 
 
-/obj/item/weapon/flamethrower/Destroy()
+/obj/item/flamethrower/examine(mob/user)
+	. = ..()
+	if (beaker)
+		if (beaker.reagents)
+			to_chat(user, SPAN_NOTICE("The loaded [beaker.name] has about [beaker.reagents.total_volume] unit\s left."))
+		else
+			to_chat(user, SPAN_NOTICE("The loaded [beaker.name] is empty."))
+	else
+		to_chat(user, SPAN_NOTICE("\The [src] has no fuel container loaded!."))
+
+	if (lit)
+		to_chat(user, SPAN_WARNING("\The [src] is lit!"))
+
+
+/obj/item/flamethrower/Destroy()
 	QDEL_NULL(weldtool)
 	QDEL_NULL(igniter)
-	QDEL_NULL(tank)
+	QDEL_NULL(beaker)
 	. = ..()
 
-/obj/item/weapon/flamethrower/Process()
+/obj/item/flamethrower/Process()
 	if(!lit)
 		STOP_PROCESSING(SSobj, src)
 		return null
+	else if (!beaker || beaker.reagents.total_volume == 0)
+		visible_message(SPAN_WARNING("\The [src] sputters and goes out!"))
+		playsound(loc, 'sound/items/welderdeactivate.ogg', 50, TRUE)
+		STOP_PROCESSING(SSobj,src)
+		set_light(0)
+		lit = FALSE
+		update_icon()
 	var/turf/location = loc
-	if(istype(location, /mob/))
+	if(ismob(location))
 		var/mob/M = location
-		if(M.l_hand == src || M.r_hand == src)
+		if (M.IsHolding(src))
 			location = M.loc
 	if(isturf(location)) //start a fire if possible
 		location.hotspot_expose(700, 2)
 	return
 
 
-/obj/item/weapon/flamethrower/on_update_icon()
-	overlays.Cut()
+/obj/item/flamethrower/on_update_icon()
+	ClearOverlays()
 	if(igniter)
-		overlays += "+igniter[status]"
-	if(tank)
-		if(istype(tank, /obj/item/weapon/tank/hydrogen))
-			overlays += "+htank"
-		else
-			overlays += "+ptank"
+		AddOverlays("+igniter[status]")
+	if(beaker)
+		AddOverlays("+ptank")
 	if(lit)
-		overlays += "+lit"
+		AddOverlays("+lit")
 		item_state = "flamethrower_1"
 	else
 		item_state = "flamethrower_0"
 	return
 
-/obj/item/weapon/flamethrower/afterattack(atom/target, mob/user, proximity)
+/obj/item/flamethrower/afterattack(atom/target, mob/user, proximity)
 	// Make sure our user is still holding us
-	if(user && user.get_active_hand() == src)
-		if(user.a_intent == I_HELP) //don't shoot if we're on help intent
-			to_chat(user, "<span class='warning'>You refrain from firing \the [src] as your intent is set to help.</span>")
-			return
-		var/turf/target_turf = get_turf(target)
-		if(target_turf)
-			var/turflist = getline(user, target_turf)
-			flame_turf(turflist)
+	if(user.a_intent == I_HELP) //don't shoot if we're on help intent
+		to_chat(user, SPAN_WARNING("You refrain from firing \the [src] as your intent is set to help."))
+		return
+	var/turf/target_turf = get_turf(target)
+	if(target_turf)
+		var/turflist = getline(user, target_turf)
+		flame_turf(turflist)
 
-/obj/item/weapon/flamethrower/attackby(obj/item/W as obj, mob/user as mob)
-	if(user.stat || user.restrained() || user.lying)	return
-	if(isWrench(W) && !status)//Taking this apart
+/obj/item/flamethrower/attack_hand(mob/user)
+	if(user.get_inactive_hand() == src)
+		if(beaker && CanPhysicallyInteract(user))
+			user.put_in_hands(beaker)
+			beaker = null
+			to_chat(user, SPAN_NOTICE("You remove the fuel container from [src]!"))
+			update_icon()
+	else
+		return ..()
+
+/obj/item/flamethrower/use_tool(obj/item/W, mob/living/user, list/click_params)
+	if (isWrench(W) && !status && !complete)
 		if(weldtool)
 			weldtool.dropInto(loc)
 			weldtool = null
 		if(igniter)
 			igniter.dropInto(loc)
 			igniter = null
-		if(tank)
-			tank.dropInto(loc)
-			tank = null
+		if(beaker)
+			beaker.dropInto(loc)
+			beaker = null
 		new /obj/item/stack/material/rods(get_turf(src))
 		qdel(src)
-		return
+		return TRUE
 
-	if(isScrewdriver(W) && igniter && !lit)
+	if(isScrewdriver(W) && igniter && !lit && !complete)
 		status = !status
-		to_chat(user, "<span class='notice'>[igniter] is now [status ? "secured" : "unsecured"]!</span>")
+		to_chat(user, SPAN_NOTICE("\The [igniter] is now [status ? "secured" : "unsecured"]!"))
 		update_icon()
-		return
+		return TRUE
 
 	if(isigniter(W))
 		var/obj/item/device/assembly/igniter/I = W
-		if(I.secured)	return
-		if(igniter)		return
+		if (I.secured)
+			USE_FEEDBACK_FAILURE("The igniter is secured!")
+			return TRUE
+		if (igniter)
+			USE_FEEDBACK_FAILURE("\The [src] already has an igniter.")
+			return TRUE
 		if(!user.unEquip(I, src))
-			return
+			FEEDBACK_UNEQUIP_FAILURE(user, I)
+			return TRUE
 		igniter = I
 		update_icon()
+		return TRUE
+
+	if (istype(W, /obj/item/reagent_containers) && W.is_open_container() && (W.w_class <= max_beaker))
+		if(user.unEquip(W, src))
+			if(beaker)
+				beaker.forceMove(get_turf(src))
+				to_chat(user, SPAN_NOTICE("You swap the fuel container in \the [src]!"))
+			beaker = W
+			update_icon()
+		return TRUE
+
+	return ..()
+
+
+/obj/item/flamethrower/attack_self(mob/user as mob)
+	toggle_igniter(user)
+
+/obj/item/flamethrower/proc/toggle_igniter(mob/user)
+	if(!beaker || beaker.reagents.total_volume == 0)
+		to_chat(user, SPAN_NOTICE("There isn't enough fuel!"))
 		return
-
-	if(istype(W,/obj/item/weapon/tank))
-		if(tank)
-			to_chat(user, "<span class='notice'>There appears to already be a fuel tank loaded in [src]!</span>")
-			return
-		if(!user.unEquip(W, src))
-			return
-		tank = W
-		update_icon()
+	if(!status)
+		to_chat(user,SPAN_NOTICE("Secure the igniter first!"))
 		return
+	to_chat(user, SPAN_NOTICE("You [lit ? "extinguish" : "ignite"] [src]!"))
+	lit = !lit
+	if(lit)
+		playsound(loc, 'sound/items/welderactivate.ogg', 50, TRUE)
+		START_PROCESSING(SSobj, src)
+	else
+		playsound(loc, 'sound/items/welderdeactivate.ogg', 50, TRUE)
+		STOP_PROCESSING(SSobj,src)
+	if(lit)
+		set_light(2.5, 0.7, l_color = COLOR_ORANGE)
+	else
+		set_light(0)
 
-	if(istype(W, /obj/item/device/scanner/gas))
-		var/obj/item/device/scanner/gas/A = W
-		A.analyze_gases(src, user)
-		return
-	..()
-	return
-
-
-/obj/item/weapon/flamethrower/attack_self(mob/user as mob)
-	if(user.stat || user.restrained() || user.lying)	return
-	user.set_machine(src)
-	if(!tank)
-		to_chat(user, "<span class='notice'>Attach a fuel tank first!</span>")
-		return
-	var/dat = text("<TT><B>Flamethrower (<A HREF='?src=\ref[src];light=1'>[lit ? "<font color='red'>Lit</font>" : "Unlit"]</a>)</B><BR>\n Tank Pressure: [tank.air_contents.return_pressure()]<BR>\nAmount to throw: <A HREF='?src=\ref[src];amount=-100'>-</A> <A HREF='?src=\ref[src];amount=-10'>-</A> <A HREF='?src=\ref[src];amount=-1'>-</A> [throw_amount] <A HREF='?src=\ref[src];amount=1'>+</A> <A HREF='?src=\ref[src];amount=10'>+</A> <A HREF='?src=\ref[src];amount=100'>+</A><BR>\n<A HREF='?src=\ref[src];remove=1'>Remove fuel tank</A> - <A HREF='?src=\ref[src];close=1'>Close</A></TT>")
-	show_browser(user, dat, "window=flamethrower;size=600x300")
-	onclose(user, "flamethrower")
-	return
-
-/obj/item/weapon/flamethrower/return_air()
-	if(tank)
-		return tank.return_air()
-
-/obj/item/weapon/flamethrower/Topic(href,href_list[])
-	if(href_list["close"])
-		usr.unset_machine()
-		close_browser(usr, "window=flamethrower")
-		return
-	if(usr.stat || usr.restrained() || usr.lying)	return
-	usr.set_machine(src)
-	if(href_list["light"])
-		if(!tank)	return
-		if(tank.air_contents.get_by_flag(XGM_GAS_FUEL) <  1)	return
-		if(!status)	return
-		lit = !lit
-		if(lit)
-			START_PROCESSING(SSobj, src)
-	if(href_list["amount"])
-		throw_amount = throw_amount + text2num(href_list["amount"])
-		throw_amount = max(50, min(5000, throw_amount))
-	if(href_list["remove"])
-		if(!tank)	return
-		usr.put_in_hands(tank)
-		tank = null
-		lit = 0
-		usr.unset_machine()
-		close_browser(usr, "window=flamethrower")
-	for(var/mob/M in viewers(1, loc))
-		if((M.client && M.machine == src))
-			attack_self(M)
 	update_icon()
-	return
 
+#define REQUIRED_POWER_TO_FIRE_FLAMETHROWER 10
+#define FLAMETHROWER_POWER_MULTIPLIER 1.5
+#define FLAMETHROWER_RELEASE_AMOUNT 5
 
-//Called from turf.dm turf/dblclick
-/obj/item/weapon/flamethrower/proc/flame_turf(turflist)
+/obj/item/flamethrower/proc/flame_turf(list/turflist)
+	if(!beaker)
+		return
 	if(!lit || operating)	return
-	operating = 1
+
+	var/size = length(turflist)
+	if (!size)
+		return
+	LIST_RESIZE(turflist, min(size, range))
+
+	var/power = 0
+	var/datum/reagents/beaker_reagents = beaker.reagents
+	var/datum/reagents/my_fraction = new(beaker_reagents.maximum_volume, src)
+	beaker_reagents.trans_to_holder(my_fraction, FLAMETHROWER_RELEASE_AMOUNT * length(turflist), safety = TRUE)
+	var/fire_colour = null
+	var/highest_amount = 0
+	for(var/datum/reagent/R in beaker_reagents.reagent_list)
+		power += R.accelerant_quality * FLAMETHROWER_POWER_MULTIPLIER //Flamethrowers inflate flammability compared to a pool of fuel
+		if(R.volume > highest_amount && R.accelerant_quality > 0)
+			highest_amount = R.volume
+			fire_colour = R.fire_colour
+
+	if(power < REQUIRED_POWER_TO_FIRE_FLAMETHROWER)
+		audible_message(SPAN_DANGER("\The [src] sputters."))
+		playsound(src, 'sound/weapons/guns/flamethrower_empty.ogg', 50, TRUE, -3)
+		return
+	playsound(src, pick('sound/weapons/guns/flamethrower1.ogg','sound/weapons/guns/flamethrower2.ogg','sound/weapons/guns/flamethrower3.ogg' ), 50, TRUE, -3)
+
+	operating = TRUE //anti-spam tool, is unset when the flame projectile goes away
 	for(var/turf/T in turflist)
 		if(T.density || istype(T, /turf/space))
 			break
 		if(!previousturf && length(turflist)>1)
 			previousturf = get_turf(src)
 			continue	//so we don't burn the tile we be standin on
-		if(previousturf && LinkBlocked(previousturf, T))
+		if(previousturf && (!T.CanPass(null, previousturf, 0,0) || !previousturf.CanPass(null, T, 0,0)))
 			break
-		ignite_turf(T)
+		previousturf = T
+
+		//Consume part of our fuel to create a fire spot
+		T.IgniteTurf(power / length(turflist), fire_colour)
+		T.hotspot_expose((power*3) + 380,500)
+		my_fraction.remove_any(FLAMETHROWER_RELEASE_AMOUNT)
 		sleep(1)
 	previousturf = null
-	operating = 0
-	for(var/mob/M in viewers(1, loc))
-		if((M.client && M.machine == src))
-			attack_self(M)
+	operating = FALSE
+	if(beaker) //In the event we earlied out that means some fuel goes back into tank
+		if(my_fraction.total_volume > 0)
+			my_fraction.trans_to_holder(beaker_reagents, my_fraction.total_volume, safety = TRUE)
+	QDEL_NULL(my_fraction)
 
-/obj/item/weapon/flamethrower/proc/ignite_turf(turf/target)
-	//TODO: DEFERRED Consider checking to make sure tank pressure is high enough before doing this...
-	//Transfer 5% of current tank air contents to turf
-	var/datum/gas_mixture/air_transfer = tank.remove_air_ratio(0.02*(throw_amount/100))
-	//air_transfer.toxins = air_transfer.toxins * 5 // This is me not comprehending the air system. I realize this is retarded and I could probably make it work without fucking it up like this, but there you have it. -- TLE
-	new/obj/effect/decal/cleanable/liquid_fuel/flamethrower_fuel(target,air_transfer.get_by_flag(XGM_GAS_FUEL),get_dir(loc,target))
-	air_transfer.remove_by_flag(XGM_GAS_FUEL, 0)
-	target.assume_air(air_transfer)
-	//Burn it based on transfered gas
-	//target.hotspot_expose(part4.air_contents.temperature*2,300)
-	target.hotspot_expose((tank.air_contents.temperature*2) + 380,500) // -- More of my "how do I shot fire?" dickery. -- TLE
-	//location.hotspot_expose(1000,500,1)
+#undef REQUIRED_POWER_TO_FIRE_FLAMETHROWER
+#undef FLAMETHROWER_POWER_MULTIPLIER
 
-/obj/item/weapon/flamethrower/full/New(var/loc)
+/obj/item/flamethrower/full
+	icon = 'icons/obj/weapons/flamethrower_new.dmi'
+	item_state = "prebuilt_flamethrower_0"
+	complete = TRUE
+
+	item_icons = list(
+		slot_l_hand_str = 'icons/obj/weapons/flamethrower_new.dmi',
+		slot_r_hand_str = 'icons/obj/weapons/flamethrower_new.dmi',
+		)
+
+	item_state_slots = list(
+		slot_l_hand_str = "humanoid body-slot_l_hand_0",
+		slot_r_hand_str = "humanoid body-slot_r_hand_0",
+		)
+
+/obj/item/flamethrower/full/on_update_icon()
 	..()
-	weldtool = new /obj/item/weapon/weldingtool(src)
+	item_state_slots[slot_l_hand_str] = "humanoid body-slot_l_hand_[lit]"
+	item_state_slots[slot_r_hand_str] = "humanoid body-slot_r_hand_[lit]"
+
+/obj/item/flamethrower/full/Initialize()
+	. = ..()
+	weldtool = new /obj/item/weldingtool(src)
 	weldtool.status = 0
 	igniter = new /obj/item/device/assembly/igniter(src)
 	igniter.secured = 0
 	status = 1
 	update_icon()
+
+/obj/item/flamethrower/full/loaded/Initialize()
+	beaker = new /obj/item/reagent_containers/glass/beaker/insulated/large(src)
+	beaker.reagents.add_reagent(/datum/reagent/napalm, 120)
+	. = ..()

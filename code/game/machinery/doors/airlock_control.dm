@@ -19,7 +19,7 @@
 
 	command(signal.data["command"])
 
-/obj/machinery/door/airlock/proc/command(var/new_command)
+/obj/machinery/door/airlock/proc/command(new_command)
 	cur_command = new_command
 
 	//if there's no power, recieve the signal but just don't do anything. This allows airlocks to continue to work normally once power is restored
@@ -38,7 +38,7 @@
 	if (command_completed(cur_command))
 		cur_command = null
 
-/obj/machinery/door/airlock/proc/do_command(var/command)
+/obj/machinery/door/airlock/proc/do_command(command)
 	switch(command)
 		if("open")
 			open()
@@ -69,7 +69,7 @@
 
 	send_status()
 
-/obj/machinery/door/airlock/proc/command_completed(var/command)
+/obj/machinery/door/airlock/proc/command_completed(command)
 	switch(command)
 		if("open")
 			return (!density)
@@ -91,7 +91,7 @@
 
 	return 1	//Unknown command. Just assume it's completed.
 
-/obj/machinery/door/airlock/proc/send_status(var/bumped = 0)
+/obj/machinery/door/airlock/proc/send_status(bumped = 0)
 	if(radio_connection)
 		var/datum/signal/signal = new
 		signal.transmission_method = 1 //radio signal
@@ -142,11 +142,11 @@
 	return ..()
 
 /obj/machinery/airlock_sensor
-	icon = 'icons/obj/airlock_machines.dmi'
+	icon = 'icons/obj/doors/airlock_machines.dmi'
 	icon_state = "airlock_sensor_off"
 	name = "airlock sensor"
 
-	anchored = 1
+	anchored = TRUE
 	power_channel = ENVIRON
 
 	var/master_tag
@@ -185,7 +185,7 @@
 		var/datum/gas_mixture/air_sample = return_air()
 		var/pressure = round(air_sample.return_pressure(),0.1)
 
-		if(abs(pressure - previousPressure) > 0.001 || previousPressure == null)
+		if(abs(pressure - previousPressure) > 0.001 || isnull(previousPressure))
 			var/datum/signal/signal = new
 			signal.transmission_method = 1 //radio signal
 			signal.data["tag"] = id_tag
@@ -226,11 +226,11 @@
 	command = "cycle_exterior"
 
 /obj/machinery/access_button
-	icon = 'icons/obj/airlock_machines.dmi'
+	icon = 'icons/obj/doors/airlock_machines.dmi'
 	icon_state = "access_button_standby"
 	name = "access button"
 
-	anchored = 1
+	anchored = TRUE
 	power_channel = ENVIRON
 
 	var/master_tag
@@ -249,12 +249,11 @@
 	else
 		icon_state = "access_button_off"
 
-/obj/machinery/access_button/attackby(obj/item/I as obj, mob/user as mob)
-	//Swiping ID on the access button
-	if (istype(I, /obj/item/weapon/card/id) || istype(I, /obj/item/modular_computer))
+/obj/machinery/access_button/use_tool(obj/item/I, mob/living/user, list/click_params)
+	if (istype(I, /obj/item/card/id) || istype(I, /obj/item/modular_computer))
 		attack_hand(user)
-		return
-	..()
+		return TRUE
+	return ..()
 
 /obj/machinery/access_button/interface_interact(mob/user)
 	if(!CanInteract(user, DefaultTopicState()))

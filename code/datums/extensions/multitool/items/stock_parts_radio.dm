@@ -3,10 +3,10 @@
 	var/weakref/machine
 
 /datum/extension/interactive/multitool/radio/extension_status(mob/user)
-	var/obj/item/weapon/stock_parts/radio/radio = holder
+	var/obj/item/stock_parts/radio/radio = holder
 	if(radio.status & PART_STAT_INSTALLED)
 		return STATUS_CLOSE
-	return ..()	
+	return ..()
 
 /datum/extension/interactive/multitool/radio/interact(obj/item/device/multitool/M, mob/user)
 	if(extension_status(user) != STATUS_INTERACTIVE)
@@ -31,7 +31,7 @@
 	return input
 
 /datum/extension/interactive/multitool/radio/get_interact_window(obj/item/device/multitool/M, mob/user)
-	var/obj/item/weapon/stock_parts/radio/radio = holder
+	var/obj/item/stock_parts/radio/radio = holder
 	var/list/dat = list()
 
 	dat += "<a href='?src=\ref[src];unlink=1'>Unlink Machine</a><br>"
@@ -46,7 +46,7 @@
 	return JOINTEXT(dat)
 
 /datum/extension/interactive/multitool/radio/on_topic(href, href_list, user)
-	var/obj/item/weapon/stock_parts/radio/radio = holder
+	var/obj/item/stock_parts/radio/radio = holder
 	if(href_list["unlink"])
 		machine = null
 		return MT_CLOSE
@@ -100,7 +100,7 @@
 		. += "<tr>"
 		. += "<td><a href='?src=\ref[src];[table_tag]=1;remove=[thing]'>(-)</a></td>"
 		. += "<td><a href='?src=\ref[src];[table_tag]=1;rename=[thing]'>[thing]</a></td>"
-		var/decl/public_access/variable = selected_events[thing]
+		var/singleton/public_access/variable = selected_events[thing]
 		. += "<td><a href='?src=\ref[src];[table_tag]=1;new_val=[thing]'>[variable.name]</a></td>"
 		. += "<td><a href='?src=\ref[src];[table_tag]=1;desc=\ref[variable]'>(?)</a></td>"
 		. += "</tr>"
@@ -126,7 +126,7 @@
 		return MT_REFRESH
 	if(href_list["new_val"])
 		var/thing = href_list["new_val"]
-		var/decl/public_access/variable = selected_events && selected_events[thing]
+		var/singleton/public_access/variable = selected_events && selected_events[thing]
 		if(!variable || !LAZYLEN(valid_events))
 			return MT_REFRESH
 		var/valid_variables = list()
@@ -145,7 +145,7 @@
 		LAZYSET(selected_events, copytext(md5(num2text(rand(0, 1))), 1, 11), valid_events[pick(valid_events)]) // random key
 		return MT_REFRESH
 	if(href_list["desc"])
-		var/decl/public_access/variable = locate(href_list["desc"])
+		var/singleton/public_access/variable = locate(href_list["desc"])
 		if(istype(variable))
 			to_chat(user, variable.desc)
 		return MT_NOACTION
@@ -155,12 +155,12 @@
 	. = actual_machine
 	if(!actual_machine)
 		return
-	var/obj/item/weapon/stock_parts/radio/transmitter/basic/radio = holder
+	var/obj/item/stock_parts/radio/transmitter/basic/radio = holder
 	radio.sanitize_events(actual_machine, radio.transmit_on_change)
 	radio.sanitize_events(actual_machine, radio.transmit_on_tick)
 
 /datum/extension/interactive/multitool/radio/transmitter/get_interact_window(obj/item/device/multitool/M, mob/user)
-	var/obj/item/weapon/stock_parts/radio/transmitter/basic/radio = holder
+	var/obj/item/stock_parts/radio/transmitter/basic/radio = holder
 	var/list/dat = list()
 
 	dat += "<b>Transmit on change:</b><br>"
@@ -177,7 +177,7 @@
 	var/obj/machinery/actual_machine = machine.resolve()
 	if(!actual_machine)
 		return MT_CLOSE
-	var/obj/item/weapon/stock_parts/radio/transmitter/basic/radio = holder
+	var/obj/item/stock_parts/radio/transmitter/basic/radio = holder
 	if(href_list["on_change"])
 		return event_list_topic(radio.transmit_on_change, actual_machine.public_variables, user, href_list)
 	if(href_list["on_tick"])
@@ -188,13 +188,13 @@
 	. = actual_machine
 	if(!actual_machine)
 		return
-	var/obj/item/weapon/stock_parts/radio/transmitter/on_event/radio = holder
+	var/obj/item/stock_parts/radio/transmitter/on_event/radio = holder
 	if(!radio.is_valid_event(actual_machine, radio.event))
 		radio.event = null
 	radio.sanitize_events(actual_machine, radio.transmit_on_event)
 
 /datum/extension/interactive/multitool/radio/event_transmitter/get_interact_window(obj/item/device/multitool/M, mob/user)
-	var/obj/item/weapon/stock_parts/radio/transmitter/on_event/radio = holder
+	var/obj/item/stock_parts/radio/transmitter/on_event/radio = holder
 	var/list/dat = list()
 
 	dat += "<b>Choose event:</b><br>"
@@ -214,7 +214,7 @@
 	var/obj/machinery/actual_machine = machine.resolve()
 	if(!actual_machine)
 		return MT_CLOSE
-	var/obj/item/weapon/stock_parts/radio/transmitter/on_event/radio = holder
+	var/obj/item/stock_parts/radio/transmitter/on_event/radio = holder
 
 	if(href_list["on_event"])
 		return event_list_topic(radio.transmit_on_event, actual_machine.public_variables, user, href_list)
@@ -231,12 +231,12 @@
 	. = actual_machine
 	if(!actual_machine)
 		return
-	var/obj/item/weapon/stock_parts/radio/receiver/radio = holder
+	var/obj/item/stock_parts/radio/receiver/radio = holder
 	radio.sanitize_events(actual_machine, radio.receive_and_call)
 	radio.sanitize_events(actual_machine, radio.receive_and_write)
 
 /datum/extension/interactive/multitool/radio/receiver/get_interact_window(obj/item/device/multitool/M, mob/user)
-	var/obj/item/weapon/stock_parts/radio/receiver/radio = holder
+	var/obj/item/stock_parts/radio/receiver/radio = holder
 	var/list/dat = list()
 
 	dat += "<b>Transmit on change:</b><br>"
@@ -253,7 +253,7 @@
 	var/obj/machinery/actual_machine = machine.resolve()
 	if(!actual_machine)
 		return MT_CLOSE
-	var/obj/item/weapon/stock_parts/radio/receiver/radio = holder
+	var/obj/item/stock_parts/radio/receiver/radio = holder
 	if(href_list["call"])
 		return event_list_topic(radio.receive_and_call, actual_machine.public_methods, user, href_list)
 	if(href_list["write"])

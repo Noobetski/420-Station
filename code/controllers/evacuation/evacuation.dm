@@ -5,7 +5,7 @@
 #define EVAC_COOLDOWN   4
 #define EVAC_COMPLETE   5
 
-var/datum/evacuation_controller/evacuation_controller
+var/global/datum/evacuation_controller/evacuation_controller
 
 /datum/evacuation_controller
 
@@ -39,7 +39,7 @@ var/datum/evacuation_controller/evacuation_controller
 	var/datum/announcement/priority/evac_called =   new(0)
 	var/datum/announcement/priority/evac_recalled = new(0)
 
-/datum/evacuation_controller/proc/auto_recall(var/_recall)
+/datum/evacuation_controller/proc/auto_recall(_recall)
 	recall = _recall
 
 /datum/evacuation_controller/proc/set_up()
@@ -50,12 +50,12 @@ var/datum/evacuation_controller/evacuation_controller
 /datum/evacuation_controller/proc/get_cooldown_message()
 	return "An evacuation cannot be called at this time. Please wait another [round((evac_cooldown_time-world.time)/600)] minute\s before trying again."
 
-/datum/evacuation_controller/proc/add_can_call_predicate(var/datum/evacuation_predicate/esp)
+/datum/evacuation_controller/proc/add_can_call_predicate(datum/evacuation_predicate/esp)
 	if(esp in evacuation_predicates)
 		CRASH("[esp] has already been added as an evacuation predicate")
 	evacuation_predicates += esp
 
-/datum/evacuation_controller/proc/call_evacuation(var/mob/user, var/_emergency_evac, var/forced, var/skip_announce, var/autotransfer)
+/datum/evacuation_controller/proc/call_evacuation(mob/user, _emergency_evac, forced, skip_announce, autotransfer)
 
 	if(state != EVAC_IDLE)
 		return 0
@@ -96,7 +96,7 @@ var/datum/evacuation_controller/evacuation_controller
 			GLOB.using_map.emergency_shuttle_called_announcement()
 	else
 		if(!skip_announce)
-			priority_announcement.Announce(replacetext(replacetext(GLOB.using_map.shuttle_called_message, "%dock_name%", "[GLOB.using_map.dock_name]"),  "%ETA%", "[round(get_eta()/60)] minute\s"))
+			priority_announcement.Announce(replacetext(replacetext(GLOB.using_map.shuttle_called_message, "%dock_name%", "[GLOB.using_map.dock_name]"),  "%ETA%", "[round(get_eta()/60,0.5)] minute\s"))
 
 	return 1
 
@@ -104,8 +104,9 @@ var/datum/evacuation_controller/evacuation_controller
 
 	if(!can_cancel())
 		return 0
+	if(!emergency_evacuation)
+		evac_cooldown_time = world.time + (world.time - evac_called_at)
 
-	evac_cooldown_time = world.time + (world.time - evac_called_at)
 	state = EVAC_COOLDOWN
 
 	evac_ready_time =   null
@@ -129,9 +130,9 @@ var/datum/evacuation_controller/evacuation_controller
 /datum/evacuation_controller/proc/finish_preparing_evac()
 	state = EVAC_LAUNCHING
 
-	var/estimated_time = round(get_eta()/60,1)
+	var/estimated_time = round(get_eta()/60,0.5)
 	if (emergency_evacuation)
-		evac_waiting.Announce(replacetext(GLOB.using_map.emergency_shuttle_docked_message, "%ETD%", "[estimated_time] minute\s"), new_sound = sound('sound/effects/Evacuation.ogg', volume = 35))
+		evac_waiting.Announce(replacetext(GLOB.using_map.emergency_shuttle_docked_message, "%ETD%", "[estimated_time] minute\s"), new_sound = sound('sound/effects/Evacuation.ogg', volume = 30))
 	else
 		priority_announcement.Announce(replacetext(replacetext(GLOB.using_map.shuttle_docked_message, "%dock_name%", "[GLOB.using_map.dock_name]"),  "%ETD%", "[estimated_time] minute\s"))
 	if(config.announce_evac_to_irc)
@@ -145,9 +146,9 @@ var/datum/evacuation_controller/evacuation_controller
 	state = EVAC_IN_TRANSIT
 
 	if (emergency_evacuation)
-		priority_announcement.Announce(replacetext(replacetext(GLOB.using_map.emergency_shuttle_leaving_dock, "%dock_name%", "[GLOB.using_map.dock_name]"),  "%ETA%", "[round(get_eta()/60,1)] minute\s"))
+		priority_announcement.Announce(replacetext(replacetext(GLOB.using_map.emergency_shuttle_leaving_dock, "%dock_name%", "[GLOB.using_map.dock_name]"),  "%ETA%", "[round(get_eta()/60,0.5)] minute\s"))
 	else
-		priority_announcement.Announce(replacetext(replacetext(GLOB.using_map.shuttle_leaving_dock, "%dock_name%", "[GLOB.using_map.dock_name]"),  "%ETA%", "[round(get_eta()/60,1)] minute\s"))
+		priority_announcement.Announce(replacetext(replacetext(GLOB.using_map.shuttle_leaving_dock, "%dock_name%", "[GLOB.using_map.dock_name]"),  "%ETA%", "[round(get_eta()/60,0.5)] minute\s"))
 
 	return 1
 
@@ -176,13 +177,45 @@ var/datum/evacuation_controller/evacuation_controller
 /datum/evacuation_controller/proc/available_evac_options()
 	return list()
 
-/datum/evacuation_controller/proc/handle_evac_option(var/option_target, var/mob/user)
+/datum/evacuation_controller/proc/handle_evac_option(option_target, mob/user)
 	var/datum/evacuation_option/selected = evacuation_options[option_target]
 	if (!isnull(selected) && istype(selected))
 		selected.execute(user)
 
-/datum/evacuation_controller/proc/get_evac_option(var/option_target)
+/datum/evacuation_controller/proc/get_evac_option(option_target)
 	return null
 
 /datum/evacuation_controller/proc/should_call_autotransfer_vote()
 	return (state == EVAC_IDLE)
+
+
+/datum/evacuation_controller/proc/UpdateStat()
+	var/stat_text = "Invalid State"
+	switch (state)
+		if (EVAC_IDLE)
+			stat_text = "Idle"
+		if (EVAC_PREPPING)
+			stat_text = "Preparing"
+			stat_text += " | Emergency: [emergency_evacuation ? "Y" : "N"]"
+			stat_text += " | Called At: [worldtime2stationtime(evac_called_at)]"
+			stat_text += " | Ready In: [time_to_readable(evac_ready_time - world.time)]"
+			stat_text += " | No Return: [world.time > evac_no_return ? "Y" : "In [time_to_readable(evac_no_return - world.time)]"]"
+			stat_text += " | Recall: [recall ? "Y ([time_to_readable(auto_recall_time - world.time)])" : "N"]"
+		if (EVAC_LAUNCHING)
+			stat_text = "Launching"
+			stat_text += " | Emergency: [emergency_evacuation ? "Y" : "N"]"
+			stat_text += " | Called At: [worldtime2stationtime(evac_called_at)]"
+			stat_text += " | Launch In: [time_to_readable(evac_launch_time - world.time)]"
+		if (EVAC_IN_TRANSIT)
+			stat_text = "In Transit"
+			stat_text += " | Emergency: [emergency_evacuation ? "Y" : "N"]"
+			stat_text += " | Called At: [worldtime2stationtime(evac_called_at)]"
+			stat_text += " | Arrive In: [time_to_readable(evac_arrival_time - world.time)]"
+		if (EVAC_COOLDOWN)
+			stat_text = "Cooldown"
+			stat_text += " | Emergency: [emergency_evacuation ? "Y" : "N"]"
+			stat_text += " | Idle In: [time_to_readable(evac_cooldown_time - world.time)]"
+		if (EVAC_COMPLETE)
+			stat_text = "Complete"
+			stat_text += " | Emergency: [emergency_evacuation ? "Y" : "N"]"
+	return stat_text

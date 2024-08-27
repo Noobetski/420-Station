@@ -1,6 +1,7 @@
 /obj/item/latexballon
 	name = "latex glove"
 	desc = "A latex glove, usually used as a balloon."
+	icon = 'icons/obj/toy.dmi'
 	icon_state = "latexballon"
 	item_state = "lgloves"
 	force = 0
@@ -11,7 +12,7 @@
 	var/state
 	var/datum/gas_mixture/air_contents = null
 
-/obj/item/latexballon/proc/blow(obj/item/weapon/tank/tank)
+/obj/item/latexballon/proc/blow(obj/item/tank/tank)
 	if (icon_state == "latexballon_bursted")
 		return
 	src.air_contents = tank.remove_air_volume(3)
@@ -29,9 +30,9 @@
 /obj/item/latexballon/ex_act(severity)
 	burst()
 	switch(severity)
-		if (1)
+		if (EX_ACT_DEVASTATING)
 			qdel(src)
-		if (2)
+		if (EX_ACT_HEAVY)
 			if (prob(50))
 				qdel(src)
 
@@ -43,6 +44,7 @@
 		burst()
 	return
 
-/obj/item/latexballon/attackby(obj/item/W as obj, mob/user as mob)
-	if (W.can_puncture())
+/obj/item/latexballon/use_tool(obj/item/item, mob/living/user, list/click_params)
+	if (item.can_puncture())
 		burst()
+	return ..()

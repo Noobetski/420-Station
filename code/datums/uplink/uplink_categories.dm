@@ -33,6 +33,9 @@
 /datum/uplink_category/implants
 	name = "Implants"
 
+/datum/uplink_category/augments
+	name = "Augments"
+
 /datum/uplink_category/medical
 	name = "Medical & Food"
 
@@ -44,6 +47,9 @@
 
 /datum/uplink_category/badassery
 	name = "Badassery"
+
+/datum/uplink_category/structures_and_vehicles
+	name = "Structures & Vehicles"
 
 /datum/uplink_category/telecrystals
 	name = "Telecrystal Materialization"

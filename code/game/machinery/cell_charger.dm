@@ -1,63 +1,69 @@
 /obj/machinery/cell_charger
 	name = "heavy-duty cell charger"
 	desc = "A much more powerful version of the standard recharger that is specially designed for charging power cells."
-	icon = 'icons/obj/power.dmi'
+	icon = 'icons/obj/machines/power/cell_charger.dmi'
 	icon_state = "ccharger0"
-	anchored = 1
+	anchored = TRUE
+	obj_flags = OBJ_FLAG_CAN_TABLE | OBJ_FLAG_ANCHORABLE
 	idle_power_usage = 5
 	active_power_usage = 60 KILOWATTS	//This is the power drawn when charging
 	power_channel = EQUIP
-	var/obj/item/weapon/cell/charging = null
+	var/obj/item/cell/charging = null
 	var/chargelevel = -1
 
 /obj/machinery/cell_charger/on_update_icon()
 	icon_state = "ccharger[charging ? 1 : 0]"
-	if(charging && !(stat & (BROKEN|NOPOWER)) )
+	if(charging && operable())
 		var/newlevel = 	round(charging.percent() * 4.0 / 99)
 		if(chargelevel != newlevel)
-			overlays.Cut()
-			overlays += "ccharger-o[newlevel]"
+			ClearOverlays()
+			AddOverlays(emissive_appearance(icon, "ccharger-o[newlevel]"))
+			AddOverlays("ccharger-o[newlevel]")
 			chargelevel = newlevel
 	else
-		overlays.Cut()
+		ClearOverlays()
 
-/obj/machinery/cell_charger/examine(var/mob/user, var/distance)
+/obj/machinery/cell_charger/examine(mob/user, distance)
 	. = ..()
 	if(distance <= 5)
 		to_chat(user, "There's [charging ? "a" : "no"] cell in the charger.")
 		if(charging)
 			to_chat(user, "Current charge: [charging.charge]")
 
-/obj/machinery/cell_charger/attackby(obj/item/weapon/W, mob/user)
-	if(stat & BROKEN)
-		return
+/obj/machinery/cell_charger/post_anchor_change()
+	..()
+	set_power()
 
-	if(istype(W, /obj/item/weapon/cell) && anchored)
-		if(charging)
-			to_chat(user, "<span class='warning'>There is already a cell in the charger.</span>")
-			return
-		else
-			var/area/a = get_area(loc)
-			if(a.power_equip == 0) // There's no APC in this area, don't try to cheat power!
-				to_chat(user, "<span class='warning'>The [name] blinks red as you try to insert the cell!</span>")
-				return
-			if(!user.unEquip(W, src))
-				return
-			charging = W
-			set_power()
-			START_PROCESSING_MACHINE(src, MACHINERY_PROCESS_SELF)
-			user.visible_message("[user] inserts a cell into the charger.", "You insert a cell into the charger.")
-			chargelevel = -1
-		queue_icon_update()
-	else if(isWrench(W))
-		if(charging)
-			to_chat(user, "<span class='warning'>Remove the cell first!</span>")
-			return
+/obj/machinery/cell_charger/use_tool(obj/item/W, mob/living/user, list/click_params)
+	if(MACHINE_IS_BROKEN(src))
+		return TRUE
 
-		anchored = !anchored
+	if(istype(W, /obj/item/cell) && anchored)
+		if(charging)
+			to_chat(user, SPAN_WARNING("There is already a cell in the charger."))
+			return TRUE
+
+		var/area/a = get_area(loc)
+		if(a.power_equip == 0) // There's no APC in this area, don't try to cheat power!
+			to_chat(user, SPAN_WARNING("The [name] blinks red as you try to insert the cell!"))
+			return TRUE
+		if(!user.unEquip(W, src))
+			return TRUE
+		charging = W
 		set_power()
-		to_chat(user, "You [anchored ? "attach" : "detach"] the cell charger [anchored ? "to" : "from"] the ground")
-		playsound(src.loc, 'sound/items/Ratchet.ogg', 75, 1)
+		START_PROCESSING_MACHINE(src, MACHINERY_PROCESS_SELF)
+		user.visible_message("[user] inserts a cell into the charger.", "You insert a cell into the charger.")
+		chargelevel = -1
+		queue_icon_update()
+		return TRUE
+
+	//Anchoring is handled by obj/use_tool() if OBJ_ANCHORABLE flag is set.
+	if (isWrench(W))
+		if(charging)
+			to_chat(user, SPAN_WARNING("Remove the cell first!"))
+			return TRUE
+
+	return ..()
 
 /obj/machinery/cell_charger/physical_attack_hand(mob/user)
 	if(charging)
@@ -73,7 +79,7 @@
 		return TRUE
 
 /obj/machinery/cell_charger/emp_act(severity)
-	if(stat & (BROKEN|NOPOWER))
+	if(inoperable())
 		return
 	if(charging)
 		charging.emp_act(severity)
@@ -81,7 +87,7 @@
 
 /obj/machinery/cell_charger/proc/set_power()
 	queue_icon_update()
-	if((stat & (BROKEN|NOPOWER)) || !anchored)
+	if(inoperable() || !anchored)
 		update_use_power(POWER_USE_OFF)
 		return
 	if (charging && !charging.fully_charged())

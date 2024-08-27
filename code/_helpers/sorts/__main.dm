@@ -9,7 +9,7 @@
 #define MIN_GALLOP 7
 
 	//This is a global instance to allow much of this code to be reused. The interfaces are kept separately
-var/datum/sortInstance/sortInstance = new()
+var/global/datum/sortInstance/sortInstance = new()
 /datum/sortInstance
 	//The array being sorted.
 	var/list/L
@@ -33,6 +33,7 @@ var/datum/sortInstance/sortInstance = new()
 
 
 /datum/sortInstance/proc/timSort(start, end)
+	RETURN_TYPE(/list)
 	runBases.Cut()
 	runLens.Cut()
 
@@ -76,7 +77,7 @@ var/datum/sortInstance/sortInstance = new()
 		//Merge all remaining runs to complete sort
 	//ASSERT(start == end)
 	mergeForceCollapse();
-	//ASSERT(runBases.len == 1)
+	//ASSERT(length(runBases) == 1)
 
 		//reset minGallop, for successive calls
 	minGallop = MIN_GALLOP
@@ -113,7 +114,7 @@ start	the index of the first element in the range that is	not already known to b
 		//[lo, left) elements <= pivot < [right, start) elements
 		//in other words, find where the pivot element should go using bisection search
 		while(left < right)
-			var/mid = (left + right) >> 1	//round((left+right)/2)
+			var/mid = SHIFTR(left + right, 1)	//round((left+right)/2)
 			if(call(cmp)(fetchElement(L,mid), pivot) > 0)
 				right = mid
 			else
@@ -169,7 +170,7 @@ reverse a descending sequence without violating stability.
 	var/r = 0	//becomes 1 if any bits are shifted off
 	while(n >= MIN_MERGE)
 		r |= (n & 1)
-		n >>= 1
+		n = SHIFTR(n, 1)
 	return n + r
 
 //Examines the stack of runs waiting to be merged and merges adjacent runs until the stack invariants are reestablished:
@@ -178,8 +179,8 @@ reverse a descending sequence without violating stability.
 //This method is called each time a new run is pushed onto the stack.
 //So the invariants are guaranteed to hold for i<stackSize upon entry to the method
 /datum/sortInstance/proc/mergeCollapse()
-	while(runBases.len >= 2)
-		var/n = runBases.len - 1
+	while(length(runBases) >= 2)
+		var/n = length(runBases) - 1
 		if(n > 1 && runLens[n-1] <= runLens[n] + runLens[n+1])
 			if(runLens[n-1] < runLens[n+1])
 				--n
@@ -193,8 +194,8 @@ reverse a descending sequence without violating stability.
 //Merges all runs on the stack until only one remains.
 //Called only once, to finalise the sort
 /datum/sortInstance/proc/mergeForceCollapse()
-	while(runBases.len >= 2)
-		var/n = runBases.len - 1
+	while(length(runBases) >= 2)
+		var/n = length(runBases) - 1
 		if(n > 1 && runLens[n-1] < runLens[n+1])
 			--n
 		mergeAt(n)
@@ -204,9 +205,9 @@ reverse a descending sequence without violating stability.
 //Run i must be the penultimate or antepenultimate run on the stack
 //In other words, i must be equal to stackSize-2 or stackSize-3
 /datum/sortInstance/proc/mergeAt(i)
-	//ASSERT(runBases.len >= 2)
+	//ASSERT(length(runBases) >= 2)
 	//ASSERT(i >= 1)
-	//ASSERT(i == runBases.len - 1 || i == runBases.len - 2)
+	//ASSERT(i == length(runBases) - 1 || i == length(runBases) - 2)
 
 	var/base1 = runBases[i]
 	var/base2 = runBases[i+1]
@@ -266,7 +267,7 @@ reverse a descending sequence without violating stability.
 		var/maxOffset = len - hint
 		while(offset < maxOffset && call(cmp)(key, fetchElement(L,base+hint+offset)) > 0)
 			lastOffset = offset
-			offset = (offset << 1) + 1
+			offset = SHIFTL(offset, 1) + 1
 
 		if(offset > maxOffset)
 			offset = maxOffset
@@ -278,7 +279,7 @@ reverse a descending sequence without violating stability.
 		var/maxOffset = hint + 1
 		while(offset < maxOffset && call(cmp)(key, fetchElement(L,base+hint-offset)) <= 0)
 			lastOffset = offset
-			offset = (offset << 1) + 1
+			offset = SHIFTL(offset, 1) + 1
 
 		if(offset > maxOffset)
 			offset = maxOffset
@@ -293,7 +294,7 @@ reverse a descending sequence without violating stability.
 	//offset. Do a binary search with invariant L[base+lastOffset-1] < key <= L[base+offset]
 	++lastOffset
 	while(lastOffset < offset)
-		var/m = lastOffset + ((offset - lastOffset) >> 1)
+		var/m = lastOffset + SHIFTR(offset - lastOffset, 1)
 
 		if(call(cmp)(key, fetchElement(L,base+m)) > 0)
 			lastOffset = m + 1
@@ -325,7 +326,7 @@ reverse a descending sequence without violating stability.
 		var/maxOffset = hint + 1	//therefore we want to insert somewhere in the range [base,base+hint] = [base+,base+(hint+1))
 		while(offset < maxOffset && call(cmp)(key, fetchElement(L,base+hint-offset)) < 0)	//we are iterating backwards
 			lastOffset = offset
-			offset = (offset << 1) + 1	//1 3 7 15
+			offset = SHIFTL(offset, 1) + 1	//1 3 7 15
 			//if(offset <= 0)	//int overflow, not an issue here since we are using floats
 			//	offset = maxOffset
 
@@ -340,7 +341,7 @@ reverse a descending sequence without violating stability.
 		var/maxOffset = len - hint	//therefore we want to insert somewhere in the range (base+hint,base+len) = [base+hint+1, base+hint+(len-hint))
 		while(offset < maxOffset && call(cmp)(key, fetchElement(L,base+hint+offset)) >= 0)
 			lastOffset = offset
-			offset = (offset << 1) + 1
+			offset = SHIFTL(offset, 1) + 1
 			//if(offset <= 0)	//int overflow, not an issue here since we are using floats
 			//	offset = maxOffset
 
@@ -354,7 +355,7 @@ reverse a descending sequence without violating stability.
 
 	++lastOffset
 	while(lastOffset < offset)
-		var/m = lastOffset + ((offset - lastOffset) >> 1)
+		var/m = lastOffset + SHIFTR(offset - lastOffset, 1)
 
 		if(call(cmp)(key, fetchElement(L,base+m)) < 0)	//key <= L[base+m]
 			offset = m
@@ -571,6 +572,7 @@ reverse a descending sequence without violating stability.
 
 
 /datum/sortInstance/proc/mergeSort(start, end)
+	RETURN_TYPE(/list)
 	var/remaining = end - start
 
 	//If array is small, do an insertion sort
@@ -596,8 +598,8 @@ reverse a descending sequence without violating stability.
 
 	while(remaining > 0)
 
-	while(runBases.len >= 2)
-		var/n = runBases.len - 1
+	while(length(runBases) >= 2)
+		var/n = length(runBases) - 1
 		if(n > 1 && runLens[n-1] <= runLens[n] + runLens[n+1])
 			if(runLens[n-1] < runLens[n+1])
 				--n
@@ -607,8 +609,8 @@ reverse a descending sequence without violating stability.
 		else
 			break	//Invariant is established
 
-	while(runBases.len >= 2)
-		var/n = runBases.len - 1
+	while(length(runBases) >= 2)
+		var/n = length(runBases) - 1
 		if(n > 1 && runLens[n-1] < runLens[n+1])
 			--n
 		mergeAt2(n)

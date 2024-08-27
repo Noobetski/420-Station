@@ -1,6 +1,6 @@
-/obj/item/weapon/fuel_assembly
+/obj/item/fuel_assembly
 	name = "fuel rod assembly"
-	icon = 'icons/obj/machines/power/fusion.dmi'
+	icon = 'icons/obj/fusion_fuel_assembly.dmi'
 	icon_state = "fuel_assembly"
 	layer = 4
 
@@ -12,12 +12,12 @@
 	var/radioactivity = 0
 	var/initial_amount
 
-/obj/item/weapon/fuel_assembly/New(var/newloc, var/_material, var/_colour)
+/obj/item/fuel_assembly/New(newloc, _material, _colour)
 	fuel_type = _material
 	fuel_colour = _colour
 	..(newloc)
 
-/obj/item/weapon/fuel_assembly/Initialize()
+/obj/item/fuel_assembly/Initialize()
 	. = ..()
 
 	if(ispath(fuel_type, /datum/reagent))
@@ -43,35 +43,35 @@
 		SetName("[fuel_type] fuel rod assembly")
 		desc = "A fuel rod for a fusion reactor. This one is made from [fuel_type]."
 
-	icon_state = "blank"
+	icon_state = "fuel_assembly"
 	var/image/I = image(icon, "fuel_assembly")
 	I.color = fuel_colour
-	overlays += list(I, image(icon, "fuel_assembly_bracket"))
+	AddOverlays(list(I, image(icon, "fuel_assembly_bracket")))
 	rod_quantities[fuel_type] = initial_amount
 
-/obj/item/weapon/fuel_assembly/Process()
+/obj/item/fuel_assembly/Process()
 	if(!radioactivity)
 		return PROCESS_KILL
 
 	if(istype(loc, /turf))
 		SSradiation.radiate(src, max(1,ceil(radioactivity/15)))
 
-/obj/item/weapon/fuel_assembly/Destroy()
+/obj/item/fuel_assembly/Destroy()
 	STOP_PROCESSING(SSobj, src)
 	return ..()
 
 // Mapper shorthand.
-/obj/item/weapon/fuel_assembly/deuterium/New(var/newloc)
+/obj/item/fuel_assembly/deuterium/New(newloc)
 	..(newloc, MATERIAL_DEUTERIUM)
 
-/obj/item/weapon/fuel_assembly/tritium/New(var/newloc)
+/obj/item/fuel_assembly/tritium/New(newloc)
 	..(newloc, MATERIAL_TRITIUM)
 
-/obj/item/weapon/fuel_assembly/phoron/New(var/newloc)
+/obj/item/fuel_assembly/phoron/New(newloc)
 	..(newloc, MATERIAL_PHORON)
 
-/obj/item/weapon/fuel_assembly/supermatter/New(var/newloc)
+/obj/item/fuel_assembly/supermatter/New(newloc)
 	..(newloc, MATERIAL_SUPERMATTER)
 
-/obj/item/weapon/fuel_assembly/hydrogen/New(var/newloc)
+/obj/item/fuel_assembly/hydrogen/New(newloc)
 	..(newloc, MATERIAL_HYDROGEN)

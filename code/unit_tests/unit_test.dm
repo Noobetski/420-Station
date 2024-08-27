@@ -24,26 +24,26 @@
  *
  */
 
-var/all_unit_tests_passed = 1
-var/failed_unit_tests = 0
-var/skipped_unit_tests = 0
-var/total_unit_tests = 0
+var/global/all_unit_tests_passed = 1
+var/global/failed_unit_tests = 0
+var/global/skipped_unit_tests = 0
+var/global/total_unit_tests = 0
 
 // For console out put in Linux/Bash makes the output green or red.
-// Should probably only be used for unit tests/Travis since some special folks use winders to host servers.
+// Should probably only be used for unit tests since some special folks use winders to host servers.
 // if you want plain output, use dm.sh -DUNIT_TEST -DUNIT_TEST_PLAIN baystation12.dme
 #ifdef UNIT_TEST_PLAIN
-var/ascii_esc = ""
-var/ascii_red = ""
-var/ascii_green = ""
-var/ascii_yellow = ""
-var/ascii_reset = ""
+var/global/ascii_esc = ""
+var/global/ascii_red = ""
+var/global/ascii_green = ""
+var/global/ascii_yellow = ""
+var/global/ascii_reset = ""
 #else
-var/ascii_esc = ascii2text(27)
-var/ascii_red = "[ascii_esc]\[31m"
-var/ascii_green = "[ascii_esc]\[32m"
-var/ascii_yellow = "[ascii_esc]\[33m"
-var/ascii_reset = "[ascii_esc]\[0m"
+var/global/ascii_esc = ascii2text(27)
+var/global/ascii_red = "[ascii_esc]\[31m"
+var/global/ascii_green = "[ascii_esc]\[32m"
+var/global/ascii_yellow = "[ascii_esc]\[33m"
+var/global/ascii_reset = "[ascii_esc]\[0m"
 #endif
 
 
@@ -61,23 +61,23 @@ var/ascii_reset = "[ascii_esc]\[0m"
 	var/safe_landmark
 	var/space_landmark
 
-/datum/unit_test/proc/log_debug(var/message)
+/datum/unit_test/proc/log_debug(message)
 	log_unit_test("[ascii_yellow]---  DEBUG  --- \[[name]\]: [message][ascii_reset]")
 
-/datum/unit_test/proc/log_bad(var/message)
+/datum/unit_test/proc/log_bad(message)
 	log_unit_test("[ascii_red]\[[name]\]: [message][ascii_reset]")
 
-/datum/unit_test/proc/fail(var/message)
+/datum/unit_test/proc/fail(message)
 	all_unit_tests_passed = 0
 	failed_unit_tests++
 	reported = 1
 	log_unit_test("[ascii_red]!!! FAILURE !!! \[[name]\]: [message][ascii_reset]")
 
-/datum/unit_test/proc/pass(var/message)
+/datum/unit_test/proc/pass(message)
 	reported = 1
 	log_unit_test("[ascii_green]*** SUCCESS *** \[[name]\]: [message][ascii_reset]")
 
-/datum/unit_test/proc/skip(var/message)
+/datum/unit_test/proc/skip(message)
 	skipped_unit_tests++
 	reported = 1
 	log_unit_test("[ascii_yellow]--- SKIPPED --- \[[name]\]: [message][ascii_reset]")
@@ -92,7 +92,7 @@ var/ascii_reset = "[ascii_esc]\[0m"
 /datum/unit_test/proc/get_safe_turf()
 	if(!safe_landmark)
 		for(var/landmark in landmarks_list)
-			if(istype(landmark, /obj/effect/landmark/test/safe_turf))
+			if(istype(landmark, /obj/landmark/test/safe_turf))
 				safe_landmark = landmark
 				break
 	return get_turf(safe_landmark)
@@ -100,7 +100,7 @@ var/ascii_reset = "[ascii_esc]\[0m"
 /datum/unit_test/proc/get_space_turf()
 	if(!space_landmark)
 		for(var/landmark in landmarks_list)
-			if(istype(landmark, /obj/effect/landmark/test/space_turf))
+			if(istype(landmark, /obj/landmark/test/space_turf))
 				space_landmark = landmark
 				break
 	return get_turf(space_landmark)
@@ -111,13 +111,14 @@ var/ascii_reset = "[ascii_esc]\[0m"
 
 /proc/load_unit_test_changes()
 /*
-	//This takes about 60 seconds to run on Travis and is only used for the ZAS vacume check on The Asteroid.
+	//This takes about 60 seconds to run when unit testing and is only used for the ZAS vacume check on The Asteroid.
 	if(config.generate_map != 1)
 		log_unit_test("Overiding Configuration option for Asteroid Generation to ENABLED")
 		config.generate_map = 1	// The default map requires it, the example config doesn't have this enabled.
  */
 
 /proc/get_test_datums()
+	RETURN_TYPE(/list)
 	. = list()
 	for(var/test in subtypesof(/datum/unit_test))
 		var/datum/unit_test/d = test
@@ -132,7 +133,7 @@ var/ascii_reset = "[ascii_esc]\[0m"
 	if(world.time > end_time)
 		test.fail("Unit Tests Ran out of time")   // This should never happen, and if it does either fix your unit tests to be faster or if you can make them async checks.
 		return
-	if (test.start_test() == null)	// Runtimed.
+	if (isnull(test.start_test()))	// Runtimed.
 		test.fail("Test Runtimed")
 	return 1
 
@@ -157,19 +158,26 @@ var/ascii_reset = "[ascii_esc]\[0m"
 	else
 		log_unit_test("[ascii_red]**** \[[failed_unit_tests]\\[total_unit_tests]\] Unit Tests Failed [skipped_message]****[ascii_reset]")
 
-/datum/admins/proc/run_unit_test(var/datum/unit_test/unit_test_type in get_test_datums())
+/datum/admins/proc/run_unit_test()
 	set name = "Run Unit Test"
 	set desc = "Runs the selected unit test - Remember to enable Debug Log Messages"
 	set category = "Debug"
 
-	if(!unit_test_type)
-		return
-
 	if(!check_rights(R_DEBUG))
 		return
 
-	log_and_message_admins("has started the unit test '[initial(unit_test_type.name)]'")
-	var/datum/unit_test/test = new unit_test_type
+	var/list/options = list()
+	var/list/test_datums = get_test_datums()
+	for (var/datum/unit_test/unit_test_type as anything in test_datums)
+		options["[initial(unit_test_type.name)]"] = unit_test_type
+	options = sortAssoc(options)
+	var/datum/unit_test/selected_unit_test_type = input(usr, "Runs the selected unit test - Remember to enable Debug Log Messages", "Run Unit Test", null) as null|anything in options
+	if (!selected_unit_test_type || !options["[selected_unit_test_type]"])
+		return
+	selected_unit_test_type = options["[selected_unit_test_type]"]
+
+	log_and_message_admins("has started the unit test '[initial(selected_unit_test_type.name)]'")
+	var/datum/unit_test/test = new selected_unit_test_type
 	var/end_unit_tests = world.time + MAX_UNIT_TEST_RUN_TIME
 	do_unit_test(test, end_unit_tests, FALSE)
 	if(test.async)
@@ -177,10 +185,10 @@ var/ascii_reset = "[ascii_esc]\[0m"
 			sleep(20)
 	unit_test_final_message()
 
-/obj/effect/landmark/test/safe_turf
+/obj/landmark/test/safe_turf
 	name = "safe_turf" // At creation, landmark tags are set to: "landmark*[name]"
-	desc = "A safe turf should be an as large block as possible of livable, passable turfs, preferably at least 3x3 with the marked turf as the center"
+	desc = "A safe turf should be an as large block as possible of livable, passable turfs, preferably at least 3x3 with the marked turf as the center."
 
-/obj/effect/landmark/test/space_turf
+/obj/landmark/test/space_turf
 	name = "space_turf"
-	desc = "A space turf should be an as large block as possible of space, preferably at least 3x3 with the marked turf as the center"
+	desc = "A space turf should be an as large block as possible of space, preferably at least 3x3 with the marked turf as the center."

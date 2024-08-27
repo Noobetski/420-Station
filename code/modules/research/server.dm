@@ -1,9 +1,11 @@
 /obj/machinery/r_n_d/server
-	name = "R&D Server"
-	icon = 'icons/obj/machines/research.dmi'
+	name = "\improper R&D server"
+	icon = 'icons/obj/machines/research/server.dmi'
 	icon_state = "server"
 	base_type = /obj/machinery/r_n_d/server
-	construct_state = /decl/machine_construction/default/panel_closed
+	construct_state = /singleton/machine_construction/default/panel_closed
+	machine_name = "\improper R&D server"
+	machine_desc = "A powerful piece of hardware used as the hub of a research matrix, containing every byte of data gleaned from an experiment."
 	var/datum/research/files
 	var/health = 100
 	var/list/id_with_upload = list()	//List of R&D consoles with upload to server access.
@@ -16,27 +18,57 @@
 	var/delay = 10
 	req_access = list(access_rd) //Only the R&D can change server settings.
 
-/obj/machinery/r_n_d/server/RefreshParts()
-	var/tot_rating = 0
-	for(var/obj/item/weapon/stock_parts/SP in src)
-		tot_rating += SP.rating
-	change_power_consumption(initial(idle_power_usage)/max(1, tot_rating), POWER_USE_IDLE)
+
+/obj/machinery/r_n_d/server/Destroy()
+	QDEL_NULL(files)
+	return ..()
+
 
 /obj/machinery/r_n_d/server/Initialize()
 	. = ..()
 	if(!files)
 		files = new /datum/research(src)
 	var/list/temp_list
-	if(!id_with_upload.len)
+	if(!length(id_with_upload))
 		temp_list = list()
 		temp_list = splittext(id_with_upload_string, ";")
 		for(var/N in temp_list)
 			id_with_upload += text2num(N)
-	if(!id_with_download.len)
+	if(!length(id_with_download))
 		temp_list = list()
 		temp_list = splittext(id_with_download_string, ";")
 		for(var/N in temp_list)
 			id_with_download += text2num(N)
+	update_icon()
+
+
+/obj/machinery/r_n_d/server/operable()
+	return !inoperable(MACHINE_STAT_EMPED)
+
+
+/obj/machinery/r_n_d/server/on_update_icon()
+	ClearOverlays()
+	if (operable())
+		AddOverlays(list(
+			"server_on",
+			"server_lights_on",
+			emissive_appearance(icon, "server_lights_on"),
+		))
+	else
+		AddOverlays(list(
+			"server_lights_off",
+			emissive_appearance(icon, "server_lights_off")
+		))
+	if (panel_open)
+		AddOverlays("server_panel")
+
+
+/obj/machinery/r_n_d/server/RefreshParts()
+	var/tot_rating = 0
+	for(var/obj/item/stock_parts/SP in src)
+		tot_rating += SP.rating
+	change_power_consumption(initial(idle_power_usage)/max(1, tot_rating), POWER_USE_IDLE)
+
 
 /obj/machinery/r_n_d/server/Process()
 	..()
@@ -45,7 +77,7 @@
 		if(0 to T0C)
 			health = min(100, health + 1)
 		if(T0C to (T20C + 20))
-			health = between(0, health, 100)
+			health = clamp(health, 0, 100)
 		if((T20C + 20) to (T0C + 70))
 			health = max(0, health - 1)
 	if(health <= 0)
@@ -59,6 +91,7 @@
 	else
 		produce_heat()
 		delay = initial(delay)
+	update_icon()
 
 /obj/machinery/r_n_d/server/proc/produce_heat()
 	if(!produces_heat)
@@ -67,7 +100,7 @@
 	if(!use_power)
 		return
 
-	if(!(stat & (NOPOWER|BROKEN))) //Blatently stolen from telecoms
+	if(operable()) //Blatently stolen from telecoms
 		var/turf/simulated/L = loc
 		if(istype(L))
 			var/datum/gas_mixture/env = L.return_air()
@@ -84,7 +117,7 @@
 			env.merge(removed)
 
 /obj/machinery/r_n_d/server/centcom
-	name = "Central R&D Database"
+	name = "central R&D database"
 	server_id = -1
 
 /obj/machinery/r_n_d/server/centcom/proc/update_connections()
@@ -113,10 +146,12 @@
 	return PROCESS_KILL //don't need process()
 
 /obj/machinery/computer/rdservercontrol
-	name = "R&D Server Controller"
+	name = "\improper R&D server controller"
 	icon_keyboard = "rd_key"
 	icon_screen = "rdcomp"
 	light_color = "#a97faa"
+	machine_name = "\improper R&D server control console"
+	machine_desc = "If an R&D server is the heart of a research setup, this is the brain. Any kind of data manipulation on the server happens from this console."
 	var/screen = 0
 	var/obj/machinery/r_n_d/server/temp_server
 	var/list/servers = list()
@@ -125,7 +160,7 @@
 
 /obj/machinery/computer/rdservercontrol/CanUseTopic(user)
 	if(!allowed(user) && !emagged)
-		to_chat(user, "<span class='warning'>You do not have the required access level</span>")
+		to_chat(user, SPAN_WARNING("You do not have the required access level"))
 		return STATUS_CLOSE
 	return ..()
 
@@ -257,23 +292,23 @@
 	onclose(user, "server_control")
 	return
 
-/obj/machinery/computer/rdservercontrol/emag_act(var/remaining_charges, var/mob/user)
+/obj/machinery/computer/rdservercontrol/emag_act(remaining_charges, mob/user)
 	if(!emagged)
 		playsound(src.loc, 'sound/effects/sparks4.ogg', 75, 1)
-		emagged = 1
+		emagged = TRUE
 		req_access.Cut()
-		to_chat(user, "<span class='notice'>You you disable the security protocols.</span>")
+		to_chat(user, SPAN_NOTICE("You disable the security protocols."))
 		src.updateUsrDialog()
 		return 1
 
 /obj/machinery/r_n_d/server/robotics
-	name = "Robotics R&D Server"
-	id_with_upload_string = "1;2"
-	id_with_download_string = "1;2"
+	name = "robotics R&D server"
+	id_with_upload_string = "1;2;3"
+	id_with_download_string = "1;2;3"
 	server_id = 2
 
 /obj/machinery/r_n_d/server/core
-	name = "Core R&D Server"
+	name = "core R&D server"
 	id_with_upload_string = "1;3"
 	id_with_download_string = "1;3"
 	server_id = 1

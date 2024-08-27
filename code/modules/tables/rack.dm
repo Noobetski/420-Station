@@ -1,13 +1,12 @@
 /obj/structure/table/rack
 	name = "rack"
 	desc = "Different from the Middle Ages version."
-	icon = 'icons/obj/objects.dmi'
+	icon = 'icons/obj/structures/furniture.dmi'
 	icon_state = "rack"
 	can_plate = 0
 	can_reinforce = 0
 	flipped = -1
-
-	material = DEFAULT_FURNITURE_MATERIAL
+	obj_flags = EMPTY_BITFIELD // No tabling objects
 
 /obj/structure/table/rack/New()
 	..()
@@ -30,8 +29,8 @@
 /obj/structure/table/rack/can_connect()
 	return FALSE
 
-/obj/structure/table/rack/holorack/dismantle(obj/item/weapon/wrench/W, mob/user)
-	to_chat(user, "<span class='warning'>You cannot dismantle \the [src].</span>")
+/obj/structure/table/rack/holorack/dismantle(obj/item/wrench/W, mob/user)
+	to_chat(user, SPAN_WARNING("You cannot dismantle \the [src]."))
 	return
 
 /obj/structure/table/rack/dark

@@ -1,5 +1,6 @@
-/mob/living/carbon/
+/mob/living/carbon
 	gender = MALE
+	pronouns = PRONOUNS_THEY_THEM
 	var/datum/species/species //Contains icon generation and language information, set during New().
 
 	var/life_tick = 0      // The amount of life ticks that have processed on this mob.
@@ -24,7 +25,7 @@
 	var/nutrition = 400
 	var/hydration = 400
 
-	var/obj/item/weapon/tank/internal = null//Human/Monkey
+	var/obj/item/tank/internal = null//Human/Monkey
 
 
 	//these two help govern taste. The first is the last time a taste message was shown to the plaer.

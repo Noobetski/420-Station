@@ -5,10 +5,11 @@
 	wall_name = "bulkhead"
 	stack_type = /obj/item/stack/material/uranium
 	radioactivity = 12
-	icon_base = "stone"
+	sheet_icon_base = "puck"
+	wall_icon_base = "stone"
 	door_icon_base = "stone"
 	table_icon_base = "stone"
-	icon_reinf = "reinf_stone"
+	wall_icon_reinf = "reinf_stone"
 	icon_colour = "#007a00"
 	weight = 22
 	stack_origin_tech = list(TECH_MATERIAL = 5)
@@ -29,11 +30,12 @@
 	hardness = MATERIAL_FLEXIBLE + 5
 	integrity = 100
 	stack_origin_tech = list(TECH_MATERIAL = 4)
+	sheet_icon_base = "ingot"
 	sheet_singular_name = "ingot"
 	sheet_plural_name = "ingots"
 	chem_products = list(
-				/datum/reagent/gold = 20
-				)
+		/datum/reagent/gold = 20
+	)
 	construction_difficulty = MATERIAL_HARD_DIY
 	ore_smelts_to = MATERIAL_GOLD
 	ore_result_amount = 5
@@ -48,13 +50,17 @@
 		)
 	ore_icon_overlay = "nugget"
 	sale_price = 3
-	value = 40	
+	value = 40
 
-/material/gold/bronze //placeholder for ashtrays
+/material/gold/bronze
 	name = MATERIAL_BRONZE
-	lore_text = "An alloy of copper and tin."
+	lore_text = "An alloy of copper, now typically used for decoration."
 	icon_colour = "#edd12f"
 	construction_difficulty = MATERIAL_HARD_DIY
+	chem_products = list(
+		/datum/reagent/copper = 18,
+		/datum/reagent/aluminium = 2
+	)
 	ore_smelts_to = null
 	ore_compresses_to = null
 	sale_price = null
@@ -66,6 +72,7 @@
 	weight = 15
 	hardness = MATERIAL_FLEXIBLE + 10
 	stack_origin_tech = list(TECH_MATERIAL = 2)
+	sheet_icon_base = "ingot"
 	sheet_singular_name = "ingot"
 	sheet_plural_name = "ingots"
 	chem_products = list(
@@ -90,6 +97,7 @@
 	weight = 22
 	hardness = MATERIAL_FLEXIBLE + 10
 	stack_origin_tech = list(TECH_MATERIAL = 3)
+	sheet_icon_base = "ingot"
 	sheet_singular_name = "ingot"
 	sheet_plural_name = "ingots"
 	chem_products = list(
@@ -110,10 +118,9 @@
 	lore_text = "A strong, flexible alloy of iron and carbon. Probably the single most fundamentally useful and ubiquitous substance in human space."
 	wall_name = "bulkhead"
 	stack_type = /obj/item/stack/material/steel
-	integrity = 150
-	brute_armor = 5
-	icon_base = "solid"
-	icon_reinf = "reinf_over"
+	brute_armor = 7
+	wall_icon_base = "solid"
+	wall_icon_reinf = "reinf_over"
 	icon_colour = COLOR_STEEL
 	hitsound = 'sound/weapons/smash.ogg'
 	chem_products = list(
@@ -149,8 +156,9 @@
 				)
 	integrity = 125
 	weight = 18
-	icon_base = "solid"
-	icon_reinf = "reinf_over"
+	sheet_icon_base = "sheet-sheen"
+	wall_icon_base = "solid"
+	wall_icon_reinf = "reinf_over"
 	icon_colour = "#cccdcc"
 	hitsound = 'sound/weapons/smash.ogg'
 	sale_price = 1
@@ -173,11 +181,12 @@
 	stack_type = /obj/item/stack/material/plasteel
 	integrity = 400
 	melting_point = 6000
-	icon_base = "solid"
-	icon_reinf = "reinf_over"
+	sheet_icon_base = "sheet-reinf"
+	wall_icon_base = "solid"
+	wall_icon_reinf = "reinf_over"
 	icon_colour = "#a8a9b2"
-	explosion_resistance = 25
-	brute_armor = 6
+	explosion_resistance = 7.5
+	brute_armor = 8
 	burn_armor = 10
 	hardness = MATERIAL_VERY_HARD
 	weight = 23
@@ -199,10 +208,10 @@
 	melting_point = 3000
 	weight = 18
 	stack_type = /obj/item/stack/material/titanium
-	icon_base = "metal"
+	wall_icon_base = "metal"
 	door_icon_base = "metal"
 	icon_colour = "#d1e6e3"
-	icon_reinf = "reinf_metal"
+	wall_icon_reinf = "reinf_metal"
 	construction_difficulty = MATERIAL_VERY_HARD_DIY
 	alloy_materials = null
 	alloy_product = FALSE
@@ -213,8 +222,9 @@
 	stack_type = /obj/item/stack/material/ocp
 	integrity = 200
 	melting_point = 12000
-	icon_base = "solid"
-	icon_reinf = "reinf_over"
+	sheet_icon_base = "sheet-reinf"
+	wall_icon_base = "solid"
+	wall_icon_reinf = "reinf_over"
 	icon_colour = "#9bc6f2"
 	brute_armor = 4
 	burn_armor = 20
@@ -232,12 +242,14 @@
 	stack_type = /obj/item/stack/material/osmium
 	icon_colour = "#9999ff"
 	stack_origin_tech = list(TECH_MATERIAL = 5)
+	sheet_icon_base = "ingot"
 	sheet_singular_name = "ingot"
 	sheet_plural_name = "ingots"
 	construction_difficulty = MATERIAL_VERY_HARD_DIY
 	sale_price = 3
 	ore_smelts_to = MATERIAL_OSMIUM
 	value = 30
+	weight = 29
 
 /material/tritium
 	name = MATERIAL_TRITIUM
@@ -247,6 +259,7 @@
 	stack_type = /obj/item/stack/material/tritium
 	icon_colour = "#777777"
 	stack_origin_tech = list(TECH_MATERIAL = 5)
+	sheet_icon_base = "puck"
 	sheet_singular_name = "ingot"
 	sheet_plural_name = "ingots"
 	is_fusion_fuel = 1
@@ -261,6 +274,7 @@
 	stack_type = /obj/item/stack/material/deuterium
 	icon_colour = "#999999"
 	stack_origin_tech = list(TECH_MATERIAL = 3)
+	sheet_icon_base = "puck"
 	sheet_singular_name = "ingot"
 	sheet_plural_name = "ingots"
 	is_fusion_fuel = 1
@@ -272,6 +286,8 @@
 	display_name = "metallic hydrogen"
 	wall_name = "bulkhead"
 	stack_type = /obj/item/stack/material/mhydrogen
+	sheet_icon_base = "sheet-mythril"
+	sheet_has_plural_icon = FALSE
 	icon_colour = "#e6c5de"
 	stack_origin_tech = list(TECH_MATERIAL = 6, TECH_POWER = 6, TECH_MAGNET = 5)
 	is_fusion_fuel = 1
@@ -295,6 +311,7 @@
 	icon_colour = "#deddff"
 	weight = 27
 	stack_origin_tech = list(TECH_MATERIAL = 2)
+	sheet_icon_base = "ingot"
 	sheet_singular_name = "ingot"
 	sheet_plural_name = "ingots"
 	construction_difficulty = MATERIAL_HARD_DIY
@@ -315,6 +332,7 @@
 	stack_type = /obj/item/stack/material/iron
 	icon_colour = "#5c5454"
 	weight = 22
+	sheet_icon_base = "ingot"
 	sheet_singular_name = "ingot"
 	sheet_plural_name = "ingots"
 	hitsound = 'sound/weapons/smash.ogg'
@@ -330,6 +348,7 @@
 	name = MATERIAL_VOX
 	display_name = "durable alloy"
 	wall_name = "bulkhead"
+	sheet_icon_base = "vox"
 	stack_type = null
 	icon_colour = "#6c7364"
 	integrity = 1200
@@ -355,9 +374,9 @@
 	display_name = "alien alloy"
 	wall_name = "bulkhead"
 	stack_type = null
-	icon_base = "jaggy"
+	wall_icon_base = "jaggy"
 	door_icon_base = "metal"
-	icon_reinf = "reinf_metal"
+	wall_icon_reinf = "reinf_metal"
 	hitsound = 'sound/weapons/smash.ogg'
 	sheet_singular_name = "chunk"
 	sheet_plural_name = "chunks"
@@ -366,7 +385,7 @@
 	hidden_from_codex = TRUE
 
 /material/aliumium/New()
-	icon_base = "metal"
+	wall_icon_base = "metal"
 	icon_colour = rgb(rand(10,150),rand(10,150),rand(10,150))
 	explosion_resistance = rand(25,40)
 	brute_armor = rand(10,20)
@@ -374,9 +393,28 @@
 	hardness = rand(15,100)
 	integrity = rand(200,400)
 	melting_point = rand(400,10000)
+
+	// Randomize icons
+	if (rand(0, 1))
+		sheet_icon_base = pick(list("sheet", "sheet-reinf", "sheet-clear", "sheet-sheen", "sheet-glass-reinf"))
+		sheet_icon_reinf = "reinf_overlay"
+	else
+		sheet_icon_base = pick(list("sheet-wood", "diamond", "ingot", "sheet-card", "brick", "rod", "puck", "skin", "bone", "vox"))
+		sheet_icon_reinf = null
+	wall_icon_base = pick(list("metal", "stone", "solid", "cult", "wood"))
+	switch (wall_icon_base)
+		if ("wood")
+			wall_icon_reinf = "reinf_metal"
+		if ("solid")
+			wall_icon_reinf = "reinf_over"
+		else
+			wall_icon_reinf = "reinf_[wall_icon_reinf]"
+	door_icon_base = pick(list("metal", "stone", "plastic", "cult", "wood"))
+	table_icon_base = pick(list("metal", "solid", "stone", "cult", "wood"))
+
 	..()
 
-/material/aliumium/place_dismantled_girder(var/turf/target, var/material/reinf_material)
+/material/aliumium/place_dismantled_girder(turf/target, material/reinf_material)
 	return
 
 /material/hematite
@@ -404,3 +442,38 @@
 	ore_name = "rutile"
 	ore_icon_overlay = "lump"
 	sale_price = 2
+
+
+/material/electrum
+	name = MATERIAL_ELECTRUM
+	lore_text = "A soft natural alloy of gold and silver with a green-gold color, typically used for coinage and decoration."
+	wall_name = "bulkhead"
+	stack_type = /obj/item/stack/material/electrum
+	sheet_icon_base = "ingot"
+	sheet_singular_name = "ingot"
+	sheet_plural_name = "ingots"
+	icon_colour = "#e7c697"
+	weight = 22
+	integrity = 100
+	hardness = MATERIAL_FLEXIBLE + 10
+	stack_origin_tech = list(TECH_MATERIAL = 4)
+	chem_products = list(
+		/datum/reagent/silver = 8,
+		/datum/reagent/gold = 8,
+		/datum/reagent/copper = 2
+	)
+	xarch_ages = list(
+		"thousand" = 999,
+		"million" = 999,
+		"billion" = 4,
+		"billion_lower" = 3
+	)
+	construction_difficulty = MATERIAL_HARD_DIY
+	ore_smelts_to = MATERIAL_ELECTRUM
+	ore_result_amount = 3
+	ore_spread_chance = 10
+	ore_name = "electrum"
+	ore_scan_icon = "mineral_uncommon"
+	ore_icon_overlay = "shiny"
+	sale_price = 3
+	value = 37

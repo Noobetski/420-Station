@@ -6,7 +6,7 @@
 /turf/simulated/floor,
 /area/template_noop)
 "c" = (
-/mob/living/simple_animal/corgi,
+/mob/living/simple_animal/passive/corgi,
 /turf/simulated/floor,
 /area/template_noop)
 "d" = (
@@ -16,7 +16,7 @@
 /turf/unsimulated/floor/shuttle_ceiling,
 /area/template_noop)
 "f" = (
-/obj/effect/landmark/map_data{
+/obj/landmark/map_data{
 	height = 3
 	},
 /turf/unsimulated/floor/shuttle_ceiling,

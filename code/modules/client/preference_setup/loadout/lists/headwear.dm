@@ -15,10 +15,15 @@
 
 /datum/gear/head/bandana/New()
 	..()
-	gear_tweaks += new/datum/gear_tweak/path/specified_types_list(typesof(/obj/item/clothing/mask/bandana) + typesof(/obj/item/clothing/head/bandana))
+	gear_tweaks += new/datum/gear_tweak/path/specified_types_list(subtypesof(/obj/item/clothing/mask/bandana) + /obj/item/clothing/head/bandana)
+
+/datum/gear/head/custom_bandana
+	display_name = "bandana, colour select"
+	path = /obj/item/clothing/mask/bandana
+	flags = GEAR_HAS_COLOR_SELECTION
 
 /datum/gear/head/beanie
-	display_name = "beanie, color select"
+	display_name = "beanie, colour select"
 	path = /obj/item/clothing/head/beanie
 	flags = GEAR_HAS_COLOR_SELECTION
 
@@ -61,15 +66,7 @@
 /datum/gear/head/hairflower
 	display_name = "hair flower pin"
 	path = /obj/item/clothing/head/hairflower
-
-/datum/gear/head/hairflower/New()
-	..()
-	var/pins = list()
-	pins["blue pin"] = /obj/item/clothing/head/hairflower/blue
-	pins["pink pin"] = /obj/item/clothing/head/hairflower/pink
-	pins["red pin"] = /obj/item/clothing/head/hairflower
-	pins["yellow pin"] = /obj/item/clothing/head/hairflower/yellow
-	gear_tweaks += new/datum/gear_tweak/path(pins)
+	flags = GEAR_HAS_COLOR_SELECTION
 
 /datum/gear/head/hardhat
 	display_name = "hardhat selection"
@@ -79,14 +76,11 @@
 /datum/gear/head/hardhat/New()
 	..()
 	var/hardhats = list()
-	hardhats["blue hardhat"] = /obj/item/clothing/head/hardhat/dblue
+	hardhats["blue hardhat"] = /obj/item/clothing/head/hardhat/blue
 	hardhats["orange hardhat"] = /obj/item/clothing/head/hardhat/orange
 	hardhats["red hardhat"] = /obj/item/clothing/head/hardhat/red
-	hardhats["light damage control helmet"] = /obj/item/clothing/head/hardhat/EMS/DC_light
-	hardhats["Emergency Management Bureau helmet"] = /obj/item/clothing/head/hardhat/damage_control/EMB
-	hardhats["red ancient Emergency Management Bureau helmet"] = /obj/item/clothing/head/hardhat/damage_control/EMB_Ancient
-	hardhats["yellow ancient Emergency Management Bureau helmet"] = /obj/item/clothing/head/hardhat/damage_control/EMB_Ancient/yellow
-	hardhats["white ancient Emergency Management Bureau helmet"] = /obj/item/clothing/head/hardhat/damage_control/EMB_Ancient/white
+	hardhats["light damage control helmet"] = /obj/item/clothing/head/hardhat/light
+	hardhats["yellow hardhat"] = /obj/item/clothing/head/hardhat
 	gear_tweaks += new/datum/gear_tweak/path(hardhats)
 
 /datum/gear/head/formalhat
@@ -104,6 +98,7 @@
 	formalhats["top hat"] = /obj/item/clothing/head/that
 	formalhats["fedora, brown"] = /obj/item/clothing/head/det
 	formalhats["fedora, grey"] = /obj/item/clothing/head/det/grey
+	formalhats["panama hat"] = /obj/item/clothing/head/panama
 	gear_tweaks += new/datum/gear_tweak/path(formalhats)
 
 /datum/gear/head/informalhat
@@ -144,7 +139,7 @@
 /datum/gear/head/surgical
 	display_name = "standard surgical caps"
 	path = /obj/item/clothing/head/surgery
-	flags = GEAR_HAS_TYPE_SELECTION
+	flags = GEAR_HAS_TYPE_SELECTION | GEAR_HAS_NO_CUSTOMIZATION
 
 /datum/gear/head/surgical/custom
 	display_name = "surgical cap, colour select"
@@ -175,6 +170,7 @@
 /datum/gear/head/corporateberet
 	display_name = "corporate beret selection"
 	path = /obj/item/clothing/head/beret
+	flags = GEAR_HAS_NO_CUSTOMIZATION
 
 /datum/gear/head/corporateberet/New()
 	..()
@@ -182,3 +178,9 @@
 	options += /obj/item/clothing/head/beret/pcrc
 	options += /obj/item/clothing/head/beret/saare
 	gear_tweaks += new/datum/gear_tweak/path/specified_types_list(options)
+
+/datum/gear/head/deckcrew
+	display_name = "deck crew helmet"
+	path = /obj/item/clothing/head/deckcrew
+	flags = GEAR_HAS_TYPE_SELECTION
+	description = "A helmet with ear protection and a visor, used in hangars on many ships."

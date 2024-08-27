@@ -21,6 +21,7 @@
 			i++
 
 		var/list/additional_hud_elements = list(
+			/obj/screen/exosuit/toggle/power_control,
 			/obj/screen/exosuit/toggle/maint,
 			/obj/screen/exosuit/eject,
 			/obj/screen/exosuit/toggle/hardpoint,
@@ -33,23 +34,25 @@
 		if(body && body.pilot_coverage >= 100)
 			additional_hud_elements += /obj/screen/exosuit/toggle/air
 		i = 0
-		var/pos = 7
+		var/pos = 8
 		for(var/additional_hud in additional_hud_elements)
 			var/obj/screen/exosuit/M = new additional_hud(src)
-			M.screen_loc = "1:6,[pos]:[i * -12]"
+			M.screen_loc = "1:6,[pos]:[i]"
 			hud_elements |= M
-			i++
-			if(i == 3)
-				pos--
-				i = 0
+			i -= M.height
 
 		hud_health = new /obj/screen/exosuit/health(src)
 		hud_health.screen_loc = "EAST-1:28,CENTER-3:11"
 		hud_elements |= hud_health
 		hud_open = locate(/obj/screen/exosuit/toggle/hatch_open) in hud_elements
 		hud_power = new /obj/screen/exosuit/power(src)
-		hud_power.screen_loc = "EAST-1:12,CENTER-4:25"
+		hud_power.screen_loc = "EAST-1:24,CENTER-4:25"
 		hud_elements |= hud_power
+		hud_power_control = locate(/obj/screen/exosuit/toggle/power_control) in hud_elements
+		hud_camera = locate(/obj/screen/exosuit/toggle/camera) in hud_elements
+		hud_heat = new /obj/screen/exosuit/heat(src)
+		hud_heat.screen_loc = "EAST-1:28,CENTER-4"
+		hud_elements |= hud_heat
 
 	refresh_hud()
 
@@ -58,15 +61,21 @@
 		var/obj/screen/exosuit/hardpoint/H = hardpoint_hud_elements[hardpoint]
 		if(H) H.update_system_info()
 	handle_hud_icons_health()
-	var/obj/item/weapon/cell/C = get_cell()
+	var/obj/item/cell/C = get_cell()
 	if(istype(C))
-		hud_power.maptext = "[round(get_cell().charge)]/[round(get_cell().maxcharge)]"
-	else hud_power.maptext = "CHECK POWER"
+		hud_power.maptext_x = initial(hud_power.maptext_x)
+		hud_power.maptext_y = initial(hud_power.maptext_y)
+		hud_power.maptext = STYLE_SMALLFONTS_OUTLINE("[round(get_cell().charge)]/[round(get_cell().maxcharge)]", 7, COLOR_WHITE, COLOR_BLACK)
+	else
+		hud_power.maptext_x = 16
+		hud_power.maptext_y = -8
+		hud_power.maptext = STYLE_SMALLFONTS_OUTLINE("CHECK POWER", 7, COLOR_WHITE, COLOR_BLACK)
+
 	refresh_hud()
 
 /mob/living/exosuit/handle_hud_icons_health()
 
-	hud_health.overlays.Cut()
+	hud_health.ClearOverlays()
 
 	if(!body || !get_cell() || (get_cell().charge <= 0))
 		return
@@ -74,7 +83,7 @@
 	if(!body.diagnostics || !body.diagnostics.is_functional() || ((emp_damage>EMP_GUI_DISRUPT) && prob(emp_damage*2)))
 		if(!GLOB.mech_damage_overlay_cache["critfail"])
 			GLOB.mech_damage_overlay_cache["critfail"] = image(icon='icons/mecha/mech_hud.dmi',icon_state="dam_error")
-		hud_health.overlays |= GLOB.mech_damage_overlay_cache["critfail"]
+		hud_health.AddOverlays(GLOB.mech_damage_overlay_cache["critfail"])
 		return
 
 	var/list/part_to_state = list("legs" = legs,"body" = body,"head" = head,"arms" = arms)
@@ -100,4 +109,19 @@
 				else
 					I.color = "#f5f5f0"
 			GLOB.mech_damage_overlay_cache["[part]-[state]"] = I
-		hud_health.overlays |= GLOB.mech_damage_overlay_cache["[part]-[state]"]
+		hud_health.AddOverlays(GLOB.mech_damage_overlay_cache["[part]-[state]"])
+
+/mob/living/exosuit/proc/reset_hardpoint_color()
+	for(var/hardpoint in hardpoint_hud_elements)
+		var/obj/screen/exosuit/hardpoint/H = hardpoint_hud_elements[hardpoint]
+		if(H)
+			H.color = COLOR_WHITE
+
+/mob/living/exosuit/setClickCooldown(timeout)
+	. = ..()
+	for(var/hardpoint in hardpoint_hud_elements)
+		var/obj/screen/exosuit/hardpoint/H = hardpoint_hud_elements[hardpoint]
+		if(H)
+			H.color = "#a03b3b"
+			animate(H, color = COLOR_WHITE, time = timeout, easing = CUBIC_EASING | EASE_IN)
+	addtimer(new Callback(src, .proc/reset_hardpoint_color), timeout)

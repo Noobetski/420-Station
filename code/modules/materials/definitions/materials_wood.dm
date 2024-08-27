@@ -5,7 +5,8 @@
 	stack_type = /obj/item/stack/material/wood
 	icon_colour = WOOD_COLOR_GENERIC
 	integrity = 75
-	icon_base = "wood"
+	sheet_icon_base = "sheet-wood"
+	wall_icon_base = "wood"
 	table_icon_base = "wood"
 	explosion_resistance = 2
 	shard_type = SHARD_SPLINTER
@@ -102,3 +103,23 @@
 				/datum/reagent/water = 5,
 				/datum/reagent/toxin/taxine = 0.05
 				)
+
+/material/wood/vox
+	name = MATERIAL_VOXRES
+	ignition_point = T0C+300
+	melting_point = T0C+300
+	conductive = 0
+	stack_type = /obj/item/stack/material/wood/vox
+	icon_colour = "#3a4e1b"
+	chem_products = list(
+				/datum/reagent/resinpulp = 20
+				)
+	hidden_from_codex = TRUE
+	sheet_icon_base = "vox"
+	sheet_singular_name = "slab"
+	sheet_plural_name = "slabs"
+	construction_difficulty = MATERIAL_NORMAL_DIY
+	integrity = 60
+	hardness = MATERIAL_FLEXIBLE
+	weight = 12
+	brute_armor = 1

@@ -39,13 +39,13 @@
 		TRADER_INSULT_GOOD       = "Where this come from? Is trade no good?",
 		TRADER_INSULT_BAD        = "If you say all this at home, you be dead!"
 		)
-	possible_wanted_items = list(/obj/item/weapon/                  = TRADER_SUBTYPES_ONLY,
+	possible_wanted_items = list(/obj/item                  = TRADER_SUBTYPES_ONLY,
 								/obj/item/stack/material            = TRADER_SUBTYPES_ONLY,
 								/obj/item/stack/material/cyborg     = TRADER_BLACKLIST_ALL,
 								/obj/item/organ                     = TRADER_SUBTYPES_ONLY,
 								)
 
-	possible_trading_items = list(/obj/item/weapon/gun/projectile/dartgun/vox           = TRADER_SUBTYPES_ONLY,
+	possible_trading_items = list(/obj/item/gun/projectile/dartgun/vox           = TRADER_SUBTYPES_ONLY,
 								/obj/item/trash                                         = TRADER_SUBTYPES_ONLY,
 								/obj/item/remains                                       = TRADER_ALL,
 								/obj/item/clothing/accessory                            = TRADER_ALL,
@@ -56,6 +56,7 @@
 	mob_transfer_message = "<span class='danger'>You are transported to the ORIGIN. When the transportation dizziness wears off, you find you are surrounded by cackling Vox...</span>"
 
 /datum/trader/ship/vox/New()
+	..()
 	speech[TRADER_HAIL_START + "silicon"] = "Hello metal thing! You trade metal for things?"
 	speech[TRADER_HAIL_START + SPECIES_HUMAN] = "Hello hueman! Kiikikikiki! MOB trade with us, yes? Good!"
 
@@ -63,7 +64,7 @@
 	visited_vox_speech[TRADER_HAIL_START + SPECIES_HUMAN] = "Friend of Vox is friend of all Vox! MOB you trade now!"
 	visited_vox_speech[TRADER_HAIL_START + SPECIES_VOX] = "SKREEEE! May the Shoal make this trade good, MOB!"
 
-/datum/trader/ship/vox/hail(var/mob/user)
+/datum/trader/ship/vox/hail(mob/user)
 	if(istype(user, /mob/living/carbon/human))
 		var/mob/living/carbon/human/H = user
 		if(H.species)
@@ -79,7 +80,7 @@
 		return ..()
 	return FALSE
 
-/datum/trader/ship/vox/get_item_value(var/trading_num)
+/datum/trader/ship/vox/get_item_value(trading_num)
 	. = ..()
 	if(!hailed_vox)
 		. *= 2

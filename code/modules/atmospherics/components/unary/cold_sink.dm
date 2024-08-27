@@ -4,16 +4,19 @@
 /obj/machinery/atmospherics/unary/freezer
 	name = "gas cooling system"
 	desc = "Cools gas when connected to a pipe network."
-	icon = 'icons/obj/Cryogenic2.dmi'
-	icon_state = "freezer_0"
-	density = 1
-	anchored = 1
+	icon = 'icons/obj/atmospherics/temperature_machines.dmi'
+	icon_state = "freezer"
+	density = TRUE
+	anchored = TRUE
 	use_power = POWER_USE_OFF
 	idle_power_usage = 5			// 5 Watts for thermostat related circuitry
 	base_type = /obj/machinery/atmospherics/unary/freezer
-	construct_state = /decl/machine_construction/default/panel_closed
+	construct_state = /singleton/machine_construction/default/panel_closed
 	uncreated_component_parts = null
 	stat_immune = 0
+
+	machine_name = "gas cooling system"
+	machine_desc = "While active, this machine cools the gas in a connected pipeline to lower temperatures. Gas pressure decreases with chilling, allowing it to be compressed more easily."
 
 	var/heatsink_temperature = T20C	// The constant temperature reservoir into which the freezer pumps heat. Probably the hull of the station or something.
 	var/internal_volume = 600		// L
@@ -46,20 +49,25 @@
 	update_icon()
 
 /obj/machinery/atmospherics/unary/freezer/on_update_icon()
-	if(node)
-		if(use_power && cooling)
-			icon_state = "freezer_1"
-		else
-			icon_state = "freezer"
-	else
-		icon_state = "freezer_0"
-	return
+	ClearOverlays()
+	if(panel_open)
+		AddOverlays("[icon_state]_panel")
+	if(is_powered())
+		AddOverlays(emissive_appearance(icon, "[icon_state]_lights"))
+		AddOverlays("[icon_state]_lights")
+		if(node)
+			if(use_power && cooling)
+				AddOverlays(emissive_appearance(icon, "[icon_state]_lights_working"))
+				AddOverlays("[icon_state]_lights_working")
+			else
+				AddOverlays(emissive_appearance(icon, "[icon_state]_lights_standby"))
+				AddOverlays("[icon_state]_lights_standby")
 
 /obj/machinery/atmospherics/unary/freezer/interface_interact(mob/user)
 	ui_interact(user)
 	return TRUE
 
-/obj/machinery/atmospherics/unary/freezer/ui_interact(mob/user, ui_key = "main", var/datum/nanoui/ui = null, var/force_open = 1)
+/obj/machinery/atmospherics/unary/freezer/ui_interact(mob/user, ui_key = "main", datum/nanoui/ui = null, force_open = 1)
 	// this is the data which will be sent to the ui
 	var/data[0]
 	data["on"] = use_power ? 1 : 0
@@ -103,7 +111,7 @@
 		else
 			set_temperature = max(set_temperature + amount, 0)
 	if(href_list["setPower"]) //setting power to 0 is redundant anyways
-		var/new_setting = between(0, text2num(href_list["setPower"]), 100)
+		var/new_setting = clamp(text2num(href_list["setPower"]), 0, 100)
 		set_power_level(new_setting)
 
 	add_fingerprint(usr)
@@ -111,7 +119,7 @@
 /obj/machinery/atmospherics/unary/freezer/Process()
 	..()
 
-	if(stat & (NOPOWER|BROKEN) || !use_power)
+	if(inoperable() || !use_power)
 		cooling = 0
 		update_icon()
 		return
@@ -141,16 +149,16 @@
 //upgrading parts
 /obj/machinery/atmospherics/unary/freezer/RefreshParts()
 	..()
-	var/cap_rating = Clamp(total_component_rating_of_type(/obj/item/weapon/stock_parts/capacitor), 0, 20)
-	var/manip_rating = Clamp(total_component_rating_of_type(/obj/item/weapon/stock_parts/manipulator), 1, 10)
-	var/bin_rating = Clamp(total_component_rating_of_type(/obj/item/weapon/stock_parts/matter_bin), 0, 10)
+	var/cap_rating = clamp(total_component_rating_of_type(/obj/item/stock_parts/capacitor), 0, 20)
+	var/manip_rating = clamp(total_component_rating_of_type(/obj/item/stock_parts/manipulator), 1, 10)
+	var/bin_rating = clamp(total_component_rating_of_type(/obj/item/stock_parts/matter_bin), 0, 10)
 
 	power_rating = initial(power_rating) * cap_rating / 2			//more powerful
 	heatsink_temperature = initial(heatsink_temperature) / ((manip_rating + bin_rating) / 2)	//more efficient
 	air_contents.volume = max(initial(internal_volume) - 200, 0) + 200 * bin_rating
 	set_power_level(power_setting)
 
-/obj/machinery/atmospherics/unary/freezer/proc/set_power_level(var/new_power_setting)
+/obj/machinery/atmospherics/unary/freezer/proc/set_power_level(new_power_setting)
 	power_setting = new_power_setting
 	power_rating = max_power_rating * (power_setting/100)
 

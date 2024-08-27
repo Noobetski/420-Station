@@ -1,10 +1,12 @@
 /obj/machinery/compressor
 	name = "compressor"
 	desc = "The compressor stage of a gas turbine generator."
-	icon = 'icons/obj/pipes.dmi'
+	icon = 'icons/obj/atmospherics/pipes.dmi'
 	icon_state = "compressor"
-	anchored = 1
-	density = 1
+	anchored = TRUE
+	density = TRUE
+	machine_name = "turbine control console"
+	machine_desc = "Used to monitor, operate, and configure a connected gas turbine."
 	var/obj/machinery/power/turbine/turbine
 	var/datum/gas_mixture/gas_contained
 	var/turf/simulated/inturf
@@ -17,22 +19,22 @@
 /obj/machinery/power/turbine
 	name = "gas turbine generator"
 	desc = "A gas turbine used for backup power generation."
-	icon = 'icons/obj/pipes.dmi'
+	icon = 'icons/obj/atmospherics/pipes.dmi'
 	icon_state = "turbine"
-	anchored = 1
-	density = 1
+	anchored = TRUE
+	density = TRUE
 	var/obj/machinery/compressor/compressor
 	var/turf/simulated/outturf
 	var/lastgen
 
 /obj/machinery/computer/turbine_computer
-	name = "Gas turbine control computer"
+	name = "gas turbine control computer"
 	desc = "A computer to remotely control a gas turbine."
-	icon = 'icons/obj/computer.dmi'
+	icon = 'icons/obj/machines/computer.dmi'
 	icon_keyboard = "tech_key"
 	icon_screen = "turbinecomp"
-	anchored = 1
-	density = 1
+	anchored = TRUE
+	density = TRUE
 	var/obj/machinery/compressor/compressor
 	var/list/obj/machinery/door/blast/doors
 	var/door_status = 0
@@ -63,8 +65,8 @@
 /obj/machinery/compressor/Process()
 	if(!starter)
 		return
-	overlays.Cut()
-	if(stat & BROKEN)
+	ClearOverlays()
+	if(MACHINE_IS_BROKEN(src))
 		return
 	rpm = 0.9* rpm + 0.1 * rpmtarget
 	var/datum/gas_mixture/environment = inturf.return_air()
@@ -76,7 +78,7 @@
 	rpm = max(0, rpm - (rpm*rpm)/COMPFRICTION)
 
 
-	if(starter && !(stat & NOPOWER))
+	if(starter && is_powered())
 		use_power_oneoff(2800)
 		if(rpm<1000)
 			rpmtarget = 1000
@@ -87,13 +89,13 @@
 
 
 	if(rpm>50000)
-		overlays += image('icons/obj/pipes.dmi', "comp-o4", FLY_LAYER)
+		AddOverlays(image('icons/obj/atmospherics/pipes.dmi', "comp-o4", FLY_LAYER))
 	else if(rpm>10000)
-		overlays += image('icons/obj/pipes.dmi', "comp-o3", FLY_LAYER)
+		AddOverlays(image('icons/obj/atmospherics/pipes.dmi', "comp-o3", FLY_LAYER))
 	else if(rpm>2000)
-		overlays += image('icons/obj/pipes.dmi', "comp-o2", FLY_LAYER)
+		AddOverlays(image('icons/obj/atmospherics/pipes.dmi', "comp-o2", FLY_LAYER))
 	else if(rpm>500)
-		overlays += image('icons/obj/pipes.dmi', "comp-o1", FLY_LAYER)
+		AddOverlays(image('icons/obj/atmospherics/pipes.dmi', "comp-o1", FLY_LAYER))
 	 //TODO: DEFERRED
 
 /obj/machinery/power/turbine/Initialize()
@@ -101,8 +103,7 @@
 	outturf = get_step(src, dir)
 	return INITIALIZE_HINT_LATELOAD
 
-/obj/machinery/power/turbine/LateInitialize()
-	..()
+/obj/machinery/power/turbine/LateInitialize(mapload)
 	if(!compressor) // It should have found us and subscribed.
 		set_broken(TRUE)
 
@@ -120,8 +121,8 @@
 /obj/machinery/power/turbine/Process()
 	if(!compressor.starter)
 		return
-	overlays.Cut()
-	if(stat & BROKEN)
+	ClearOverlays()
+	if(MACHINE_IS_BROKEN(src))
 		return
 	lastgen = ((compressor.rpm / TURBGENQ)**TURBGENG) *TURBGENQ
 
@@ -138,7 +139,7 @@
 		outturf.assume_air(removed)
 
 	if(lastgen > 100)
-		overlays += image('icons/obj/pipes.dmi', "turb-o", FLY_LAYER)
+		AddOverlays(image('icons/obj/atmospherics/pipes.dmi', "turb-o", FLY_LAYER))
 
 
 	for(var/mob/M in viewers(1, src))
@@ -148,7 +149,7 @@
 
 /obj/machinery/power/turbine/interact(mob/user)
 
-	if ( (get_dist(src, user) > 1 ) || (stat & (NOPOWER|BROKEN)) && (!istype(user, /mob/living/silicon/ai)) )
+	if ( (get_dist(src, user) > 1 ) || (inoperable()) && (!istype(user, /mob/living/silicon/ai)) )
 		user.machine = null
 		close_browser(user, "window=turbine")
 		return
@@ -171,7 +172,7 @@
 
 	return
 
-/obj/machinery/power/turbine/CanUseTopic(var/mob/user, href_list)
+/obj/machinery/power/turbine/CanUseTopic(mob/user, href_list)
 	if(!user.IsAdvancedToolUser())
 		to_chat(user, FEEDBACK_YOU_LACK_DEXTERITY)
 		return min(..(), STATUS_UPDATE)
@@ -200,7 +201,7 @@
 	for(var/obj/machinery/compressor/C in SSmachines.machinery)
 		if(id_tag == C.comp_id)
 			compressor = C
-	doors = new /list()
+	doors = list()
 	for(var/obj/machinery/door/blast/P in SSmachines.machinery)
 		if(P.id_tag == id_tag)
 			doors += P
@@ -214,7 +215,7 @@
 	interact(user)
 	return TRUE
 
-/obj/machinery/computer/turbine_computer/interact(var/mob/user)
+/obj/machinery/computer/turbine_computer/interact(mob/user)
 	user.machine = src
 	var/dat
 	if(src.compressor)
@@ -230,7 +231,7 @@
 		\n<BR>
 		\n"}
 	else
-		dat += "<span class='danger'>No compatible attached compressor found.</span>"
+		dat += SPAN_DANGER("No compatible attached compressor found.")
 
 	show_browser(user, dat, "window=computer;size=400x500")
 	onclose(user, "computer")

@@ -1,8 +1,10 @@
 /obj/machinery/computer/modular
 	name = "console"
-	maximum_component_parts = list(/obj/item/weapon/stock_parts = 14)	//There's a lot of stuff that goes in these
+	maximum_component_parts = list(/obj/item/stock_parts = 14)	//There's a lot of stuff that goes in these
+	machine_name = "general-purpose computer motherboard"
+	machine_desc = "Used to build \"modular computers\" - stationary or portable devices that connect to NTNet and support a wide array of programs."
 	var/list/interact_sounds = list("keyboard", "keystroke")
-	var/obj/item/weapon/stock_parts/computer/hard_drive/portable/portable_drive
+	var/obj/item/stock_parts/computer/hard_drive/portable/portable_drive
 
 /obj/machinery/computer/modular/Initialize()
 	set_extension(src, /datum/extension/interactive/ntos/console)
@@ -16,7 +18,7 @@
 	. = ..()
 
 /obj/machinery/computer/modular/Process()
-	if(stat & NOPOWER)
+	if(!is_powered())
 		return
 	var/datum/extension/interactive/ntos/os = get_extension(src, /datum/extension/interactive/ntos)
 	if(os)
@@ -24,7 +26,7 @@
 
 /obj/machinery/computer/modular/power_change()
 	. = ..()
-	if(. && (stat & NOPOWER))
+	if(. && (!is_powered()))
 		var/datum/extension/interactive/ntos/os = get_extension(src, /datum/extension/interactive/ntos)
 		if(os)
 			os.event_powerfailure()
@@ -41,6 +43,15 @@
 		os.ui_interact(user)
 	return TRUE
 
+/obj/machinery/computer/modular/on_update_icon()
+	..()
+	var/datum/extension/interactive/ntos/os = get_extension(src, /datum/extension/interactive/ntos)
+	if(os)
+		if(os.on)
+			set_light(light_range_on, light_power_on, light_color)
+		else
+			set_light(0)
+
 /obj/machinery/computer/modular/get_screen_overlay()
 	var/datum/extension/interactive/ntos/os = get_extension(src, /datum/extension/interactive/ntos)
 	if(os)
@@ -49,23 +60,24 @@
 /obj/machinery/computer/modular/get_keyboard_overlay()
 	var/datum/extension/interactive/ntos/os = get_extension(src, /datum/extension/interactive/ntos)
 	if(os)
+		icon_keyboard = os.get_keyboard_state()
 		return os.get_keyboard_overlay()
 
-/obj/machinery/computer/modular/emag_act(var/remaining_charges, var/mob/user)
-	var/obj/item/weapon/stock_parts/circuitboard/modular_computer/MB = get_component_of_type(/obj/item/weapon/stock_parts/circuitboard/modular_computer)
+/obj/machinery/computer/modular/emag_act(remaining_charges, mob/user)
+	var/obj/item/stock_parts/circuitboard/modular_computer/MB = get_component_of_type(/obj/item/stock_parts/circuitboard/modular_computer)
 	return MB && MB.emag_act(remaining_charges, user)
 
-/obj/machinery/computer/modular/components_are_accessible(var/path)
+/obj/machinery/computer/modular/components_are_accessible(path)
 	. = ..()
 	if(.)
 		return
-	if(!ispath(path, /obj/item/weapon/stock_parts/computer))
+	if(!ispath(path, /obj/item/stock_parts/computer))
 		return FALSE
-	var/obj/item/weapon/stock_parts/computer/P = path
+	var/obj/item/stock_parts/computer/P = path
 	return initial(P.external_slot)
 
-/obj/machinery/computer/modular/attackby(obj/item/I, mob/user)
-	if(istype(I, /obj/item/weapon/stock_parts/computer/hard_drive/portable))
+/obj/machinery/computer/modular/use_tool(obj/item/I, mob/living/user, list/click_params)
+	if(istype(I, /obj/item/stock_parts/computer/hard_drive/portable))
 		if(portable_drive)
 			to_chat(user, SPAN_WARNING("There's already \a [portable_drive] plugged in."))
 			return TRUE
@@ -82,7 +94,7 @@
 	set src in view(1)
 
 	if(!CanPhysicallyInteract(usr))
-		to_chat(usr, "<span class='warning'>You can't reach it.</span>")
+		to_chat(usr, SPAN_WARNING("You can't reach it."))
 		return
 
 	if(ismob(usr))
@@ -94,7 +106,7 @@
 	portable_drive = null
 	verbs -= /obj/machinery/computer/modular/proc/eject_usb
 
-/obj/machinery/computer/modular/CouldUseTopic(var/mob/user)
+/obj/machinery/computer/modular/CouldUseTopic(mob/user)
 	..()
 	if(LAZYLEN(interact_sounds) && CanPhysicallyInteract(user))
 		playsound(src, pick(interact_sounds), 40)
@@ -102,18 +114,19 @@
 /obj/machinery/computer/modular/RefreshParts()
 	..()
 	var/extra_power = 0
-	for(var/obj/item/weapon/stock_parts/computer/part in component_parts)
+	for(var/obj/item/stock_parts/computer/part in component_parts)
 		if(part.enabled)
 			extra_power += part.power_usage
 	change_power_consumption(initial(active_power_usage) + extra_power, POWER_USE_ACTIVE)
 
 /obj/machinery/computer/modular/CtrlAltClick(mob/user)
 	if(!CanPhysicallyInteract(user))
-		return 0
+		return FALSE
 	var/datum/extension/interactive/ntos/os = get_extension(src, /datum/extension/interactive/ntos)
 	if(os)
 		os.open_terminal(user)
-		return 1
+		return TRUE
+	return FALSE
 
 /obj/machinery/computer/modular/verb/emergency_shutdown()
 	set name = "Forced Shutdown"

@@ -6,7 +6,7 @@
 	spawn_positions = 0
 	supervisors = "Corporate Regulations, the Union Charter, and the Expeditionary Corps Organisation"
 	selection_color = "#2f2f7f"
-	economic_power = 15
+	economic_power = 18
 	minimal_player_age = 0
 	alt_titles = list(
 		"Corporate Liaison",
@@ -14,14 +14,21 @@
 		"Corporate Representative",
 		"Corporate Executive"
 		)
-	outfit_type = /decl/hierarchy/outfit/job/torch/passenger/workplace_liaison
+	outfit_type = /singleton/hierarchy/outfit/job/torch/passenger/workplace_liaison
 	allowed_branches = list(/datum/mil_branch/civilian)
 	allowed_ranks = list(/datum/mil_rank/civ/contractor)
-	min_skill = list(   SKILL_BUREAUCRACY	= SKILL_EXPERT,
-	                    SKILL_FINANCE		= SKILL_BASIC)
-	skill_points = 20
-	access = list(access_liaison, access_bridge, access_solgov_crew,
-						access_nanotrasen, access_commissary, access_torch_fax)
+	skill_points = 26
+	min_skill = list( // 5 points
+		SKILL_BUREAUCRACY = SKILL_EXPERIENCED, // 4 points
+		SKILL_FINANCE = SKILL_BASIC // 1 point
+	)
+
+	access = list(
+		access_liaison, access_bridge, access_solgov_crew,
+		access_nanotrasen, access_commissary, access_torch_fax,
+		access_radio_comm, access_radio_serv
+	)
+
 	software_on_spawn = list(/datum/computer_file/program/reports)
 
 /datum/job/liaison/get_description_blurb()

@@ -1,11 +1,11 @@
-/obj/item/weapon/robot_module/flying/surveyor
+/obj/item/robot_module/flying/surveyor
 	name = "survey drone module"
 	display_name = "Surveyor"
 	channels = list(
 		"Science" = TRUE,
 		"Exploration" = TRUE
 	)
-	networks = list(NETWORK_EXPEDITION)
+	networks = list(NETWORK_RESEARCH)
 	sprites = list(
 		"Drone"  = "drone-science",
 		"Eyebot" = "eyebot-science"
@@ -16,48 +16,65 @@
 		/obj/item/stack/flag/red
 	)
 	skills = list(
-		SKILL_ELECTRICAL          = SKILL_PROF,
-		SKILL_ATMOS               = SKILL_PROF,
-		SKILL_PILOT               = SKILL_EXPERT,
-		SKILL_BOTANY              = SKILL_PROF,
-		SKILL_EVA                 = SKILL_PROF,
+		SKILL_ELECTRICAL          = SKILL_MASTER,
+		SKILL_ATMOS               = SKILL_MASTER,
+		SKILL_PILOT               = SKILL_EXPERIENCED,
+		SKILL_BOTANY              = SKILL_MASTER,
+		SKILL_EVA                 = SKILL_MASTER,
 		SKILL_MECH                = HAS_PERK,
 	)
 
 	equipment = list(
-		/obj/item/weapon/material/hatchet/machete/unbreakable,
+		/obj/item/device/flash,
+		/obj/item/material/hatchet/machete/unbreakable,
 		/obj/item/inducer/borg,
 		/obj/item/device/scanner/gas,
-		/obj/item/weapon/storage/plants,
-		/obj/item/weapon/wirecutters/clippers,
+		/obj/item/storage/plants,
+		/obj/item/wirecutters/clippers,
 		/obj/item/device/scanner/mining,
-		/obj/item/weapon/extinguisher,
-		/obj/item/weapon/gun/launcher/net/borg,
+		/obj/item/extinguisher,
+		/obj/item/gun/launcher/net/borg,
 		/obj/item/device/gps,
-		/obj/item/weapon/weldingtool/largetank,
-		/obj/item/weapon/screwdriver,
-		/obj/item/weapon/wrench,
-		/obj/item/weapon/crowbar,
-		/obj/item/weapon/wirecutters,
+		/obj/item/weldingtool/largetank,
+		/obj/item/screwdriver,
+		/obj/item/wrench,
+		/obj/item/crowbar,
+		/obj/item/wirecutters,
 		/obj/item/device/multitool,
 		/obj/item/bioreactor,
-		/obj/item/weapon/inflatable_dispenser/robot
+		/obj/item/inflatable_dispenser/robot,
+		/obj/item/robot_harvester
 	)
 
-	emag = /obj/item/weapon/melee/energy/machete
+	emag_gear = list(
+		/obj/item/melee/baton/robot/electrified_arm,
+		/obj/item/gun/energy/gun
+	)
+	access = list(
+		access_emergency_storage,
+		access_eva,
+		access_expedition_shuttle,
+		access_explorer,
+		access_guppy,
+		access_hangar,
+		access_petrov,
+		access_research,
+		access_radio_exp,
+		access_radio_sci
+	)
 
-/obj/item/weapon/robot_module/flying/surveyor/finalize_synths()
+/obj/item/robot_module/flying/surveyor/finalize_synths()
 	. = ..()
 	for(var/flag_type in flag_types)
 		equipment += new flag_type(src)
 
-/obj/item/weapon/robot_module/flying/surveyor/respawn_consumable(var/mob/living/silicon/robot/R, var/amount)
-	var/obj/item/weapon/gun/launcher/net/borg/gun = locate() in equipment
+/obj/item/robot_module/flying/surveyor/respawn_consumable(mob/living/silicon/robot/R, amount)
+	var/obj/item/gun/launcher/net/borg/gun = locate() in equipment
 	if(!gun)
 		gun = new(src)
 		equipment += gun
-	if(length(gun.shells) < gun.max_shells)
-		gun.load(new /obj/item/weapon/net_shell)
+	if(LAZYLEN(gun.shells) < gun.max_shells)
+		gun.load(new /obj/item/net_shell)
 
 	for(var/flagtype in flag_types)
 		var/obj/item/stack/flag/flag = locate(flagtype) in equipment
@@ -67,4 +84,3 @@
 		if(flag.amount < flag.max_amount)
 			flag.add(1)
 	..()
-

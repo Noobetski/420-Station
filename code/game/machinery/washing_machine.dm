@@ -8,18 +8,18 @@
 // other states are independent.
 
 /obj/machinery/washing_machine
-	name = "Washing Machine"
+	name = "washing machine"
 	icon = 'icons/obj/machines/washing_machine.dmi'
 	icon_state = "wm_00"
-	density = 1
-	anchored = 1
-	construct_state = /decl/machine_construction/default/panel_closed
+	density = TRUE
+	anchored = TRUE
+	construct_state = /singleton/machine_construction/default/panel_closed
 	uncreated_component_parts = null
 	stat_immune = 0
 	var/state = 0
 	var/gibs_ready = 0
 	var/obj/crayon
-	var/obj/item/weapon/reagent_containers/pill/detergent/detergent
+	var/obj/item/reagent_containers/pill/detergent/detergent
 	obj_flags = OBJ_FLAG_ANCHORABLE
 	clicksound = "button"
 	clickvol = 40
@@ -27,6 +27,9 @@
 	// Power
 	idle_power_usage = 10
 	active_power_usage = 150
+
+	machine_name = "washing machine"
+	machine_desc = "Uses detergent and water to get your clothes minty fresh. Good for those pesky bloodstains! Also decontaminates clothing that has been exposed to toxic elements, as long as detergent is used in the washing process."
 
 /obj/machinery/washing_machine/Destroy()
 	QDEL_NULL(crayon)
@@ -55,7 +58,7 @@
 		to_chat(usr, "You must first close the machine.")
 		return
 
-	if(stat & NOPOWER)
+	if(!is_powered())
 		to_chat(usr, SPAN_WARNING("\The [src] is unpowered."))
 		return
 
@@ -65,7 +68,7 @@
 
 	update_use_power(POWER_USE_ACTIVE)
 	update_icon()
-	addtimer(CALLBACK(src, /obj/machinery/washing_machine/proc/wash), 20 SECONDS)
+	addtimer(new Callback(src, /obj/machinery/washing_machine/proc/wash), 20 SECONDS)
 
 /obj/machinery/washing_machine/proc/wash()
 	for(var/atom/A in (contents - component_parts))
@@ -83,7 +86,7 @@
 				C.ironed_state = WRINKLES_WRINKLY
 				if(detergent)
 					C.change_smell(SMELL_CLEAN)
-					addtimer(CALLBACK(C, /obj/item/clothing/proc/change_smell), detergent.smell_clean_time, TIMER_UNIQUE | TIMER_OVERRIDE)
+					addtimer(new Callback(C, /obj/item/clothing/proc/change_smell), detergent.smell_clean_time, TIMER_UNIQUE | TIMER_OVERRIDE)
 	QDEL_NULL(detergent)
 
 	//Tanning!
@@ -107,8 +110,8 @@
 		return
 	if(state & WASHER_STATE_CLOSED)
 		to_chat(usr, SPAN_WARNING("\The [src] is closed."))
-		return	
-	if(!do_after(usr, 2 SECONDS, src))
+		return
+	if(!do_after(usr, 2 SECONDS, src, DO_DEFAULT | DO_USER_UNIQUE_ACT | DO_PUBLIC_PROGRESS))
 		return
 	if(!(state & WASHER_STATE_CLOSED))
 		usr.dropInto(loc)
@@ -119,24 +122,28 @@
 /obj/machinery/washing_machine/clean_blood()
 	. = ..()
 	state &= ~WASHER_STATE_BLOODY
-	update_icon()	
+	update_icon()
 
 /obj/machinery/washing_machine/components_are_accessible(path)
 	return !(state & WASHER_STATE_RUNNING) && ..()
 
-/obj/machinery/washing_machine/attackby(obj/item/weapon/W, mob/user)
+/obj/machinery/washing_machine/use_tool(obj/item/W, mob/living/user, list/click_params)
+	if ((. = ..()))
+		return
+
 	if(!(state & WASHER_STATE_CLOSED))
-		if(!crayon && istype(W,/obj/item/weapon/pen/crayon))
+		if(!crayon && istype(W,/obj/item/pen/crayon))
 			if(!user.unEquip(W, src))
 				return
 			crayon = W
 			return TRUE
-		if(!detergent && istype(W,/obj/item/weapon/reagent_containers/pill/detergent))
+		if(!detergent && istype(W,/obj/item/reagent_containers/pill/detergent))
 			if(!user.unEquip(W, src))
 				return
 			detergent = W
 			return TRUE
-	if(istype(W, /obj/item/weapon/holder)) // Mob holder
+
+	if(istype(W, /obj/item/holder)) // Mob holder
 		for(var/mob/living/doggy in W)
 			doggy.forceMove(src)
 		qdel(W)
@@ -144,65 +151,26 @@
 		update_icon()
 		return TRUE
 
-	else if(istype(W,/obj/item/stack/hairlesshide) || \
-		istype(W,/obj/item/clothing/under)  || \
-		istype(W,/obj/item/clothing/mask)   || \
-		istype(W,/obj/item/clothing/head)   || \
-		istype(W,/obj/item/clothing/gloves) || \
-		istype(W,/obj/item/clothing/shoes)  || \
-		istype(W,/obj/item/clothing/suit)   || \
-		istype(W,/obj/item/weapon/bedsheet) || \
-		istype(W,/obj/item/underwear/))
-
-		//YES, it's hardcoded... saves a var/can_be_washed for every single clothing item.
-		if ( istype(W,/obj/item/clothing/suit/space ) )
-			to_chat(user, "This item does not fit.")
-			return
-		if ( istype(W,/obj/item/clothing/suit/syndicatefake ) )
-			to_chat(user, "This item does not fit.")
-			return
-		if ( istype(W,/obj/item/clothing/suit/cyborg_suit ) )
-			to_chat(user, "This item does not fit.")
-			return
-		if ( istype(W,/obj/item/clothing/suit/bomb_suit ) )
-			to_chat(user, "This item does not fit.")
-			return
-		if ( istype(W,/obj/item/clothing/suit/armor ) )
-			to_chat(user, "This item does not fit.")
-			return
-		if ( istype(W,/obj/item/clothing/suit/armor ) )
-			to_chat(user, "This item does not fit.")
-			return
-		if ( istype(W,/obj/item/clothing/mask/gas ) )
-			to_chat(user, "This item does not fit.")
-			return
-		if ( istype(W,/obj/item/clothing/mask/smokable/cigarette ) )
-			to_chat(user, "This item does not fit.")
-			return
-		if ( istype(W,/obj/item/clothing/head/syndicatefake ) )
-			to_chat(user, "This item does not fit.")
-			return
-		if ( istype(W,/obj/item/clothing/head/helmet ) )
-			to_chat(user, "This item does not fit.")
-			return
-
-		if(contents.len < 5)
-			if(!(state & WASHER_STATE_CLOSED))
-				if(!user.unEquip(W, src))
-					return
-				state |= WASHER_STATE_FULL
-				update_icon()
-			else
-				to_chat(user, SPAN_NOTICE("You can't put the item in right now."))
-		else
-			to_chat(user, SPAN_NOTICE("\The [src] is full"))
-		return TRUE
-
-	if(state & WASHER_STATE_RUNNING)
+	if (state & WASHER_STATE_RUNNING)
 		to_chat(user, SPAN_WARNING("\The [src] is currently running."))
 		return TRUE
 
-	return ..()
+	if (!(W.item_flags & ITEM_FLAG_WASHER_ALLOWED))
+		to_chat(user, SPAN_WARNING("\The [W] can't be washed in \the [src]!"))
+		return TRUE
+
+	if (length(contents) < 5)
+		if (!(state & WASHER_STATE_CLOSED))
+			if (!user.unEquip(W, src))
+				return
+			state |= WASHER_STATE_FULL
+			update_icon()
+		else
+			to_chat(user, SPAN_NOTICE("You can't put the item in right now."))
+	else
+		to_chat(user, SPAN_NOTICE("\The [src] is full."))
+	return TRUE
+
 
 /obj/machinery/washing_machine/physical_attack_hand(mob/user)
 	if(state & WASHER_STATE_RUNNING)

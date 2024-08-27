@@ -1,4 +1,4 @@
-var/list/all_virtual_listeners = list()
+var/global/list/all_virtual_listeners = list()
 
 /mob/observer/virtual
 	icon = 'icons/mob/virtual.dmi'
@@ -8,7 +8,7 @@ var/list/all_virtual_listeners = list()
 	sight = SEE_SELF
 
 	virtual_mob = null
-	no_z_overlay = TRUE
+	z_flags = ZMM_IGNORE
 
 	var/atom/movable/host
 	var/host_type = /atom/movable
@@ -17,8 +17,9 @@ var/list/all_virtual_listeners = list()
 
 	var/static/list/overlay_icons
 
-/mob/observer/virtual/New(var/location, var/atom/movable/host)
-	..()
+/mob/observer/virtual/Initialize(mapload, atom/movable/host)
+	. = ..()
+
 	if(!istype(host, host_type))
 		CRASH("Received an unexpected host type. Expected [host_type], was [log_info_line(host)].")
 	src.host = host
@@ -28,9 +29,7 @@ var/list/all_virtual_listeners = list()
 
 	update_icon()
 
-/mob/observer/virtual/Initialize()
-	. = ..()
-	STOP_PROCESSING(SSmobs, src)
+	STOP_PROCESSING_MOB(src)
 
 /mob/observer/virtual/Destroy()
 	GLOB.moved_event.unregister(host, src, /atom/movable/proc/move_to_turf_or_null)
@@ -43,12 +42,12 @@ var/list/all_virtual_listeners = list()
 		overlay_icons = list()
 		for(var/i_state in icon_states(icon))
 			overlay_icons[i_state] = image(icon = icon, icon_state = i_state)
-	overlays.Cut()
+	ClearOverlays()
 
 	if(abilities & VIRTUAL_ABILITY_HEAR)
-		overlays += overlay_icons["hear"]
+		AddOverlays(overlay_icons["hear"])
 	if(abilities & VIRTUAL_ABILITY_SEE)
-		overlays += overlay_icons["see"]
+		AddOverlays(overlay_icons["see"])
 
 /***********************
 * Virtual Mob Creation *

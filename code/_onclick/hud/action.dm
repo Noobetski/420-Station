@@ -25,7 +25,7 @@
 	var/background_icon_state = "bg_default"
 	var/mob/living/owner
 
-/datum/action/New(var/Target)
+/datum/action/New(Target)
 	target = Target
 
 /datum/action/Destroy()
@@ -33,7 +33,7 @@
 		Remove(owner)
 	return ..()
 
-/datum/action/proc/SetTarget(var/atom/Target)
+/datum/action/proc/SetTarget(atom/Target)
 	target = Target
 
 /datum/action/proc/Grant(mob/living/T)
@@ -64,10 +64,10 @@
 		if(AB_ITEM, AB_ITEM_USE_ICON)
 			if(target)
 				var/obj/item/item = target
-				item.ui_action_click()
+				item.ui_action_click(owner)
 		//if(AB_SPELL)
 		//	if(target)
-		//		var/obj/effect/proc_holder/spell = target
+		//		var/obj/proc_holder/spell = target
 		//		spell.Click()
 		if(AB_INNATE)
 			if(!active)
@@ -120,6 +120,16 @@
 /obj/screen/movable/action_button
 	var/datum/action/owner
 	screen_loc = "WEST,NORTH"
+	/// String. Title of the tooltip displayed on hover. Set during `Initialize()`, defaults to `owner.target.name`.
+	var/tooltip_title
+
+
+/obj/screen/movable/action_button/Initialize(mapload, _owner)
+	. = ..(mapload)
+	owner = _owner
+	if (owner?.target)
+		tooltip_title = owner.target.name
+
 
 /obj/screen/movable/action_button/Click(location,control,params)
 	var/list/modifiers = params2list(params)
@@ -131,13 +141,22 @@
 	owner.Trigger()
 	return 1
 
+
+/obj/screen/movable/action_button/MouseEntered(location, control, params)
+	openToolTip(usr, src, params, tooltip_title, name)
+
+
+/obj/screen/movable/action_button/MouseExited(location, control, params)
+	closeToolTip(usr)
+
+
 /obj/screen/movable/action_button/proc/UpdateIcon()
 	if(!owner)
 		return
 	icon = owner.button_icon
 	icon_state = owner.background_icon_state
 
-	overlays.Cut()
+	ClearOverlays()
 	var/image/img
 	if(owner.action_type == AB_ITEM && owner.target)
 		var/obj/item/I = owner.target
@@ -146,7 +165,7 @@
 		img = image(owner.button_icon,src,owner.button_icon_state)
 	img.pixel_x = 0
 	img.pixel_y = 0
-	overlays += img
+	AddOverlays(img)
 
 	if(!owner.IsAvailable())
 		color = rgb(128,0,0,128)
@@ -172,7 +191,7 @@
 	usr.update_action_buttons()
 
 
-/obj/screen/movable/action_button/hide_toggle/proc/InitialiseIcon(var/mob/living/user)
+/obj/screen/movable/action_button/hide_toggle/proc/InitialiseIcon(mob/living/user)
 	if(isalien(user))
 		icon_state = "bg_alien"
 	else
@@ -181,12 +200,12 @@
 	return
 
 /obj/screen/movable/action_button/hide_toggle/UpdateIcon()
-	overlays.Cut()
+	ClearOverlays()
 	var/image/img = image(icon,src,hidden?"show":"hide")
-	overlays += img
+	AddOverlays(img)
 	return
 
-//This is the proc used to update all the action buttons. Properly defined in /mob/living/
+//This is the proc used to update all the action buttons. Properly defined in /mob/living
 /mob/proc/update_action_buttons()
 	return
 
@@ -194,7 +213,7 @@
 #define AB_NORTH_OFFSET 26
 #define AB_MAX_COLUMNS 10
 
-/datum/hud/proc/ButtonNumberToScreenCoords(var/number) // TODO : Make this zero-indexed for readabilty
+/datum/hud/proc/ButtonNumberToScreenCoords(number) // TODO : Make this zero-indexed for readabilty
 	var/row = round((number-1)/AB_MAX_COLUMNS)
 	var/col = ((number - 1)%(AB_MAX_COLUMNS)) + 1
 	var/coord_col = "+[col-1]"
@@ -203,15 +222,13 @@
 	var/coord_row_offset = AB_NORTH_OFFSET
 	return "WEST[coord_col]:[coord_col_offset],NORTH[coord_row]:[coord_row_offset]"
 
-/datum/hud/proc/SetButtonCoords(var/obj/screen/button,var/number)
+/datum/hud/proc/SetButtonCoords(obj/screen/button,number)
 	var/row = round((number-1)/AB_MAX_COLUMNS)
 	var/col = ((number - 1)%(AB_MAX_COLUMNS)) + 1
-	var/x_offset = 32*(col-1) + AB_WEST_OFFSET + 2*col
-	var/y_offset = -32*(row+1) + AB_NORTH_OFFSET
-
-	var/matrix/M = matrix()
-	M.Translate(x_offset,y_offset)
-	button.transform = M
+	button.SetTransform(
+		offset_x = 32 * (col - 1) + AB_WEST_OFFSET + 2 * col,
+		offset_y = -32 * (row + 1) + AB_NORTH_OFFSET
+	)
 
 //Presets for item actions
 /datum/action/item_action
@@ -227,7 +244,7 @@
 	action_type = AB_ITEM_USE_ICON
 	button_icon = 'icons/obj/action_buttons/organs.dmi'
 
-/datum/action/item_action/organ/SetTarget(var/atom/Target)
+/datum/action/item_action/organ/SetTarget(atom/Target)
 	. = ..()
 	var/obj/item/organ/O = target
 	if(istype(O))

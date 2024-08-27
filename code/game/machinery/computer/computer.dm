@@ -1,22 +1,24 @@
 /obj/machinery/computer
 	name = "computer"
-	icon = 'icons/obj/computer.dmi'
+	icon = 'icons/obj/machines/computer.dmi'
 	icon_state = "computer"
-	density = 1
-	anchored = 1.0
+	density = TRUE
+	anchored = TRUE
 	idle_power_usage = 300
 	active_power_usage = 300
-	construct_state = /decl/machine_construction/default/panel_closed/computer
+	construct_state = /singleton/machine_construction/default/panel_closed/computer
 	uncreated_component_parts = null
 	stat_immune = 0
 	frame_type = /obj/machinery/constructable_frame/computerframe/deconstruct
 	var/processing = 0
 
+	health_max = 80
+	damage_hitsound = 'sound/weapons/smash.ogg'
+
 	var/icon_keyboard = "generic_key"
 	var/icon_screen = "generic"
-	var/light_max_bright_on = 0.2
-	var/light_inner_range_on = 0.1
-	var/light_outer_range_on = 2
+	var/light_power_on = 1
+	var/light_range_on = 2
 	var/overlay_layer
 	atom_flags = ATOM_FLAG_NO_TEMP_CHANGE | ATOM_FLAG_CLIMBABLE
 	clicksound = "keyboard"
@@ -29,84 +31,95 @@
 	. = ..()
 	update_icon()
 
-/obj/machinery/computer/emp_act(severity)
-	if(prob(20/severity)) set_broken(TRUE)
-	..()
+/obj/machinery/computer/can_damage_health(damage, damage_type)
+	if (!can_use_tools)
+		return FALSE
+	. = ..()
 
-/obj/machinery/computer/ex_act(severity)
-	switch(severity)
-		if(1.0)
-			qdel(src)
-			return
-		if(2.0)
-			if (prob(25))
-				qdel(src)
-				return
-			if (prob(50))
-				for(var/x in verbs)
-					verbs -= x
-				set_broken(TRUE)
-		if(3.0)
-			if (prob(25))
-				for(var/x in verbs)
-					verbs -= x
-				set_broken(TRUE)
-
-/obj/machinery/computer/bullet_act(var/obj/item/projectile/Proj)
-	if(prob(Proj.get_structure_damage()))
-		set_broken(TRUE)
+/obj/machinery/computer/on_death()
 	..()
+	visible_message(SPAN_WARNING("\The [src] breaks!"))
 
 /obj/machinery/computer/on_update_icon()
-	overlays.Cut()
+	update_glow()
+	ClearOverlays()
 	icon = initial(icon)
 	icon_state = initial(icon_state)
 
+	// Connecting multiple computers in a row
+	if(initial(icon_state) == "computer")
+		var/append_string = ""
+		var/left = turn(dir, 90)
+		var/right = turn(dir, -90)
+		var/turf/L = get_step(src, left)
+		var/turf/R = get_step(src, right)
+		var/obj/machinery/computer/LC = locate() in L
+		var/obj/machinery/computer/RC = locate() in R
+		if(LC && LC.dir == dir && initial(LC.icon_state) == "computer")
+			append_string += "_L"
+		if(RC && RC.dir == dir && initial(RC.icon_state) == "computer")
+			append_string += "_R"
+		icon_state = "computer[append_string]"
+
+
 	if(reason_broken & MACHINE_BROKEN_NO_PARTS)
-		set_light(0)
-		icon = 'icons/obj/computer.dmi'
+		icon = 'icons/obj/machines/computer.dmi'
 		icon_state = "wired"
-		var/screen = get_component_of_type(/obj/item/weapon/stock_parts/console_screen)
-		var/keyboard = get_component_of_type(/obj/item/weapon/stock_parts/keyboard)
+		var/screen = get_component_of_type(/obj/item/stock_parts/console_screen)
+		var/keyboard = get_component_of_type(/obj/item/stock_parts/keyboard)
 		if(screen)
-			overlays += "comp_screen"
+			AddOverlays("comp_screen")
 		if(keyboard)
-			overlays += icon_keyboard ? "[icon_keyboard]_off" : "keyboard"
+			AddOverlays(icon_keyboard ? "[icon_keyboard]_off" : "keyboard")
 		return
 
-	if(stat & NOPOWER)
-		set_light(0)
+	if(!is_powered())
 		if(icon_keyboard)
-			overlays += image(icon,"[icon_keyboard]_off", overlay_layer)
+			AddOverlays(image(icon,"[icon_keyboard]_off", overlay_layer))
 		return
-	else
-		set_light(light_max_bright_on, light_inner_range_on, light_outer_range_on, 2, light_color)
 
-	if(stat & BROKEN)
-		overlays += image(icon,"[icon_state]_broken", overlay_layer)
+	if(MACHINE_IS_BROKEN(src))
+		AddOverlays(image(icon,"[icon_state]_broken", overlay_layer))
 	else
-		overlays += get_screen_overlay()
+		AddOverlays(get_screen_overlay())
 
-	overlays += get_keyboard_overlay()
+	AddOverlays(get_keyboard_overlay())
+	var/screen_is_glowing = update_glow()
+	if(screen_is_glowing)
+		AddOverlays(emissive_appearance(icon, icon_screen))
+		if(icon_keyboard)
+			AddOverlays(emissive_appearance(icon, "[icon_keyboard]_mask"))
 
 /obj/machinery/computer/proc/get_screen_overlay()
-	return image(icon,icon_screen, overlay_layer)
+	return overlay_image(icon,icon_screen)
 
 /obj/machinery/computer/proc/get_keyboard_overlay()
 	if(icon_keyboard)
-		overlays += image(icon, icon_keyboard, overlay_layer)
+		return overlay_image(icon, icon_keyboard, overlay_layer)
 
 /obj/machinery/computer/proc/decode(text)
 	// Adds line breaks
 	text = replacetext(text, "\n", "<BR>")
 	return text
 
-/obj/machinery/computer/dismantle(mob/user)
-	if(stat & BROKEN)
-		to_chat(user, "<span class='notice'>The broken glass falls out.</span>")
-		for(var/obj/item/weapon/stock_parts/console_screen/screen in component_parts)
-			qdel(screen)
-			new /obj/item/weapon/material/shard(loc)
+/**
+ * Makes the computer emit light if the screen is on.
+ * Returns TRUE if the screen is on, otherwise FALSE.
+ */
+/obj/machinery/computer/proc/update_glow()
+	if (operable())
+		set_light(light_range_on, light_power_on, light_color)
+		return TRUE
 	else
-		to_chat(user, "<span class='notice'>You disconnect the monitor.</span>")
+		set_light(0)
+		return FALSE
+
+/obj/machinery/computer/dismantle(mob/user)
+	if(MACHINE_IS_BROKEN(src))
+		to_chat(user, SPAN_NOTICE("The broken glass falls out."))
+		for(var/obj/item/stock_parts/console_screen/screen in component_parts)
+			qdel(screen)
+			new /obj/item/material/shard(loc)
+	else
+		to_chat(user, SPAN_NOTICE("You disconnect the monitor."))
 	return ..()

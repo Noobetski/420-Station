@@ -6,12 +6,15 @@
 	use_power = POWER_USE_ACTIVE
 	idle_power_usage = 100
 	active_power_usage = 2000
-	anchored = 1
-	density = 0
-	level = 1
-	construct_state = /decl/machine_construction/default/panel_closed
+	anchored = TRUE
+	density = FALSE
+	level = ATOM_LEVEL_UNDER_TILE
+	construct_state = /singleton/machine_construction/default/panel_closed
 	uncreated_component_parts = null
 	stat_immune = 0
+
+	machine_name = "shield diffuser"
+	machine_desc = "These floor-mounted devices prevent formation of shields above them, and are typically placed near front of external airlocks."
 
 	var/alarm = 0
 	var/enabled = 1
@@ -27,14 +30,14 @@
 		return
 	for(var/direction in GLOB.cardinal)
 		var/turf/simulated/shielded_tile = get_step(get_turf(src), direction)
-		for(var/obj/effect/shield/S in shielded_tile)
+		for(var/obj/shield/S in shielded_tile)
 			S.diffuse(5)
 
 /obj/machinery/shield_diffuser/on_update_icon()
 	if(alarm)
 		icon_state = "fdiffuser_emergency"
 		return
-	if((stat & (NOPOWER | BROKEN)) || !enabled)
+	if(inoperable() || !enabled)
 		icon_state = "fdiffuser_off"
 	else
 		icon_state = "fdiffuser_on"
@@ -53,7 +56,7 @@
 	to_chat(user, "You turn \the [src] [enabled ? "on" : "off"].")
 	return TRUE
 
-/obj/machinery/shield_diffuser/proc/meteor_alarm(var/duration)
+/obj/machinery/shield_diffuser/proc/meteor_alarm(duration)
 	if(!duration)
 		return
 	alarm = round(max(alarm, duration))

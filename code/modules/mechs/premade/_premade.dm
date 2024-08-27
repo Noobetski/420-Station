@@ -25,13 +25,14 @@
 	spawn_mech_equipment()
 
 /mob/living/exosuit/premade/proc/spawn_mech_equipment()
+	set waitfor = FALSE
 	install_system(new /obj/item/mech_equipment/light(src), HARDPOINT_HEAD)
 
 /mob/living/exosuit/premade/random
 	name = "mismatched exosuit"
 	desc = "It seems to have been roughly thrown together and then spraypainted a single colour."
 
-/mob/living/exosuit/premade/random/Initialize(mapload, var/obj/structure/heavy_vehicle_frame/source_frame, var/super_random = FALSE, var/using_boring_colours = FALSE)
+/mob/living/exosuit/premade/random/Initialize(mapload, obj/structure/heavy_vehicle_frame/source_frame, super_random = FALSE, using_boring_colours = FALSE)
 	//if(!prob(100/(LAZYLEN(GLOB.mech_decals)+1)))
 	//	decal = pick(GLOB.mech_decals)
 
@@ -56,7 +57,7 @@
 			COLOR_GRAY80,
 			COLOR_OFF_WHITE,
 			COLOR_GUNMETAL,
-			COLOR_HULL,
+			COLOR_SOL,
 			COLOR_TITANIUM,
 			COLOR_DARK_GUNMETAL,
 			COLOR_BRONZE,
@@ -114,7 +115,7 @@
 			COLOR_CYAN_BLUE,
 			COLOR_LIGHT_CYAN,
 			COLOR_PAKISTAN_GREEN,
-			COLOR_HULL,
+			COLOR_SOL,
 			COLOR_AMBER,
 			COLOR_COMMAND_BLUE,
 			COLOR_SKY_BLUE,
@@ -149,8 +150,8 @@
 // Used for spawning/debugging.
 /mob/living/exosuit/premade/random/normal
 
-/mob/living/exosuit/premade/random/boring/Initialize(mapload, var/obj/structure/heavy_vehicle_frame/source_frame)
-	..(mapload, source_frame, using_boring_colours = TRUE)
+/mob/living/exosuit/premade/random/boring/Initialize(mapload, obj/structure/heavy_vehicle_frame/source_frame)
+	return..(mapload, source_frame, using_boring_colours = TRUE)
 
-/mob/living/exosuit/premade/random/extra/Initialize(mapload, var/obj/structure/heavy_vehicle_frame/source_frame)
-	..(mapload, source_frame, super_random = TRUE)
+/mob/living/exosuit/premade/random/extra/Initialize(mapload, obj/structure/heavy_vehicle_frame/source_frame)
+	return..(mapload, source_frame, super_random = TRUE)

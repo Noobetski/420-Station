@@ -1,4 +1,4 @@
-var/list/sounds_cache = list()
+var/global/list/sounds_cache = list()
 
 /client/proc/play_sound(S as sound)
 	set category = "Fun"
@@ -9,9 +9,27 @@ var/list/sounds_cache = list()
 	uploaded_sound.priority = 250
 
 	sounds_cache += S
+	var/volume = 100
 
-	if(alert("Song: [S]\n.", "Confirmation request" ,"Play", "Cancel") == "Cancel")
-		return
+	while (TRUE)
+		volume = input(src, "Sound volume (0 - 100)", "Volume", volume) as null|num
+		if (isnull(volume))
+			return
+
+		volume =  round(clamp(volume, 0, 100))
+		to_chat(src, "Sound volume set to [volume]%")
+		uploaded_sound.volume =volume
+		var/choice = alert("Song: [S]", "Play Sound" , "Play", "Preview", "Cancel")
+
+		if (choice == "Cancel")
+			return
+
+		if (choice == "Preview")
+			sound_to(src, uploaded_sound)
+
+		if (choice == "Play")
+			break
+
 
 	log_admin("[key_name(src)] played sound [S]")
 	message_admins("[key_name_admin(src)] played sound [S]", 1)
@@ -19,17 +37,17 @@ var/list/sounds_cache = list()
 		if(M.get_preference_value(/datum/client_preference/play_admin_midis) == GLOB.PREF_YES)
 			sound_to(M, uploaded_sound)
 
-	SSstatistics.add_field_details("admin_verb","PGS") //If you are copy-pasting this, ensure the 2nd parameter is unique to the new proc!
-
 /client/proc/play_local_sound(S as sound)
 	set category = "Fun"
 	set name = "Play Local Sound"
 	if(!check_rights(R_SOUNDS))	return
+	var/vol = input("Select a volume for the sound", "Play Local Sound", 50) as num|null
+	if (!vol)
+		return
 
 	log_admin("[key_name(src)] played a local sound [S]")
 	message_admins("[key_name_admin(src)] played a local sound [S]", 1)
-	playsound(get_turf(src.mob), S, 50, 0, 0)
-	SSstatistics.add_field_details("admin_verb","PLS") //If you are copy-pasting this, ensure the 2nd parameter is unique to the new proc!
+	playsound(get_turf(src.mob), S, vol, 0, 0)
 
 
 /client/proc/play_server_sound()
@@ -38,12 +56,11 @@ var/list/sounds_cache = list()
 	if(!check_rights(R_SOUNDS))	return
 
 	var/list/sounds = list("sound/items/bikehorn.ogg","sound/effects/siren.ogg")
-	sounds += sounds_cache	
+	sounds += sounds_cache
 
 	var/melody = input("Select a sound from the server to play", "Server sound list") as null|anything in sounds
 
-	if(!melody)	
+	if(!melody)
 		return
-		
+
 	play_sound(melody)
-	SSstatistics.add_field_details("admin_verb","PSS") //If you are copy-pasting this, ensure the 2nd parameter is unique to the new proc!

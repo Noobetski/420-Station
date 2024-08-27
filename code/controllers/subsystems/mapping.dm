@@ -8,15 +8,15 @@ SUBSYSTEM_DEF(mapping)
 	var/list/exoplanet_ruins_templates = list()
 	var/list/away_sites_templates = list()
 	var/list/submaps = list()
-	var/list/submap_archetypes = list()
 
-/datum/controller/subsystem/mapping/Initialize(timeofday)
-	// Load templates and build away sites.
+
+/datum/controller/subsystem/mapping/UpdateStat(time)
+	return
+
+
+/datum/controller/subsystem/mapping/Initialize(start_uptime)
 	preloadTemplates()
-	for(var/atype in subtypesof(/decl/submap_archetype))
-		submap_archetypes[atype] = new atype
-	GLOB.using_map.build_away_sites()
-	. = ..()
+
 
 /datum/controller/subsystem/mapping/Recover()
 	flags |= SS_NO_INIT
@@ -68,3 +68,28 @@ SUBSYSTEM_DEF(mapping)
 			space_ruins_templates[MT.name] = MT
 		else if(istype(MT, /datum/map_template/ruin/away_site))
 			away_sites_templates[MT.name] = MT
+
+/proc/generateMapList(filename)
+	RETURN_TYPE(/list)
+	var/list/potentialMaps = list()
+	var/list/Lines = world.file2list(filename)
+	if(!length(Lines))
+		return
+	for (var/t in Lines)
+		if (!t)
+			continue
+		t = trimtext(t)
+		if (length(t) == 0)
+			continue
+		else if (copytext(t, 1, 2) == "#")
+			continue
+		var/pos = findtext(t, " ")
+		var/name = null
+		if (pos)
+			name = lowertext(copytext(t, 1, pos))
+		else
+			name = lowertext(t)
+		if (!name)
+			continue
+		potentialMaps.Add(t)
+	return potentialMaps

@@ -17,11 +17,13 @@
 		return
 
 	if(is_special_character(src))
-		log_and_message_admins("removed themselves from the round via Wipe Core")
+		log_and_message_admins("removed themselves from the round via Wipe Core", src)
 
-	// We warned you.
-	empty_playable_ai_cores += new /obj/structure/AIcore/deactivated(loc)
 	GLOB.global_announcer.autosay("[src] has been moved to intelligence storage.", "Artificial Intelligence Oversight")
+	despawn()
+
+/mob/living/silicon/ai/proc/despawn()
+	empty_playable_ai_cores += new /obj/structure/AIcore/deactivated(loc)
 
 	//Handle job slot/tater cleanup.
 	clear_client()

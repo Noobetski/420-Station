@@ -5,42 +5,24 @@
 	name = "Settings"
 	sort_order = 5
 
-/datum/category_item/player_setup_item/player_global/settings/load_preferences(var/savefile/S)
-	from_save(S["lastchangelog"], pref.lastchangelog)
-	from_save(S["default_slot"], pref.default_slot)
-	from_save(S["preference_values"], pref.preference_values)
+/datum/category_item/player_setup_item/player_global/settings/load_preferences(datum/pref_record_reader/R)
+	pref.lastchangelog = R.read("lastchangelog")
+	pref.default_slot = R.read("default_slot")
+	pref.slot_names = R.read("slot_names")
+	pref.preference_values = R.read("preference_values")
 
-/datum/category_item/player_setup_item/player_global/settings/save_preferences(var/savefile/S)
-	to_save(S["lastchangelog"], pref.lastchangelog)
-	to_save(S["default_slot"], pref.default_slot)
-	to_save(S["preference_values"], pref.preference_values)
-
-/datum/category_item/player_setup_item/player_global/settings/update_setup(var/savefile/preferences, var/savefile/character)
-	if(preferences["version"] < 16)
-		var/list/preferences_enabled
-		var/list/preferences_disabled
-		from_save(preferences["preferences"], preferences_enabled)
-		from_save(preferences["preferences_disabled"], preferences_disabled)
-
-		if(!istype(preferences_enabled))
-			preferences_enabled = list()
-		if(!istype(preferences_disabled))
-			preferences_disabled = list()
-
-		pref.preference_values = list()
-		for(var/datum/client_preference/cp in get_client_preferences())
-			if(cp.key in preferences_enabled)
-				pref.preference_values[cp.key] = cp.options[1] // for the converted preferences, the truthy value is going to be the first one...
-			else if(cp.key in preferences_disabled)
-				pref.preference_values[cp.key] = cp.options[2] // ...and the falsy value the second
-			else
-				pref.preference_values[cp.key] = cp.default_value
-		return 1
+/datum/category_item/player_setup_item/player_global/settings/save_preferences(datum/pref_record_writer/W)
+	W.write("lastchangelog", pref.lastchangelog)
+	W.write("default_slot", pref.default_slot)
+	W.write("slot_names", pref.slot_names)
+	W.write("preference_values", pref.preference_values)
 
 /datum/category_item/player_setup_item/player_global/settings/sanitize_preferences()
 	// Ensure our preferences are lists.
 	if(!istype(pref.preference_values))
 		pref.preference_values = list()
+	if(!istype(pref.slot_names))
+		pref.slot_names = list()
 
 	var/list/client_preference_keys = list()
 	for(var/cp in get_client_preferences())
@@ -62,7 +44,7 @@
 	pref.lastchangelog	= sanitize_text(pref.lastchangelog, initial(pref.lastchangelog))
 	pref.default_slot	= sanitize_integer(pref.default_slot, 1, config.character_slots, initial(pref.default_slot))
 
-/datum/category_item/player_setup_item/player_global/settings/content(var/mob/user)
+/datum/category_item/player_setup_item/player_global/settings/content(mob/user)
 	. = list()
 	. += "<b>Preferences</b><br>"
 	. += "<table>"
@@ -87,7 +69,7 @@
 
 	return jointext(., "")
 
-/datum/category_item/player_setup_item/player_global/settings/OnTopic(var/href,var/list/href_list, var/mob/user)
+/datum/category_item/player_setup_item/player_global/settings/OnTopic(href,list/href_list, mob/user)
 	var/mob/pref_mob = preference_mob()
 
 	if(href_list["pref"] && href_list["value"])
@@ -98,17 +80,15 @@
 
 	return ..()
 
-/client/proc/get_preference_value(var/preference)
+/client/proc/get_preference_value(preference)
 	if(prefs)
 		var/datum/client_preference/cp = get_client_preference(preference)
 		if(cp && prefs.preference_values)
 			return prefs.preference_values[cp.key]
 		else
 			return null
-	else
-		log_error("Client is lacking preferences: [log_info_line(src)]")
 
-/client/proc/set_preference(var/preference, var/set_preference)
+/client/proc/set_preference(preference, set_preference)
 	var/datum/client_preference/cp = get_client_preference(preference)
 
 	if(!cp)
@@ -121,7 +101,7 @@
 
 	return FALSE
 
-/client/proc/cycle_preference(var/preference)
+/client/proc/cycle_preference(preference)
 	var/datum/client_preference/cp = get_client_preference(preference)
 
 	if(!cp)
@@ -130,7 +110,7 @@
 	var/next_option = next_in_list(prefs.preference_values[cp.key], cp.options)
 	return set_preference(preference, next_option)
 
-/mob/proc/get_preference_value(var/preference)
+/mob/proc/get_preference_value(preference)
 	if(!client)
 		var/datum/client_preference/cp = get_client_preference(preference)
 		if(cp)
@@ -140,7 +120,7 @@
 
 	return client.get_preference_value(preference)
 
-/mob/proc/set_preference(var/preference, var/set_preference)
+/mob/proc/set_preference(preference, set_preference)
 	if(!client)
 		return FALSE
 	if(!client.prefs)
@@ -149,7 +129,7 @@
 
 	return client.set_preference(preference, set_preference)
 
-/mob/proc/cycle_preference(var/preference)
+/mob/proc/cycle_preference(preference)
 	if(!client)
 		return FALSE
 	if(!client.prefs)

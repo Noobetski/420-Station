@@ -1,38 +1,58 @@
-/datum/gear/accessory/solawardmajor
-	display_name = "SolGov major award selection"
-	description = "A medal or ribbon awarded to SolGov personnel for significant accomplishments."
-	path = /obj/item/clothing/accessory
-	cost = 8
+/datum/gear/accessory/solgov_award_military
+	display_name = "SolGov military award selection"
+	description = "A selection of military awards awarded by the Sol Central Government."
+	path = /obj/item/storage/medalbox/sol
+	cost = 6
 	allowed_branches = SOLGOV_BRANCHES
+	flags = GEAR_HAS_NO_CUSTOMIZATION
 
-/datum/gear/accessory/solawardmajor/New()
+/datum/gear/accessory/solgov_award_military/New()
 	..()
-	var/solmajors = list()
-	solmajors["iron star"] = /obj/item/clothing/accessory/medal/solgov/iron/star
-	solmajors["bronze heart"] = /obj/item/clothing/accessory/medal/solgov/bronze/heart
-	solmajors["silver sword"] = /obj/item/clothing/accessory/medal/solgov/silver/sword
-	solmajors["medical heart"] = /obj/item/clothing/accessory/medal/solgov/heart
-	solmajors["valor medal"] = /obj/item/clothing/accessory/medal/solgov/silver/sol
-	solmajors["sapienterian medal"] = /obj/item/clothing/accessory/medal/solgov/gold/sol
-	solmajors["peacekeeper ribbon"] = /obj/item/clothing/accessory/ribbon/solgov/peace
-	solmajors["marksman ribbon"] = /obj/item/clothing/accessory/ribbon/solgov/marksman
-	gear_tweaks += new/datum/gear_tweak/path(solmajors)
+	var/solmilitary = list()
+	solmilitary["Bronze Heart"] = /obj/item/storage/medalbox/sol/bronze_heart
+	solmilitary["Home Guard medal"] = /obj/item/storage/medalbox/sol/home_guard
+	solmilitary["Iron Star"] = /obj/item/storage/medalbox/sol/iron_star
+	solmilitary["Combat Medical Award"] = /obj/item/storage/medalbox/sol/medical
+	solmilitary["Armed Forces medal"] = /obj/item/storage/medalbox/sol/armed_forces
+	solmilitary["Silver Sword"] = /obj/item/storage/medalbox/sol/silver_sword
+	solmilitary["Superior Service Cross"] = /obj/item/storage/medalbox/sol/service_cross
+	solmilitary["Medal of Honor"] = /obj/item/storage/medalbox/sol/medal_of_honor
+	gear_tweaks += new/datum/gear_tweak/path(solmilitary)
 
-/datum/gear/accessory/solawardminor
-	display_name = "SolGov minor award selection"
-	description = "A medal or ribbon awarded to SolGov personnel for minor accomplishments."
-	path = /obj/item/clothing/accessory
-	cost = 5
+/datum/gear/accessory/solgov_award_civilian
+	display_name = "SolGov civilian award selection"
+	description = "A selection of civilian awards awarded by the Sol Central Government."
+	path = /obj/item/storage/medalbox/sol
+	cost = 3
+	flags = GEAR_HAS_NO_CUSTOMIZATION
+
+/datum/gear/accessory/solgov_award_civilian/New()
+	..()
+	var/solcivilian = list()
+	solcivilian["Expeditionary Medal"] = /obj/item/storage/medalbox/sol/expeditionary
+	solcivilian["Sapientarian Peace Award"] = /obj/item/storage/medalbox/sol/sapientarian
+	solcivilian["Distinguished Service Medal"] = /obj/item/storage/medalbox/sol/service
+	gear_tweaks += new/datum/gear_tweak/path(solcivilian)
+
+/datum/gear/accessory/solgov_award_ribbons
+	display_name = "SolGov ribbon selection"
+	description = "A selection of decorations and medal ribbons awarded by the Sol Central Government."
+	path = /obj/item/clothing/accessory/ribbon/solgov
+	cost = 3
 	allowed_branches = SOLGOV_BRANCHES
+	flags = GEAR_HAS_NO_CUSTOMIZATION
 
-/datum/gear/accessory/solawardminor/New()
+/datum/gear/accessory/solgov_award_ribbons/New()
 	..()
-	var/solminors = list()
-	solminors["expeditionary medal"] = /obj/item/clothing/accessory/medal/solgov/iron/sol
-	solminors["operations medal"] = /obj/item/clothing/accessory/medal/solgov/bronze/sol
-	solminors["frontier ribbon"] = /obj/item/clothing/accessory/ribbon/solgov/frontier
-	solminors["instructor ribbon"] = /obj/item/clothing/accessory/ribbon/solgov/instructor
-	gear_tweaks += new/datum/gear_tweak/path(solminors)
+	var/solribbons = list()
+	solribbons["Marksmanship ribbon"] = /obj/item/clothing/accessory/ribbon/solgov/marksman
+	solribbons["Peacekeeping ribbon"] = /obj/item/clothing/accessory/ribbon/solgov/peace
+	solribbons["Frontier ribbon"] = /obj/item/clothing/accessory/ribbon/solgov/frontier
+	solribbons["Instructor ribbon"] = /obj/item/clothing/accessory/ribbon/solgov/instructor
+	solribbons["Combat Action ribbon"] = /obj/item/clothing/accessory/ribbon/solgov/combat
+	solribbons["Gaia Conflict ribbon"] = /obj/item/clothing/accessory/ribbon/solgov/gaiaconflict
+	solribbons["Distinguished unit ribbon"] = /obj/item/clothing/accessory/ribbon/solgov/distinguished_unit
+	gear_tweaks += new/datum/gear_tweak/path(solribbons)
 
 /datum/gear/accessory/tags
 	display_name = "dog tags"
@@ -43,25 +63,33 @@
 	display_name = "Expeditionary Corps scarf"
 	path = /obj/item/clothing/accessory/solgov/ec_scarf
 	description = "A section-specific scarf for Expeditionary Corps uniforms."
-	flags = GEAR_HAS_TYPE_SELECTION
-	allowed_branches = list(/datum/mil_branch/expeditionary_corps)
+	flags = GEAR_HAS_TYPE_SELECTION | GEAR_HAS_NO_CUSTOMIZATION
+	allowed_branches = list(
+		/datum/mil_branch/expeditionary_corps
+	)
 
 /datum/gear/accessory/ec_patch
 	display_name = "Expeditionary Corps patch"
 	path = /obj/item/clothing/accessory/solgov/ec_patch
 	description = "A shoulder patch representing the Expeditionary Corps."
-	flags = GEAR_HAS_TYPE_SELECTION
-	allowed_branches = list(/datum/mil_branch/expeditionary_corps)
+	flags = GEAR_HAS_TYPE_SELECTION | GEAR_HAS_NO_CUSTOMIZATION
+	allowed_branches = list(
+		/datum/mil_branch/expeditionary_corps
+	)
 
 /datum/gear/accessory/torch_patch
 	display_name = "Zerzura mission patch"
 	path = /obj/item/clothing/accessory/solgov/torch_patch
 	description = "A shoulder patch representing the CEV Zerzura and its mission. Given to all the oddjobs pulled from various branches to work on the Zerzura."
+	flags = GEAR_HAS_NO_CUSTOMIZATION
 
 /datum/gear/accessory/pilot_pin
 	display_name = "pilot's qualification pin"
 	path = /obj/item/clothing/accessory/solgov/specialty/pilot
-	allowed_skills = list(SKILL_PILOT = SKILL_ADEPT)
+	flags = GEAR_HAS_NO_CUSTOMIZATION
+	allowed_skills = list(
+		SKILL_PILOT = SKILL_TRAINED
+	)
 	allowed_branches = list(
 		/datum/mil_branch/fleet,
 		/datum/mil_branch/expeditionary_corps
@@ -70,13 +98,16 @@
 /datum/gear/accessory/fleetpatch
 	display_name = "fleet patch"
 	path = /obj/item/clothing/accessory/solgov/fleet_patch
-	flags = GEAR_HAS_TYPE_SELECTION
-	allowed_branches = list(/datum/mil_branch/fleet)
+	flags = GEAR_HAS_TYPE_SELECTION | GEAR_HAS_NO_CUSTOMIZATION
+	allowed_branches = list(
+		/datum/mil_branch/fleet
+	)
 
 /datum/gear/accessory/armband_ma
 	display_name = "master at arms brassard"
 	path = /obj/item/clothing/accessory/armband/solgov/ma
 	allowed_roles = SECURITY_ROLES
+	flags = GEAR_HAS_NO_CUSTOMIZATION
 
 /datum/gear/accessory/armband_security
 	allowed_roles = SECURITY_ROLES
@@ -88,18 +119,35 @@
 	allowed_roles = MEDICAL_ROLES
 
 /datum/gear/accessory/armband_emt
-	allowed_roles = list(/datum/job/doctor, /datum/job/medical_trainee)
+	allowed_roles = list(
+		/datum/job/doctor,
+		/datum/job/medical_trainee
+	)
+	flags = GEAR_HAS_NO_CUSTOMIZATION
 
 /datum/gear/accessory/armband_corpsman
 	display_name = "medical armband"
 	path = /obj/item/clothing/accessory/armband/medblue
-	allowed_roles = list(/datum/job/cmo, /datum/job/senior_doctor, /datum/job/junior_doctor, /datum/job/doctor, /datum/job/medical_trainee)
+	allowed_roles = list(
+		/datum/job/cmo,
+		/datum/job/senior_doctor,
+		/datum/job/junior_doctor,
+		/datum/job/doctor,
+		/datum/job/medical_trainee
+	)
+	flags = GEAR_HAS_NO_CUSTOMIZATION
 
 /datum/gear/accessory/armband_engineering
 	allowed_roles = ENGINEERING_ROLES
 
 /datum/gear/accessory/armband_hydro
-	allowed_roles = list(/datum/job/rd, /datum/job/scientist, /datum/job/scientist_assistant, /datum/job/assistant)
+	allowed_roles = list(
+		/datum/job/rd,
+		/datum/job/scientist,
+		/datum/job/scientist_assistant,
+		/datum/job/assistant
+	)
+	flags = GEAR_HAS_NO_CUSTOMIZATION
 
 /datum/gear/accessory/armband_nt
 	allowed_branches = CIVILIAN_BRANCHES
@@ -113,28 +161,10 @@
 /datum/gear/accessory/tie_color
 	allowed_branches = CIVILIAN_BRANCHES
 
+/datum/gear/accessory/neckerchief
+
 /datum/gear/accessory/stethoscope
 	allowed_roles = STERILE_ROLES
-
-/datum/gear/storage/brown_vest
-	allowed_roles = list(/datum/job/chief_engineer, /datum/job/senior_engineer, /datum/job/engineer, /datum/job/roboticist, /datum/job/qm, /datum/job/cargo_tech,
-						/datum/job/mining, /datum/job/janitor, /datum/job/scientist_assistant, /datum/job/merchant, /datum/job/nt_pilot, /datum/job/engineer_trainee, /datum/job/explorer, /datum/job/nt_pilot, /datum/job/pathfinder, /datum/job/submap/scavver_pilot, /datum/job/submap/scavver_doctor, /datum/job/submap/scavver_engineer)
-
-/datum/gear/storage/black_vest
-	allowed_roles = list(/datum/job/hos, /datum/job/warden, /datum/job/detective, /datum/job/officer, /datum/job/merchant)
-
-/datum/gear/storage/white_vest
-	allowed_roles = list(/datum/job/cmo, /datum/job/senior_doctor, /datum/job/junior_doctor, /datum/job/doctor, /datum/job/medical_trainee, /datum/job/chemist, /datum/job/merchant, /datum/job/medical_trainee)
-
-/datum/gear/storage/brown_drop_pouches
-	allowed_roles = list(/datum/job/chief_engineer, /datum/job/senior_engineer, /datum/job/engineer, /datum/job/roboticist, /datum/job/qm, /datum/job/cargo_tech,
-						/datum/job/mining, /datum/job/janitor, /datum/job/scientist_assistant, /datum/job/merchant, /datum/job/engineer_trainee, /datum/job/submap/scavver_pilot, /datum/job/submap/scavver_doctor, /datum/job/submap/scavver_engineer)
-
-/datum/gear/storage/black_drop_pouches
-	allowed_roles = list(/datum/job/hos, /datum/job/warden, /datum/job/detective, /datum/job/officer, /datum/job/merchant)
-
-/datum/gear/storage/white_drop_pouches
-	allowed_roles = list(/datum/job/cmo, /datum/job/senior_doctor, /datum/job/junior_doctor, /datum/job/doctor, /datum/job/medical_trainee, /datum/job/chemist, /datum/job/merchant, /datum/job/medical_trainee)
 
 /datum/gear/tactical/holster
 	allowed_roles = ARMED_ROLES
@@ -150,15 +180,17 @@
 	gear_tweaks += new/datum/gear_tweak/path(holsters)
 
 /datum/gear/tactical/sheath
-	allowed_roles = list(/datum/job/pathfinder, /datum/job/explorer)
-
-/datum/gear/tactical/armor_deco
-	allowed_roles = ARMORED_ROLES
+	allowed_roles = list(
+		/datum/job/pathfinder,
+		/datum/job/explorer)
 
 /datum/gear/tactical/press_tag
 	display_name = "Press tag"
-	path = /obj/item/clothing/accessory/armor/tag/press
-	allowed_roles = list(/datum/job/assistant)
+	path = /obj/item/clothing/accessory/armor_tag/press
+	allowed_roles = list(
+		/datum/job/assistant
+	)
+	flags = GEAR_HAS_NO_CUSTOMIZATION
 
 /datum/gear/tactical/helm_covers
 	allowed_roles = ARMORED_ROLES
@@ -168,8 +200,6 @@
 	allowed_branches = CIVILIAN_BRANCHES
 
 /datum/gear/clothing/scarf
-	allowed_roles = SEMIANDFORMAL_ROLES
-	allowed_branches = CIVILIAN_BRANCHES
 
 /datum/gear/clothing/flannel
 	allowed_roles = SEMIFORMAL_ROLES
@@ -215,8 +245,11 @@
 /datum/gear/accessory/bowtie
 	allowed_branches = CIVILIAN_BRANCHES
 
-/datum/gear/accessory/ftupin
+/datum/gear/accessory/ftu_pin
 	allowed_branches = CIVILIAN_BRANCHES
+
+/datum/gear/foundation_civilian
+	allowed_roles = list(/datum/job/psychiatrist)
 
 /*********************
  tactical accessories
@@ -225,12 +258,19 @@
 	display_name = "black UBAC shirt"
 	path = /obj/item/clothing/accessory/ubac
 	allowed_roles = ARMORED_ROLES
-	allowed_branches = list(/datum/mil_branch/expeditionary_corps, /datum/mil_branch/civilian)
+	allowed_branches = list(
+		/datum/mil_branch/expeditionary_corps,
+		/datum/mil_branch/solgov,
+		/datum/mil_branch/civilian
+	)
 
 /datum/gear/tactical/ubac/blue
 	display_name = "navy blue UBAC shirt"
 	path = /obj/item/clothing/accessory/ubac/blue
-	allowed_branches = list(/datum/mil_branch/fleet)
+	allowed_branches = list(
+		/datum/mil_branch/fleet
+	)
+	flags = GEAR_HAS_NO_CUSTOMIZATION
 
 /datum/gear/tactical/ubac/misc
 	display_name = "miscellaneous UBAC shirt selection"
@@ -253,7 +293,11 @@
 /datum/gear/tactical/armor_pouches/navy
 	display_name = "navy armor pouches"
 	path = /obj/item/clothing/accessory/storage/pouches/navy
-	allowed_branches = list(/datum/mil_branch/fleet, /datum/mil_branch/civilian)
+	allowed_branches = list(
+		/datum/mil_branch/fleet,
+		/datum/mil_branch/civilian
+	)
+	flags = GEAR_HAS_NO_CUSTOMIZATION
 
 /datum/gear/tactical/armor_pouches/misc
 	display_name = "miscellaneous armor pouches selection"
@@ -276,7 +320,11 @@
 /datum/gear/tactical/large_pouches/navy
 	display_name = "navy large armor pouches"
 	path = /obj/item/clothing/accessory/storage/pouches/large/navy
-	allowed_branches = list(/datum/mil_branch/fleet, /datum/mil_branch/civilian)
+	allowed_branches = list(
+		/datum/mil_branch/fleet,
+		/datum/mil_branch/civilian
+	)
+	flags = GEAR_HAS_NO_CUSTOMIZATION
 
 /datum/gear/tactical/large_pouches/misc
 	display_name = "miscellaneous large armor pouches selection"

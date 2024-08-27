@@ -7,20 +7,24 @@
 	name = "Inactive Camera Eye"
 	name_sufix = "Camera Eye"
 
-/mob/observer/eye/cameranet/New()
-	..()
+
+/mob/observer/eye/cameranet/Initialize(mapload)
+	. = ..()
 	visualnet = cameranet
+
 
 /mob/observer/eye/aiEye
 	name = "Inactive AI Eye"
 	name_sufix = "AI Eye"
 	icon_state = "AI-eye"
 
-/mob/observer/eye/aiEye/New()
-	..()
+
+/mob/observer/eye/aiEye/Initialize(mapload)
+	. = ..()
 	visualnet = cameranet
 
-/mob/observer/eye/aiEye/setLoc(var/T, var/cancel_tracking = 1)
+
+/mob/observer/eye/aiEye/setLoc(T, cancel_tracking = 1)
 	. = ..()
 	if(. && isAI(owner))
 		var/mob/living/silicon/ai/ai = owner
@@ -49,7 +53,7 @@
 /mob/living/silicon/ai
 	var/obj/machinery/hologram/holopad/holo = null
 
-/mob/living/silicon/ai/proc/destroy_eyeobj(var/atom/new_eye)
+/mob/living/silicon/ai/proc/destroy_eyeobj(atom/new_eye)
 	if(!eyeobj) return
 	if(!new_eye)
 		new_eye = src
@@ -58,21 +62,25 @@
 	if(client)
 		client.eye = new_eye
 
-/mob/living/silicon/ai/proc/create_eyeobj(var/newloc)
+/mob/living/silicon/ai/proc/create_eyeobj(newloc)
 	if(eyeobj) destroy_eyeobj()
 	if(!newloc) newloc = get_turf(src)
 	eyeobj = new /mob/observer/eye/aiEye(newloc)
 	eyeobj.possess(src)
 
 // Intiliaze the eye by assigning it's "ai" variable to us. Then set it's loc to us.
-/mob/living/silicon/ai/New()
-	..()
+/mob/living/silicon/ai/Initialize(mapload)
+	. = ..()
 	create_eyeobj()
+
 
 /mob/living/silicon/ai/Destroy()
 	destroy_eyeobj()
 	. = ..()
 
+/**
+ * Handles moving an AI's 'eye' to a location on click.
+ */
 /atom/proc/move_camera_by_click()
 	if(istype(usr, /mob/living/silicon/ai))
 		var/mob/living/silicon/ai/AI = usr

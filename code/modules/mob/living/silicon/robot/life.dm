@@ -17,9 +17,6 @@
 		update_items()
 	if (src.stat != DEAD) //still using power
 		use_power()
-		process_killswitch()
-		process_locks()
-		process_queued_alarms()
 	UpdateLyingBuckledAndVerbStatus()
 
 /mob/living/silicon/robot/proc/clamp_values()
@@ -40,12 +37,8 @@
 		C.update_power_state()
 
 	if ( cell && is_component_functioning("power cell") && src.cell.charge > 0 )
-		if(src.module_state_1)
+		for (var/obj/item as anything in GetAllHeld())
 			cell_use_power(50) // 50W load for every enabled tool TODO: tool-specific loads
-		if(src.module_state_2)
-			cell_use_power(50)
-		if(src.module_state_3)
-			cell_use_power(50)
 
 		if(lights_on)
 			if(intenselight)
@@ -53,26 +46,20 @@
 			else
 				cell_use_power(30) 	// 30W light. Normal lights would use ~15W, but increased for balance reasons.
 
-		src.has_power = 1
+		src.has_power = TRUE
 	else
 		power_down()
 
 /mob/living/silicon/robot/proc/power_down()
 	if (has_power)
 		visible_message("[src] beeps stridently as it begins to run on emergency backup power!", SPAN_WARNING("You beep stridently as you begin to run on emergency backup power!"))
-		has_power = 0
+		has_power = FALSE
 		set_stat(UNCONSCIOUS)
 	if(lights_on) // Light is on but there is no power!
-		lights_on = 0
+		lights_on = FALSE
 		set_light(0)
 
 /mob/living/silicon/robot/handle_regular_status_updates()
-
-	if(src.camera && !scrambledcodes)
-		if(src.stat == 2 || wires.IsIndexCut(BORG_WIRE_CAMERA))
-			src.camera.set_status(0)
-		else
-			src.camera.set_status(1)
 
 	updatehealth()
 
@@ -80,8 +67,8 @@
 		Paralyse(3)
 		src.sleeping--
 
-	if(src.resting)
-		Weaken(5)
+	if (resting) // Just in case. This breaks things so never allow robots to rest.
+		resting = FALSE
 
 	if(health < config.health_threshold_dead && src.stat != 2) //die only once
 		death()
@@ -153,15 +140,35 @@
 
 /mob/living/silicon/robot/handle_regular_hud_updates()
 	..()
-
 	var/obj/item/borg/sight/hud/hud = (locate(/obj/item/borg/sight/hud) in src)
-	if(hud && hud.hud)
+	if (hud?.hud)
 		hud.hud.process_hud(src)
 	else
-		switch(src.sensor_mode)
+		switch (sensor_mode)
 			if (SEC_HUD)
-				process_sec_hud(src,0)
+				process_sec_hud(src, FALSE)
 			if (MED_HUD)
+				process_med_hud(src, FALSE)
+	if (healths)
+		if (stat != DEAD)
+			var/health_fraction = health / maxHealth
+			if (health_fraction < 0 && !istype(src, /mob/living/silicon/robot/drone))
+				health_fraction = health / -config.health_threshold_dead
+			switch (health_fraction)
+				if (1 to POSITIVE_INFINITY)
+					healths.icon_state = "health0"
+				if (0.75 to 1)
+					healths.icon_state = "health1"
+				if (0.5 to 0.75)
+					healths.icon_state = "health2"
+				if (0.25 to 0.5)
+					healths.icon_state = "health3"
+				if (0 to 0.25)
+					healths.icon_state = "health4"
+				if (-1 to 0)
+					healths.icon_state = "health5"
+				else
+					healths.icon_state = "health6"
 				process_med_hud(src,0)
 
 	if (src.healths)
@@ -199,7 +206,7 @@
 				if(health <= config.health_threshold_dead)
 					src.healths.icon_state = "health6"
 		else
-			src.healths.icon_state = "health7"
+			healths.icon_state = "health7"
 
 	if (src.syndicate && src.client)
 		for(var/datum/mind/tra in GLOB.traitors.current_antagonists)
@@ -216,7 +223,7 @@
 
 	if (src.cells)
 		if (src.cell)
-			var/chargeNum = Clamp(ceil(cell.percent()/25), 0, 4)	//0-100 maps to 0-4, but give it a paranoid clamp just in case.
+			var/chargeNum = clamp(ceil(cell.percent()/25), 0, 4)	//0-100 maps to 0-4, but give it a paranoid clamp just in case.
 			src.cells.icon_state = "charge[chargeNum]"
 		else
 			src.cells.icon_state = "charge-empty"
@@ -265,8 +272,7 @@
 			if (machine.check_eye(src) < 0)
 				reset_view(null)
 		else
-			if(client && !client.adminobs)
-				reset_view(null)
+			reset_view(null)
 
 	return 1
 
@@ -303,7 +309,7 @@
 	if (src.client)
 		src.client.screen -= src.contents
 		for(var/obj/I in src.contents)
-			if(I && !(istype(I,/obj/item/weapon/cell) || istype(I,/obj/item/device/radio)  || istype(I,/obj/machinery/camera) || istype(I,/obj/item/device/mmi)))
+			if(I && !(istype(I,/obj/item/cell) || istype(I,/obj/item/device/radio)  || istype(I,/obj/machinery/camera) || istype(I,/obj/item/device/mmi)))
 				src.client.screen += I
 	if(src.module_state_1)
 		src.module_state_1:screen_loc = ui_inv1
@@ -313,31 +319,13 @@
 		src.module_state_3:screen_loc = ui_inv3
 	update_icon()
 
-/mob/living/silicon/robot/proc/process_killswitch()
-	if(killswitch)
-		killswitch_time --
-		if(killswitch_time <= 0)
-			if(src.client)
-				to_chat(src, "<span class='danger'>Killswitch Activated</span>")
-			killswitch = 0
-			spawn(5)
-				gib()
-
-/mob/living/silicon/robot/proc/process_locks()
-	if(weapon_lock)
-		uneq_all()
-		weaponlock_time --
-		if(weaponlock_time <= 0)
-			if(src.client)
-				to_chat(src, "<span class='danger'>Weapon Lock Timed Out!</span>")
-			weapon_lock = 0
-			weaponlock_time = 120
-
 /mob/living/silicon/robot/update_fire()
-	overlays -= image("icon"='icons/mob/OnFire.dmi', "icon_state"="Standing")
-	if(on_fire)
-		overlays += image("icon"='icons/mob/OnFire.dmi', "icon_state"="Standing")
+	CutOverlays(image("icon"='icons/mob/OnFire.dmi', "icon_state"="Standing"))
+	if (on_fire)
+		AddOverlays(image("icon"='icons/mob/OnFire.dmi', "icon_state"="Standing"))
 
 /mob/living/silicon/robot/fire_act(datum/gas_mixture/air, exposed_temperature, exposed_volume)
+	if (status_flags & GODMODE)
+		return
 	if(!on_fire) //Silicons don't gain stacks from hotspots, but hotspots can ignite them
 		IgniteMob()

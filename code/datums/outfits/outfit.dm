@@ -1,25 +1,25 @@
-var/list/outfits_decls_
-var/list/outfits_decls_root_
-var/list/outfits_decls_by_type_
+var/global/list/outfits_singletons_
+var/global/list/outfits_singletons_root_
+var/global/list/outfits_singletons_by_type_
 
-/proc/outfit_by_type(var/outfit_type)
-	if(!outfits_decls_root_)
-		init_outfit_decls()
-	return outfits_decls_by_type_[outfit_type]
+/proc/outfit_by_type(outfit_type)
+	if(!outfits_singletons_root_)
+		init_outfit_singletons()
+	return outfits_singletons_by_type_[outfit_type]
 
 /proc/outfits()
-	if(!outfits_decls_root_)
-		init_outfit_decls()
-	return outfits_decls_
+	if(!outfits_singletons_root_)
+		init_outfit_singletons()
+	return outfits_singletons_
 
-/proc/init_outfit_decls()
-	if(outfits_decls_root_)
+/proc/init_outfit_singletons()
+	if(outfits_singletons_root_)
 		return
-	outfits_decls_ = list()
-	outfits_decls_by_type_ = list()
-	outfits_decls_root_ = decls_repository.get_decl(/decl/hierarchy/outfit)
+	outfits_singletons_ = list()
+	outfits_singletons_by_type_ = list()
+	outfits_singletons_root_ = GET_SINGLETON(/singleton/hierarchy/outfit)
 
-/decl/hierarchy/outfit
+/singleton/hierarchy/outfit
 	name = "Naked"
 
 	var/uniform = null
@@ -54,22 +54,22 @@ var/list/outfits_decls_by_type_
 	var/list/backpack_overrides
 	var/flags = OUTFIT_RESET_EQUIPMENT
 
-/decl/hierarchy/outfit/New()
+/singleton/hierarchy/outfit/New()
 	..()
 	backpack_overrides = backpack_overrides || list()
 
 	if(is_hidden_category())
 		return
-	outfits_decls_by_type_[type] = src
-	dd_insertObjectList(outfits_decls_, src)
+	outfits_singletons_by_type_[type] = src
+	dd_insertObjectList(outfits_singletons_, src)
 
-/decl/hierarchy/outfit/proc/pre_equip(mob/living/carbon/human/H)
+/singleton/hierarchy/outfit/proc/pre_equip(mob/living/carbon/human/H)
 	if(flags & OUTFIT_RESET_EQUIPMENT)
 		H.delete_inventory(TRUE)
 
-/decl/hierarchy/outfit/proc/post_equip(mob/living/carbon/human/H)
+/singleton/hierarchy/outfit/proc/post_equip(mob/living/carbon/human/H)
 	if(flags & OUTFIT_HAS_JETPACK)
-		var/obj/item/weapon/tank/jetpack/J = locate(/obj/item/weapon/tank/jetpack) in H
+		var/obj/item/tank/jetpack/J = locate(/obj/item/tank/jetpack) in H
 		if(!J)
 			return
 		J.toggle()
@@ -83,7 +83,7 @@ var/list/outfits_decls_by_type_
 //
 // If you want to add more items that has species restriction, consider follow-
 // ing the same format as the gloves shown in the code below. Thanks.
-/decl/hierarchy/outfit/proc/check_and_try_equip_xeno(mob/living/carbon/human/H)
+/singleton/hierarchy/outfit/proc/check_and_try_equip_xeno(mob/living/carbon/human/H)
 	var/datum/species/S = H.species
 	if (!S || istype(S, /datum/species/human)) // null failcheck & get out here you damn humans
 		return
@@ -102,14 +102,14 @@ var/list/outfits_decls_by_type_
 
 // end of check_and_try_equip_xeno
 
-/decl/hierarchy/outfit/proc/equip(mob/living/carbon/human/H, rank, assignment, equip_adjustments)
+/singleton/hierarchy/outfit/proc/equip(mob/living/carbon/human/H, rank, assignment, equip_adjustments)
 	equip_base(H, equip_adjustments)
 
 	rank = id_pda_assignment || rank
 	assignment = id_pda_assignment || assignment || rank
 	var/list/id_cards = equip_ids(H, rank, assignment, equip_adjustments)
 	if(length(id_cards))
-		var/obj/item/weapon/card/id/W = id_cards[1]
+		var/obj/item/card/id/W = id_cards[1]
 		rank = W.rank
 		assignment = W.assignment
 	equip_pda(H, rank, assignment, equip_adjustments)
@@ -128,21 +128,20 @@ var/list/outfits_decls_by_type_
 		H.set_id_info(id_card)
 	return TRUE
 
-/decl/hierarchy/outfit/proc/equip_base(mob/living/carbon/human/H, var/equip_adjustments)
+/singleton/hierarchy/outfit/proc/equip_base(mob/living/carbon/human/H, equip_adjustments)
 	pre_equip(H)
 
 	//Start with uniform,suit,backpack for additional slots
 	if(uniform)
 		H.equip_to_slot_or_del(new uniform(H),slot_w_uniform)
 	if(holster && H.w_uniform)
-		var/obj/item/clothing/accessory/equip_holster = new holster
-		H.w_uniform.attackby(H, equip_holster)
-		if(equip_holster.loc != H.w_uniform)
-			qdel(equip_holster)
+		var/obj/item/clothing/w_uniform = H.w_uniform
+		if (istype(w_uniform))
+			var/obj/item/clothing/accessory/equip_holster = new holster
+			if (!w_uniform.attempt_attach_accessory(equip_holster, H))
+				qdel(equip_holster)
 	if(suit)
 		H.equip_to_slot_or_del(new suit(H),slot_wear_suit)
-	if(back)
-		H.equip_to_slot_or_del(new back(H),slot_back)
 	if(belt)
 		H.equip_to_slot_or_del(new belt(H),slot_belt)
 	if(gloves)
@@ -153,6 +152,13 @@ var/list/outfits_decls_by_type_
 		H.equip_to_slot_or_del(new mask(H),slot_wear_mask)
 	if(head)
 		H.equip_to_slot_or_del(new head(H),slot_head)
+	if(back)
+		H.equip_to_slot_or_del(new back(H),slot_back)
+		var/obj/item/rig/onback = H.back
+		if(istype(onback))
+			onback.wearer = H
+			H.wearing_rig = onback
+			onback.toggle_seals(H, instant = TRUE)
 	if(l_ear)
 		var/l_ear_path = (OUTFIT_ADJUSTMENT_PLAIN_HEADSET & equip_adjustments) && ispath(l_ear, /obj/item/device/radio/headset) ? /obj/item/device/radio/headset : l_ear
 		H.equip_to_slot_or_del(new l_ear_path(H),slot_l_ear)
@@ -175,7 +181,7 @@ var/list/outfits_decls_by_type_
 		H.put_in_r_hand(new r_hand(H))
 
 	if((flags & OUTFIT_HAS_BACKPACK) && !(OUTFIT_ADJUSTMENT_SKIP_BACKPACK & equip_adjustments))
-		var/decl/backpack_outfit/bo
+		var/singleton/backpack_outfit/bo
 		var/metadata
 
 		if(H.backpack_setup)
@@ -198,14 +204,14 @@ var/list/outfits_decls_by_type_
 		H.species.equip_survival_gear(H, flags&OUTFIT_EXTENDED_SURVIVAL)
 	check_and_try_equip_xeno(H)
 
-/decl/hierarchy/outfit/proc/equip_ids(mob/living/carbon/human/H, rank, assignment, equip_adjustments)
+/singleton/hierarchy/outfit/proc/equip_ids(mob/living/carbon/human/H, rank, assignment, equip_adjustments)
 	if(!id_slot || !length(id_types))
 		return
 	if(OUTFIT_ADJUSTMENT_SKIP_ID_PDA & equip_adjustments)
 		return
 	var/created_cards = list()
 	for(var/id_type in id_types)
-		var/obj/item/weapon/card/id/W = new id_type(H)
+		var/obj/item/card/id/W = new id_type(H)
 		if(id_desc)
 			W.desc = id_desc
 		if(rank)
@@ -223,7 +229,7 @@ var/list/outfits_decls_by_type_
 		created_cards += W
 	return created_cards
 
-/decl/hierarchy/outfit/proc/equip_pda(var/mob/living/carbon/human/H, var/rank, var/assignment, var/equip_adjustments)
+/singleton/hierarchy/outfit/proc/equip_pda(mob/living/carbon/human/H, rank, assignment, equip_adjustments)
 	if(!pda_slot || !pda_type)
 		return
 	if(OUTFIT_ADJUSTMENT_SKIP_ID_PDA & equip_adjustments)
@@ -232,5 +238,5 @@ var/list/outfits_decls_by_type_
 	if(H.equip_to_slot_or_store_or_drop(pda, pda_slot))
 		return pda
 
-/decl/hierarchy/outfit/dd_SortValue()
+/singleton/hierarchy/outfit/dd_SortValue()
 	return name

@@ -1,15 +1,15 @@
-/obj/item/weapon/camera_assembly
+/obj/item/camera_assembly
 	name = "camera assembly"
 	desc = "A pre-fabricated security camera kit, ready to be assembled and mounted to a surface."
-	icon = 'icons/obj/monitors.dmi'
+	icon = 'icons/obj/structures/cameras.dmi'
 	icon_state = "cameracase"
 	w_class = ITEM_SIZE_SMALL
-	anchored = 0
+	anchored = FALSE
 
 	matter = list(MATERIAL_ALUMINIUM = 700, MATERIAL_GLASS = 300)
 
 	//	Motion, EMP-Proof, X-Ray
-	var/list/obj/item/possible_upgrades = list(/obj/item/device/assembly/prox_sensor, /obj/item/stack/material/osmium, /obj/item/weapon/stock_parts/scanning_module)
+	var/list/obj/item/possible_upgrades = list(/obj/item/device/assembly/prox_sensor, /obj/item/stack/material/osmium, /obj/item/stock_parts/scanning_module)
 	var/list/upgrades = list()
 	var/camera_name
 	var/camera_network
@@ -23,57 +23,53 @@
 				4 = Screwdriver panel closed and is fully built (you cannot attach upgrades)
 	*/
 
-/obj/item/weapon/camera_assembly/attackby(obj/item/W as obj, mob/living/user as mob)
-
+/obj/item/camera_assembly/use_tool(obj/item/W, mob/living/user, list/click_params)
 	switch(state)
-
 		if(0)
 			// State 0
-			if(isWrench(W) && isturf(src.loc))
+			if(isWrench(W) && isturf(loc))
 				playsound(src.loc, 'sound/items/Ratchet.ogg', 50, 1)
 				to_chat(user, "You wrench the assembly into place.")
-				anchored = 1
+				anchored = TRUE
 				state = 1
 				update_icon()
 				auto_turn()
-				return
+				return TRUE
 
 		if(1)
 			// State 1
 			if(isWelder(W))
 				if(weld(W, user))
 					to_chat(user, "You weld the assembly securely into place.")
-					anchored = 1
+					anchored = TRUE
 					state = 2
-				return
+				return TRUE
 
 			else if(isWrench(W))
 				playsound(src.loc, 'sound/items/Ratchet.ogg', 50, 1)
 				to_chat(user, "You unattach the assembly from its place.")
-				anchored = 0
+				anchored = FALSE
 				update_icon()
 				state = 0
-				return
+				return TRUE
 
 		if(2)
 			// State 2
 			if(isCoil(W))
 				var/obj/item/stack/cable_coil/C = W
 				if(C.use(2))
-					to_chat(user, "<span class='notice'>You add wires to the assembly.</span>")
+					to_chat(user, SPAN_NOTICE("You add wires to the assembly."))
 					state = 3
 				else
-					to_chat(user, "<span class='warning'>You need 2 coils of wire to wire the assembly.</span>")
-				return
+					to_chat(user, SPAN_WARNING("You need 2 coils of wire to wire the assembly."))
+				return TRUE
 
 			else if(isWelder(W))
-
 				if(weld(W, user))
 					to_chat(user, "You unweld the assembly from its place.")
 					state = 1
-					anchored = 1
-				return
-
+					anchored = TRUE
+				return TRUE
 
 		if(3)
 			// State 3
@@ -83,12 +79,12 @@
 				var/input = sanitize(input(usr, "Which networks would you like to connect this camera to? Separate networks with a comma. No Spaces!\nFor example: Exodus,Security,Secret", "Set Network", camera_network ? camera_network : NETWORK_EXODUS))
 				if(!input)
 					to_chat(usr, "No input found please hang up and try your call again.")
-					return
+					return TRUE
 
 				var/list/tempnetwork = splittext(input, ",")
-				if(tempnetwork.len < 1)
+				if(length(tempnetwork) < 1)
 					to_chat(usr, "No network found please hang up and try your call again.")
-					return
+					return TRUE
 
 				var/area/camera_area = get_area(src)
 				var/temptag = "[sanitize(camera_area.name)] ([rand(1, 999)])"
@@ -114,54 +110,53 @@
 						if(confirm == "Yes")
 							C.update_icon()
 							break
-				return
+				return TRUE
 
 			else if(isWirecutter(W))
-
 				new/obj/item/stack/cable_coil(get_turf(src), 2)
 				playsound(src.loc, 'sound/items/Wirecutter.ogg', 50, 1)
 				to_chat(user, "You cut the wires from the circuits.")
 				state = 2
-				return
+				return TRUE
 
 	// Upgrades!
 	if(is_type_in_list(W, possible_upgrades) && !is_type_in_list(W, upgrades) && user.unEquip(W, src)) // Is a possible upgrade and isn't in the camera already.
 		to_chat(user, "You attach \the [W] into the assembly inner circuits.")
 		upgrades += W
-		return
+		return TRUE
 
 	// Taking out upgrades
-	else if(isCrowbar(W) && upgrades.len)
+	if (isCrowbar(W) && length(upgrades))
 		var/obj/U = locate(/obj) in upgrades
 		if(U)
 			to_chat(user, "You unattach an upgrade from the assembly.")
 			playsound(src.loc, 'sound/items/Crowbar.ogg', 50, 1)
 			U.dropInto(loc)
 			upgrades -= U
-		return
+		return TRUE
 
-	..()
+	return ..()
 
-/obj/item/weapon/camera_assembly/on_update_icon()
+/obj/item/camera_assembly/on_update_icon()
 	if(anchored)
 		icon_state = "camera1"
 	else
 		icon_state = "cameracase"
 
-/obj/item/weapon/camera_assembly/attack_hand(mob/user as mob)
+/obj/item/camera_assembly/attack_hand(mob/user as mob)
 	if(!anchored)
 		..()
 
-/obj/item/weapon/camera_assembly/proc/weld(var/obj/item/weapon/weldingtool/WT, var/mob/user)
+/obj/item/camera_assembly/proc/weld(obj/item/weldingtool/WT, mob/user)
 
 	if(busy)
 		return 0
 
-	if(WT.remove_fuel(0, user))
-		to_chat(user, "<span class='notice'>You start to weld \the [src]..</span>")
+	if(WT.can_use(1, user))
+		to_chat(user, SPAN_NOTICE("You start to weld \the [src].."))
 		playsound(src.loc, 'sound/items/Welder.ogg', 50, 1)
 		busy = 1
-		if(do_after(user, 20, src) && WT.isOn())
+		if(do_after(user, 2 SECONDS, src, DO_REPAIR_CONSTRUCT) && WT.remove_fuel(1, user))
 			playsound(src.loc, 'sound/items/Welder.ogg', 50, 1)
 			busy = 0
 			return 1

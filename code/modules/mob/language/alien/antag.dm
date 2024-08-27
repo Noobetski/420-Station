@@ -8,7 +8,7 @@
 	shorthand = "N/A"
 	hidden_from_codex = TRUE
 
-/datum/language/ling/broadcast(var/mob/living/speaker,var/message,var/speaker_mask)
+/datum/language/ling/broadcast(mob/living/speaker,message,speaker_mask)
 
 	if(speaker.mind && speaker.mind.changeling)
 		..(speaker,message,speaker.mind.changeling.changelingID)
@@ -27,7 +27,7 @@
 	shorthand = "N/A"
 	hidden_from_codex = TRUE
 
-/datum/language/corticalborer/broadcast(var/mob/living/speaker,var/message,var/speaker_mask)
+/datum/language/corticalborer/broadcast(mob/living/speaker,message,speaker_mask)
 
 	var/mob/living/simple_animal/borer/B
 
@@ -59,8 +59,9 @@
 	"SKRE","AHK","EHK","RAWK","KRA","AAA","EEE","KI","II","KRI","KA")
 	machine_understands = 0
 	shorthand = "Vox"
+	has_written_form = TRUE
 
-/datum/language/vox/can_speak_special(var/mob/speaker)
+/datum/language/vox/can_speak_special(mob/speaker)
 	if(!ishuman(speaker))
 		return FALSE
 	var/mob/living/carbon/human/H = speaker
@@ -93,6 +94,7 @@
 	machine_understands = 0
 	shorthand = "CT"
 	hidden_from_codex = TRUE
+	has_written_form = TRUE
 
 /datum/language/cult
 	name = LANGUAGE_CULT_GLOBAL
@@ -118,6 +120,7 @@
 	machine_understands = 0
 	shorthand = "AL"
 	hidden_from_codex = TRUE
+	has_written_form = TRUE
 
 /datum/language/alium/New()
 	speech_verb = pick("hisses","growls","whistles","blubbers","chirps","skreeches","rumbles","clicks")

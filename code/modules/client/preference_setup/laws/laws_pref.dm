@@ -3,7 +3,7 @@
 	var/is_shackled = FALSE
 
 /datum/preferences/proc/get_lawset()
-	if(!laws || !laws.len)
+	if(!laws || !length(laws))
 		return
 	var/datum/ai_laws/custom_lawset = new
 	for(var/law in laws)
@@ -14,13 +14,13 @@
 	name = "Laws"
 	sort_order = 1
 
-/datum/category_item/player_setup_item/law_pref/load_character(var/savefile/S)
-	from_save(S["laws"], pref.laws)
-	from_save(S["is_shackled"], pref.is_shackled)
+/datum/category_item/player_setup_item/law_pref/load_character(datum/pref_record_reader/R)
+	pref.laws = R.read("laws")
+	pref.is_shackled = R.read("is_shackled")
 
-/datum/category_item/player_setup_item/law_pref/save_character(var/savefile/S)
-	to_save(S["laws"], pref.laws)
-	to_save(S["is_shackled"], pref.is_shackled)
+/datum/category_item/player_setup_item/law_pref/save_character(datum/pref_record_writer/W)
+	W.write("laws", pref.laws)
+	W.write("is_shackled", pref.is_shackled)
 
 /datum/category_item/player_setup_item/law_pref/sanitize_character()
 	if(!istype(pref.laws))	pref.laws = list()
@@ -40,22 +40,22 @@
 	else
 		. += "<b>Shackle: </b>"
 		if(!pref.is_shackled)
-			. += "<span class='linkOn'>Off</span>"
+			. += SPAN_CLASS("linkOn", "Off")
 			. += "<a href='?src=\ref[src];toggle_shackle=[pref.is_shackled]'>On</a>"
 			. += "<br>Only shackled positronics have laws in an integrated positronic chassis."
 			. += "<hr>"
 		else
 			. += "<a href='?src=\ref[src];toggle_shackle=[pref.is_shackled]'>Off</a>"
-			. += "<span class='linkOn'>On</span>"
+			. += SPAN_CLASS("linkOn", "On")
 			. += "<br>You are shackled and have laws that restrict your behaviour."
 			. += "<hr>"
 
 			. += "<b>Your Current Laws:</b><br>"
 
-			if(!pref.laws.len)
+			if(!length(pref.laws))
 				. += "<b>You currently have no laws.</b><br>"
 			else
-				for(var/i in 1 to pref.laws.len)
+				for(var/i in 1 to length(pref.laws))
 					. += "[i]) [pref.laws[i]]<br>"
 
 			. += "Law sets: <a href='?src=\ref[src];lawsets=1'>Load Set</a><br>"

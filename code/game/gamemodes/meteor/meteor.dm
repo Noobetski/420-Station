@@ -7,7 +7,7 @@
 	round_description = "You are about to enter an asteroid belt!"
 	extended_round_description = "We are on an unavoidable collision course with an asteroid field. You have only a moment to prepare before you are barraged by dust and meteors. As if it was not enough, all kinds of negative events seem to happen more frequently. Good Luck."
 	config_tag = "meteor"
-	required_players = 15				// Definitely not good for low-pop
+	required_players = 1				// GET ON JUX'S WILD RIDE
 	votable = 1
 	shuttle_delay = 2
 	var/next_wave = INFINITY			// Set in post_setup() correctly to take into account potential longer pre-start times.
@@ -28,7 +28,7 @@
 	event_delay_mod_moderate = 0.5		// As a bonus, more frequent events.
 	event_delay_mod_major = 0.3
 
-/decl/vv_set_handler/meteor_severity_handler
+/singleton/vv_set_handler/meteor_severity_handler
 	handled_type = /datum/game_mode/meteor
 	handled_vars = list(
 		"meteor_severity" = /datum/game_mode/meteor/proc/set_meteor_severity,
@@ -36,7 +36,7 @@
 	)
 
 /datum/game_mode/meteor/proc/set_meteor_severity(value)
-	meteor_severity = Clamp(value, 0, maximal_severity)
+	meteor_severity = clamp(value, 0, maximal_severity)
 
 /datum/game_mode/meteor/proc/set_meteor_wave_delay(value)
 	meteor_wave_delay = max(10 SECONDS, value)
@@ -63,7 +63,7 @@
 	if(GLOB.using_map.use_overmap)
 		var/area/map = locate(/area/overmap)
 		for(var/turf/T in map)
-			T.overlays += image('icons/obj/overmap.dmi', "meteor[rand(1,4)]")
+			T.AddOverlays(image('icons/obj/overmap.dmi', "meteor[rand(1,4)]"))
 	next_wave = round_duration_in_ticks + meteor_wave_delay
 
 /datum/game_mode/meteor/process()
@@ -74,7 +74,7 @@
 	if((round_duration_in_ticks >= next_wave) && (alert_sent == 1))
 		on_enter_field()
 	if((round_duration_in_ticks >= METEOR_FAILSAFE_THRESHOLD) && (meteor_severity < 15) && !failsafe_triggered)
-		log_and_message_admins("Meteor mode severity failsafe triggered: Severity forced to 15.")
+		log_and_message_admins("Meteor mode severity failsafe triggered: Severity forced to 15.", null)
 		meteor_severity = 15
 		failsafe_triggered = 1
 
@@ -88,7 +88,7 @@
 			meteor_severity++
 			escalated = TRUE
 		if(send_admin_broadcasts)
-			log_and_message_admins("Meteor: Wave fired. Escalation: [escalated ? "Yes" : "No"]. Severity: [meteor_severity]/[maximal_severity]")
+			log_and_message_admins("Meteor: Wave fired. Escalation: [escalated ? "Yes" : "No"]. Severity: [meteor_severity]/[maximal_severity]",  null)
 
 /datum/game_mode/meteor/proc/get_meteor_types()
 	switch(meteor_severity)

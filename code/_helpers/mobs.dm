@@ -1,9 +1,6 @@
 /atom/movable/proc/get_mob()
 	return
 
-/obj/vehicle/train/get_mob()
-	return buckled_mob
-
 /mob/get_mob()
 	return src
 
@@ -15,7 +12,8 @@
 //helper for inverting armor blocked values into a multiplier
 #define blocked_mult(blocked) max(1 - (blocked/100), 0)
 
-/proc/mobs_in_view(var/range, var/source)
+/proc/mobs_in_view(range, source)
+	RETURN_TYPE(/list)
 	var/list/mobs = list()
 	for(var/atom/movable/AM in view(range, source))
 		var/M = AM.get_mob()
@@ -24,34 +22,30 @@
 
 	return mobs
 
-proc/random_hair_style(gender, species = SPECIES_HUMAN)
+/proc/random_hair_style(gender, species = SPECIES_HUMAN)
 	var/h_style = "Bald"
 
 	var/datum/species/mob_species = all_species[species]
 	var/list/valid_hairstyles = mob_species.get_hair_styles()
-	if(valid_hairstyles.len)
+	if(length(valid_hairstyles))
 		h_style = pick(valid_hairstyles)
 
 	return h_style
 
-proc/random_facial_hair_style(gender, var/species = SPECIES_HUMAN)
+/proc/random_facial_hair_style(gender, species = SPECIES_HUMAN)
 	var/f_style = "Shaved"
 	var/datum/species/mob_species = all_species[species]
 	var/list/valid_facialhairstyles = mob_species.get_facial_hair_styles(gender)
-	if(valid_facialhairstyles.len)
+	if(length(valid_facialhairstyles))
 		f_style = pick(valid_facialhairstyles)
 		return f_style
 
-proc/random_name(gender, species = SPECIES_HUMAN)
-	if(species)
-		var/datum/species/current_species = all_species[species]
-		if(current_species)
-			var/decl/cultural_info/current_culture = SSculture.get_culture(current_species.default_cultural_info[TAG_CULTURE])
-			if(current_culture)
-				return current_culture.get_random_name(gender)
-	return capitalize(pick(gender == FEMALE ? GLOB.first_names_female : GLOB.first_names_male)) + " " + capitalize(pick(GLOB.last_names))
+/proc/random_name(gender, species = SPECIES_HUMAN)
+	var/datum/species/current_species = all_species[species]
+	var/singleton/cultural_info/current_culture = SSculture.get_culture(current_species.default_cultural_info[TAG_CULTURE])
+	return current_culture.get_random_name(gender)
 
-proc/random_skin_tone(var/datum/species/current_species)
+/proc/random_skin_tone(datum/species/current_species)
 	var/species_tone = current_species ? 35 - current_species.max_skin_tone() : -185
 	switch(pick(60;"caucasian", 15;"afroamerican", 10;"african", 10;"latino", 5;"albino"))
 		if("caucasian")		. = -10
@@ -63,7 +57,7 @@ proc/random_skin_tone(var/datum/species/current_species)
 
 	return min(max(. + rand(-25, 25), species_tone), 34)
 
-proc/skintone2racedescription(tone)
+/proc/skintone2racedescription(tone)
 	switch (tone)
 		if(30 to INFINITY)		return "albino"
 		if(20 to 30)			return "pale"
@@ -75,7 +69,7 @@ proc/skintone2racedescription(tone)
 		if(-INFINITY to -65)	return "black"
 		else					return "unknown"
 
-proc/age2agedescription(age)
+/proc/age2agedescription(age)
 	switch(age)
 		if(0 to 1)			return "infant"
 		if(1 to 3)			return "toddler"
@@ -93,10 +87,10 @@ proc/age2agedescription(age)
 	for(var/icon_state in icon_states)
 		if(health >= text2num(icon_state))
 			return icon_state
-	return icon_states[icon_states.len] // If we had no match, return the last element
+	return icon_states[length(icon_states)] // If we had no match, return the last element
 
 //checks whether this item is a module of the robot it is located in.
-/proc/is_robot_module(var/obj/item/thing)
+/proc/is_robot_module(obj/item/thing)
 	if(!thing)
 		return FALSE
 	if(istype(thing.loc, /mob/living/exosuit))
@@ -106,73 +100,14 @@ proc/age2agedescription(age)
 	var/mob/living/silicon/robot/R = thing.loc
 	return (thing in R.module.equipment)
 
-/proc/get_exposed_defense_zone(var/atom/movable/target)
+/proc/get_exposed_defense_zone(atom/movable/target)
 	return pick(BP_HEAD, BP_L_HAND, BP_R_HAND, BP_L_FOOT, BP_R_FOOT, BP_L_ARM, BP_R_ARM, BP_L_LEG, BP_R_LEG, BP_CHEST, BP_GROIN)
 
-/proc/do_mob(mob/user , mob/target, time = 30, target_zone = 0, uninterruptible = 0, progress = 1, var/incapacitation_flags = INCAPACITATION_DEFAULT)
-	if(!user || !target)
-		return 0
-	var/user_loc = user.loc
-	var/target_loc = target.loc
 
-	var/holding = user.get_active_hand()
-	var/datum/progressbar/progbar
-	if (progress)
-		progbar = new(user, time, target)
-
-	var/endtime = world.time+time
-	var/starttime = world.time
-	. = 1
-	while (world.time < endtime)
-		sleep(1)
-		if (progress)
-			progbar.update(world.time - starttime)
-		if(!user || !target)
-			. = 0
-			break
-		if(uninterruptible)
-			continue
-
-		if(QDELETED(user) || user.incapacitated(incapacitation_flags) || user.loc != user_loc)
-			. = 0
-			break
-
-		if(QDELETED(target) || target.loc != target_loc)
-			. = 0
-			break
-
-		if(user.get_active_hand() != holding)
-			. = 0
-			break
-
-		if(target_zone && user.zone_sel.selecting != target_zone)
-			. = 0
-			break
-
-	if (progbar)
-		qdel(progbar)
-
-
+/// Integer. Unique sequential ID from the `do_after` proc used to validate `DO_USER_UNIQUE_ACT` flag checks.
 /mob/var/do_unique_user_handle = 0
+/// The mob currently interacting with the atom during a `do_after` timer. Used to validate `DO_TARGET_UNIQUE_ACT` flag checks.
 /atom/var/do_unique_target_user
-
-#define DO_USER_CAN_MOVE     0x1
-#define DO_USER_CAN_TURN     0x2
-#define DO_USER_UNIQUE_ACT   0x4
-#define DO_USER_SAME_HAND    0x8
-#define DO_TARGET_CAN_MOVE   0x10
-#define DO_TARGET_CAN_TURN   0x20
-#define DO_TARGET_UNIQUE_ACT 0x40
-#define DO_SHOW_PROGRESS     0x80
-
-#define DO_BOTH_CAN_MOVE     (DO_USER_CAN_MOVE | DO_TARGET_CAN_MOVE)
-#define DO_BOTH_CAN_TURN     (DO_USER_CAN_TURN | DO_TARGET_CAN_TURN)
-#define DO_BOTH_UNIQUE_ACT   (DO_USER_UNIQUE_ACT | DO_TARGET_UNIQUE_ACT)
-#define DO_DEFAULT           (DO_SHOW_PROGRESS | DO_USER_SAME_HAND | DO_BOTH_CAN_TURN)
-
-#define DO_MISSING_USER      (-1)
-#define DO_MISSING_TARGET    (-2)
-#define DO_INCAPACITATED     (-3)
 
 /proc/do_after(mob/user, delay, atom/target, do_flags = DO_DEFAULT, incapacitation_flags = INCAPACITATION_DEFAULT)
 	return !do_after_detailed(user, delay, target, do_flags, incapacitation_flags)
@@ -189,7 +124,11 @@ proc/age2agedescription(age)
 		initial_handle = sequential_id("/proc/do_after")
 		user.do_unique_user_handle = initial_handle
 
+	var/do_feedback = do_flags & DO_FAIL_FEEDBACK
+
 	if (target?.do_unique_target_user)
+		if (do_feedback)
+			to_chat(user, SPAN_WARNING("\The [target.do_unique_target_user] is already interacting with \the [target]!"))
 		return DO_TARGET_UNIQUE_ACT
 
 	if ((do_flags & DO_TARGET_UNIQUE_ACT) && target)
@@ -203,7 +142,27 @@ proc/age2agedescription(age)
 	var/target_dir = do_flags & DO_TARGET_CAN_TURN ? null : target?.dir
 	var/target_type = target?.type
 
-	var/datum/progressbar/bar = do_flags & DO_SHOW_PROGRESS ? new(user, delay, target) : null
+	var/target_zone = do_flags & DO_USER_SAME_ZONE ? user.zone_sel.selecting : null
+
+	if (do_flags & DO_MOVE_CHECKS_TURFS)
+		if (user_loc)
+			user_loc = get_turf(user)
+		if (target_loc)
+			target_loc = get_turf(target)
+
+	var/datum/progressbar/bar
+	if (do_flags & DO_SHOW_PROGRESS)
+		// Autoset over-user if not in an otherwise visible location
+		// For public progress: This is if it's not on a turf.
+		// For private progress: This is if it's not on a turf or directly in the user's visible inventory HUD.
+		if (do_flags & DO_PUBLIC_PROGRESS)
+			if (!HAS_FLAGS(do_flags, DO_BAR_OVER_USER) && (!target || !isturf(target.loc)))
+				SET_FLAGS(do_flags, DO_BAR_OVER_USER)
+			bar = new /datum/progressbar/public(user, delay, target, !!(do_flags & DO_BAR_OVER_USER))
+		else
+			if (!HAS_FLAGS(do_flags, DO_BAR_OVER_USER) && (!target || (!isturf(target.loc) && target.loc != user)))
+				SET_FLAGS(do_flags, DO_BAR_OVER_USER)
+			bar = new /datum/progressbar/private(user, delay, target, !!(do_flags & DO_BAR_OVER_USER))
 
 	var/start_time = world.time
 	var/end_time = start_time + delay
@@ -217,16 +176,16 @@ proc/age2agedescription(age)
 		if (QDELETED(user))
 			. = DO_MISSING_USER
 			break
-		if (target_type && QDELETED(target))
+		if (target_type && (QDELETED(target) || target_type != target.type))
 			. = DO_MISSING_TARGET
 			break
 		if (user.incapacitated(incapacitation_flags))
 			. = DO_INCAPACITATED
 			break
-		if (user_loc && user_loc != user.loc)
+		if (user_loc && user_loc != (do_flags & DO_MOVE_CHECKS_TURFS ? get_turf(user) : user.loc))
 			. = DO_USER_CAN_MOVE
 			break
-		if (target_loc && target_loc != target.loc)
+		if (target_loc && target_loc != (do_flags & DO_MOVE_CHECKS_TURFS ? get_turf(target) : target.loc))
 			. = DO_TARGET_CAN_MOVE
 			break
 		if (user_dir && user_dir != user.dir)
@@ -235,12 +194,36 @@ proc/age2agedescription(age)
 		if (target_dir && target_dir != target.dir)
 			. = DO_TARGET_CAN_TURN
 			break
-		if (!isnull(user_hand) && user_hand != user.hand)
+		if ((do_flags & DO_USER_SAME_HAND) && user_hand != user.hand)
 			. = DO_USER_SAME_HAND
 			break
 		if (initial_handle && initial_handle != user.do_unique_user_handle)
 			. = DO_USER_UNIQUE_ACT
 			break
+		if (target_zone && user.zone_sel.selecting != target_zone)
+			. = DO_USER_SAME_ZONE
+			break
+
+	if (. && do_feedback)
+		switch (.)
+			if (DO_MISSING_TARGET)
+				USE_FEEDBACK_FAILURE("\The [target] no longer exists!")
+			if (DO_INCAPACITATED)
+				USE_FEEDBACK_FAILURE("You're no longer able to act!")
+			if (DO_USER_CAN_MOVE)
+				USE_FEEDBACK_FAILURE("You must remain still to perform that action!")
+			if (DO_TARGET_CAN_MOVE)
+				USE_FEEDBACK_FAILURE("\The [target] must remain still to perform that action!")
+			if (DO_USER_CAN_TURN)
+				USE_FEEDBACK_FAILURE("You must face the same direction to perform that action!")
+			if (DO_TARGET_CAN_TURN)
+				USE_FEEDBACK_FAILURE("\The [target] must face the same direction to perform that action!")
+			if (DO_USER_SAME_HAND)
+				USE_FEEDBACK_FAILURE("You must remain on the same active hand to perform that action!")
+			if (DO_USER_UNIQUE_ACT)
+				USE_FEEDBACK_FAILURE("You stop what you're doing with \the [target].")
+			if (DO_USER_SAME_ZONE)
+				USE_FEEDBACK_FAILURE("You must remain targeting the same zone to perform that action!")
 
 	if (bar)
 		qdel(bar)
@@ -249,7 +232,8 @@ proc/age2agedescription(age)
 	if ((do_flags & DO_TARGET_UNIQUE_ACT) && target)
 		target.do_unique_target_user = null
 
-/proc/able_mobs_in_oview(var/origin)
+/proc/able_mobs_in_oview(origin)
+	RETURN_TYPE(/list)
 	var/list/mobs = list()
 	for(var/mob/living/M in oview(origin)) // Only living mobs are considered able.
 		if(!M.is_physically_disabled())
@@ -270,30 +254,31 @@ proc/age2agedescription(age)
 /mob/proc/add_to_living_mob_list()
 	return FALSE
 /mob/living/add_to_living_mob_list()
-	if((src in GLOB.living_mob_list_) || (src in GLOB.dead_mob_list_))
+	if((src in GLOB.alive_mobs) || (src in GLOB.dead_mobs))
 		return FALSE
-	GLOB.living_mob_list_ += src
+	GLOB.alive_mobs += src
 	return TRUE
 
 // Returns true if the mob was removed from the living list
 /mob/proc/remove_from_living_mob_list()
-	return GLOB.living_mob_list_.Remove(src)
+	return GLOB.alive_mobs.Remove(src)
 
 // Returns true if the mob was in neither the dead or living list
 /mob/proc/add_to_dead_mob_list()
 	return FALSE
 /mob/living/add_to_dead_mob_list()
-	if((src in GLOB.living_mob_list_) || (src in GLOB.dead_mob_list_))
+	if((src in GLOB.alive_mobs) || (src in GLOB.dead_mobs))
 		return FALSE
-	GLOB.dead_mob_list_ += src
+	GLOB.dead_mobs += src
 	return TRUE
 
 // Returns true if the mob was removed form the dead list
 /mob/proc/remove_from_dead_mob_list()
-	return GLOB.dead_mob_list_.Remove(src)
+	return GLOB.dead_mobs.Remove(src)
 
 //Find a dead mob with a brain and client.
-/proc/find_dead_player(var/find_key, var/include_observers = 0)
+/proc/find_dead_player(find_key, include_observers = 0)
+	RETURN_TYPE(/mob)
 	if(isnull(find_key))
 		return
 
@@ -323,18 +308,18 @@ proc/age2agedescription(age)
 
 /proc/damflags_to_strings(damflags)
 	var/list/res = list()
-	if(damflags & DAM_SHARP)
+	if(damflags & DAMAGE_FLAG_SHARP)
 		res += "sharp"
-	if(damflags & DAM_EDGE)
+	if(damflags & DAMAGE_FLAG_EDGE)
 		res += "edge"
-	if(damflags & DAM_LASER)
+	if(damflags & DAMAGE_FLAG_LASER)
 		res += "laser"
-	if(damflags & DAM_BULLET)
+	if(damflags & DAMAGE_FLAG_BULLET)
 		res += "bullet"
-	if(damflags & DAM_EXPLODE)
+	if(damflags & DAMAGE_FLAG_EXPLODE)
 		res += "explode"
-	if(damflags & DAM_DISPERSED)
+	if(damflags & DAMAGE_FLAG_DISPERSED)
 		res += "dispersed"
-	if(damflags & DAM_BIO)
+	if(damflags & DAMAGE_FLAG_BIO)
 		res += "bio"
 	return english_list(res)

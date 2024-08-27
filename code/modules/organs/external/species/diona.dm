@@ -111,9 +111,10 @@
 		return ..()
 	var/mob/living/carbon/human/H = owner
 	..()
-	if(!istype(H) || !H.organs || !H.organs.len)
+	if(!istype(H) || !length(H.organs))
 		H.death()
-	if(prob(50) && spawn_diona_nymph(get_turf(src)))
+	if(prob(25))
+		spawn_diona_nymph(get_turf(src))
 		qdel(src)
 
 /obj/item/organ/external/head/diona
@@ -129,8 +130,9 @@
 	var/icon/I = get_eyes()
 	if(glowing_eyes)
 		var/image/eye_glow = image(I)
-		eye_glow.layer = EYE_GLOW_LAYER
-		eye_glow.plane = EFFECTS_ABOVE_LIGHTING_PLANE
+		eye_glow.AddOverlays(emissive_appearance(eye_icon_location, ""))
+		eye_glow.layer = FLOAT_LAYER
+		//eye_glow.plane = EFFECTS_ABOVE_LIGHTING_PLANE
 		return eye_glow
 
 /obj/item/organ/external/head/diona/get_eyes()
@@ -141,7 +143,8 @@
 		return ..()
 	var/mob/living/carbon/human/H = owner
 	..()
-	if(!istype(H) || !H.organs || !H.organs.len)
+	if(!istype(H) || !length(H.organs))
 		H.death()
-	if(prob(50) && spawn_diona_nymph(get_turf(src)))
+	if(prob(25))
+		spawn_diona_nymph(get_turf(src))
 		qdel(src)

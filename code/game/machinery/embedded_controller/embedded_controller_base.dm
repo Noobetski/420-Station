@@ -1,6 +1,6 @@
 /obj/machinery/embedded_controller
 	name = "Embedded Controller"
-	anchored = 1
+	anchored = TRUE
 	idle_power_usage = 10
 	var/datum/computer/file/embedded_program/program	//the currently executing program
 	var/on = 1
@@ -44,11 +44,11 @@
 	return TRUE
 
 /obj/machinery/embedded_controller/radio
-	icon = 'icons/obj/airlock_machines.dmi'
+	icon = 'icons/obj/doors/airlock_machines.dmi'
 	icon_state = "airlock_control_off"
 	power_channel = ENVIRON
-	density = 0
-	unacidable = 1
+	density = FALSE
+	unacidable = TRUE
 	var/frequency = 1379
 	var/radio_filter = null
 	var/datum/radio_frequency/radio_connection
@@ -57,34 +57,34 @@
 	set_frequency(frequency)
 	. = ..()
 
-obj/machinery/embedded_controller/radio/Destroy()
+/obj/machinery/embedded_controller/radio/Destroy()
 	if(radio_controller)
 		radio_controller.remove_object(src,frequency)
 	..()
 
 /obj/machinery/embedded_controller/radio/on_update_icon()
-	overlays.Cut()
+	ClearOverlays()
 	if(!on || !istype(program))
 		return
 	if(!program.memory["processing"])
-		overlays += image(icon, "screen_standby")
-		overlays += image(icon, "indicator_done")
+		AddOverlays(image(icon, "screen_standby"))
+		AddOverlays(image(icon, "indicator_done"))
 	else
-		overlays += image(icon, "indicator_active")
+		AddOverlays(image(icon, "indicator_active"))
 	var/datum/computer/file/embedded_program/docking/airlock/docking_program = program
-	var/datum/computer/file/embedded_program/airlock/docking/airlock_program = program
+	var/datum/computer/file/embedded_program/airlock/airlock_program = program
 	if(istype(docking_program))
 		if(docking_program.override_enabled)
-			overlays += image(icon, "indicator_forced")
+			AddOverlays(image(icon, "indicator_forced"))
 		airlock_program = docking_program.airlock_program
-	
+
 	if(istype(airlock_program) && airlock_program.memory["processing"])
 		if(airlock_program.memory["pump_status"] == "siphon")
-			overlays += image(icon, "screen_drain")
+			AddOverlays(image(icon, "screen_drain"))
 		else
-			overlays += image(icon, "screen_fill")
+			AddOverlays(image(icon, "screen_fill"))
 
-/obj/machinery/embedded_controller/radio/post_signal(datum/signal/signal, var/radio_filter = null)
+/obj/machinery/embedded_controller/radio/post_signal(datum/signal/signal, radio_filter = null)
 	signal.transmission_method = TRANSMISSION_RADIO
 	if(radio_connection)
 		return radio_connection.post_signal(src, signal, radio_filter, AIRLOCK_CONTROL_RANGE)

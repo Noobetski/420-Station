@@ -1,9 +1,9 @@
 /obj/machinery/status_light
 	name = "combustion chamber status indicator"
 	desc = "A status indicator for a combustion chamber, based on temperature."
-	icon = 'icons/obj/stationobjs.dmi'
+	icon = 'icons/obj/structures/doortimer.dmi'
 	icon_state = "doortimer-p"
-	anchored = 1
+	anchored = TRUE
 	var/frequency = 1441
 	var/alert_temperature = 10000
 	var/alert = 1
@@ -16,13 +16,13 @@
 
 
 /obj/machinery/status_light/on_update_icon()
-	if(stat & (NOPOWER|BROKEN))
+	if(inoperable())
 		icon_state = "doortimer-b"
 		return
 	icon_state = "doortimer[alert]"
 
 /obj/machinery/status_light/receive_signal(datum/signal/signal)
-	if(stat & (NOPOWER|BROKEN))
+	if(inoperable())
 		return
 
 	if(!signal.data["tag"] || (signal.data["tag"] != id_tag) || !signal.data["temperature"])

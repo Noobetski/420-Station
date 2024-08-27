@@ -13,21 +13,21 @@
 
 	hud_state = "wiz_immolate"
 
-/spell/hand/duration/sunwrath/cast_hand(var/atom/A, var/mob/user)
+/spell/hand/duration/sunwrath/cast_hand(atom/A, mob/user)
 	var/turf/T = get_turf(user)
 	var/list/turfs = getline(T,A) - T
 	for(var/t in turfs)
 		var/turf/turf = t
 		if(turf.density || istype(turf, /turf/space))
 			break
-		new /obj/effect/fake_fire/sunwrath(t)
+		new /obj/fake_fire/sunwrath(t)
 	return 1
 
-/obj/effect/fake_fire/sunwrath
+/obj/fake_fire/sunwrath
 	firelevel = 2
 	last_temperature = 0
 	pressure = 3000
 
-/obj/effect/fake_fire/sunwrath/Process() //Override, so we burn mobs only
+/obj/fake_fire/sunwrath/Process() //Override, so we burn mobs only
 	for(var/mob/living/L in loc)
 		L.FireBurn(firelevel,last_temperature,pressure)

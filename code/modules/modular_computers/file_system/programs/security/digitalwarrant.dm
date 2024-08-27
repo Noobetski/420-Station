@@ -1,5 +1,5 @@
 LEGACY_RECORD_STRUCTURE(all_warrants, warrant)
-/datum/computer_file/data/warrant/
+/datum/computer_file/data/warrant
 	var/archived = FALSE
 
 /datum/computer_file/program/digitalwarrant
@@ -10,17 +10,17 @@ LEGACY_RECORD_STRUCTURE(all_warrants, warrant)
 	program_icon_state = "warrant"
 	program_key_state = "security_key"
 	program_menu_icon = "star"
-	requires_ntnet = 1
-	available_on_ntnet = 1
+	requires_ntnet = TRUE
+	available_on_ntnet = TRUE
 	required_access = access_security
-	nanomodule_path = /datum/nano_module/program/digitalwarrant/
+	nanomodule_path = /datum/nano_module/program/digitalwarrant
 	category = PROG_SEC
 
-/datum/nano_module/program/digitalwarrant/
+/datum/nano_module/program/digitalwarrant
 	name = "Warrant Assistant"
 	var/datum/computer_file/data/warrant/activewarrant
 
-/datum/nano_module/program/digitalwarrant/ui_interact(mob/user, ui_key = "main", var/datum/nanoui/ui = null, var/force_open = 1, var/datum/topic_state/state = GLOB.default_state)
+/datum/nano_module/program/digitalwarrant/ui_interact(mob/user, ui_key = "main", datum/nanoui/ui = null, force_open = 1, datum/topic_state/state = GLOB.default_state)
 	var/list/data = host.initial_data()
 
 	if(activewarrant)
@@ -51,9 +51,9 @@ LEGACY_RECORD_STRUCTURE(all_warrants, warrant)
 				arrestwarrants.Add(list(warrant))
 			else
 				searchwarrants.Add(list(warrant))
-		data["arrestwarrants"] = arrestwarrants.len ? arrestwarrants : null
-		data["searchwarrants"] = searchwarrants.len ? searchwarrants : null
-		data["archivedwarrants"] = archivedwarrants.len? archivedwarrants :null
+		data["arrestwarrants"] = length(arrestwarrants) ? arrestwarrants : null
+		data["searchwarrants"] = length(searchwarrants) ? searchwarrants : null
+		data["archivedwarrants"] = length(archivedwarrants)? archivedwarrants :null
 
 	ui = SSnano.try_update_ui(user, src, ui_key, ui, data, force_open)
 	if (!ui)
@@ -83,7 +83,7 @@ LEGACY_RECORD_STRUCTURE(all_warrants, warrant)
 	var/mob/user = usr
 	if(!istype(user))
 		return
-	var/obj/item/weapon/card/id/I = user.GetIdCard()
+	var/obj/item/card/id/I = user.GetIdCard()
 	if(!istype(I) || !I.registered_name || !(access_security in I.access))
 		to_chat(user, "Authentication error: Unable to locate ID with apropriate access to allow this operation.")
 		return
@@ -150,7 +150,7 @@ LEGACY_RECORD_STRUCTURE(all_warrants, warrant)
 					break
 		if(activewarrant)
 			program.computer.print_paper(warranttotext(activewarrant), capitalize(activewarrant.fields["arrestsearch"]) + " Warrant - " + activewarrant.fields["namewarrant"])
-		else 
+		else
 			to_chat(src, SPAN_WARNING("Internal error: Warrant not found."))
 
 
@@ -169,6 +169,9 @@ LEGACY_RECORD_STRUCTURE(all_warrants, warrant)
 			var/job = copytext(entry_components[2], 1, length(entry_components[2]))
 			activewarrant.fields["namewarrant"] = name
 			activewarrant.fields["jobwarrant"] = job
+			activewarrant.fields["auth"] = "Unauthorized"
+			activewarrant.fields["idauth"] = "Unauthorized"
+			activewarrant.fields["access"] = list()
 
 	if(href_list["editwarrantnamecustom"])
 		. = TRUE
@@ -179,6 +182,9 @@ LEGACY_RECORD_STRUCTURE(all_warrants, warrant)
 				return
 			activewarrant.fields["namewarrant"] = new_name
 			activewarrant.fields["jobwarrant"] = new_job
+			activewarrant.fields["auth"] = "Unauthorized"
+			activewarrant.fields["idauth"] = "Unauthorized"
+			activewarrant.fields["access"] = list()
 
 	if(href_list["editwarrantcharges"])
 		. = TRUE
@@ -212,7 +218,7 @@ LEGACY_RECORD_STRUCTURE(all_warrants, warrant)
 			to_chat(user, "Lookup error: Unable to locate specified job in access database.")
 			return
 		for(var/datum/computer_file/report/crew_record/CR in GLOB.all_crew_records)
-			if(CR.get_name() == activewarrant.fields["namewarrant"] && CR.get_job() == J.title)
+			if(CR.get_name() == activewarrant.fields["namewarrant"] && CR.get_job() == activewarrant.fields["jobwarrant"])
 				warrant_subject = CR
 
 		if(!warrant_subject)
@@ -242,7 +248,7 @@ LEGACY_RECORD_STRUCTURE(all_warrants, warrant)
 //Access authorized by: Notthe Capitano - Commanding Officer
 //
 //(legal notice)
-/datum/nano_module/program/digitalwarrant/proc/warranttotext(var/datum/computer_file/data/warrant/warrant)
+/datum/nano_module/program/digitalwarrant/proc/warranttotext(datum/computer_file/data/warrant/warrant)
 	. += "\[center]\[h3]" + GLOB.using_map.station_name + " " + capitalize(warrant.fields["arrestsearch"]) + " Warrant\[/center]\[/h3] \
 	      \[b]System: \[/b]" + GLOB.using_map.system_name
 	. += "\n\n\[b]Suspect Name: \[/b]" + warrant.fields["namewarrant"]

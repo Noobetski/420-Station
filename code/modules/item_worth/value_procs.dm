@@ -1,4 +1,4 @@
-/atom/proc/Value(var/base)
+/atom/proc/Value(base)
 	return base
 
 /obj/Value()
@@ -8,7 +8,7 @@
 
 /obj/machinery/Value()
 	. = ..()
-	if(stat & BROKEN)
+	if(MACHINE_IS_BROKEN(src))
 		. *= 0.5
 	. = round(.)
 
@@ -18,7 +18,7 @@
 /obj/structure/bed/Value()
 	return ..() * material.value
 
-/obj/item/slime_extract/Value(var/base)
+/obj/item/slime_extract/Value(base)
 	return base * Uses
 
 /obj/item/ammo_casing/Value()
@@ -26,7 +26,7 @@
 		return 1
 	return ..()
 
-/obj/item/weapon/reagent_containers/Value()
+/obj/item/reagent_containers/Value()
 	. = ..()
 	if(reagents)
 		for(var/a in reagents.reagent_list)
@@ -37,7 +37,7 @@
 /datum/reagent/proc/Value()
 	return value
 
-/obj/item/stack/Value(var/base)
+/obj/item/stack/Value(base)
 	return base * amount
 
 /obj/item/stack/material/Value()
@@ -45,16 +45,16 @@
 		return ..()
 	return material.value * amount
 
-/obj/item/weapon/ore/Value()
+/obj/item/ore/Value()
 	return material ? material.value : 0
 
-/obj/item/weapon/material/Value()
+/obj/item/material/Value()
 	return material.value * worth_multiplier
 
-/obj/item/weapon/spacecash/Value()
+/obj/item/spacecash/Value()
 	return worth
 
-/mob/living/carbon/human/Value(var/base)
+/mob/living/carbon/human/Value(base)
 	. = ..()
 	if(species)
 		. *= species.rarity_value

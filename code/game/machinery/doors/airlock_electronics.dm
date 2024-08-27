@@ -1,6 +1,6 @@
 //This file was auto-corrected by findeclaration.exe on 25.5.2012 20:42:31
 
-/obj/item/weapon/airlock_electronics
+/obj/item/airlock_electronics
 	name = "airlock electronics"
 	icon = 'icons/obj/doors/door_assembly.dmi'
 	icon_state = "door_electronics"
@@ -18,14 +18,14 @@
 	var/lockable = 1
 	var/autoset = TRUE // Whether the door should inherit access from surrounding areas
 
-/obj/item/weapon/airlock_electronics/attack_self(mob/user)
+/obj/item/airlock_electronics/attack_self(mob/user)
 	if (!ishuman(user) && !istype(user,/mob/living/silicon/robot))
 		return ..(user)
 
 	ui_interact(user)
 
 
-/obj/item/weapon/airlock_electronics/ui_interact(mob/user, ui_key = "main", datum/nanoui/ui = null, force_open = 1, datum/topic_state/state = GLOB.hands_state)
+/obj/item/airlock_electronics/ui_interact(mob/user, ui_key = "main", datum/nanoui/ui = null, force_open = 1, datum/topic_state/state = GLOB.hands_state)
 	var/list/data = ui_data()
 
 	ui = SSnano.try_update_ui(user, src, ui_key, ui, data, force_open)
@@ -34,7 +34,7 @@
 		ui.set_initial_data(data)
 		ui.open()
 
-/obj/item/weapon/airlock_electronics/ui_data()
+/obj/item/airlock_electronics/ui_data()
 	var/list/data = list()
 	var/list/regions = list()
 
@@ -46,10 +46,10 @@
 			access["name"] = get_access_desc(j)
 			access["id"] = j
 			access["req"] = (j in src.conf_access)
-			accesses[++accesses.len] = access
+			accesses[LIST_PRE_INC(accesses)] = access
 		region["name"] = get_region_accesses_name(i)
 		region["accesses"] = accesses
-		regions[++regions.len] = region
+		regions[LIST_PRE_INC(regions)] = region
 	data["regions"] = regions
 	data["oneAccess"] = one_access
 	data["locked"] = locked
@@ -58,16 +58,16 @@
 
 	return data
 
-/obj/item/weapon/airlock_electronics/OnTopic(mob/user, list/href_list, state)
+/obj/item/airlock_electronics/OnTopic(mob/user, list/href_list, state)
 	if(lockable)
 		if(href_list["unlock"])
 			if(!req_access || istype(user, /mob/living/silicon))
 				locked = FALSE
 				last_configurator = user.name
 			else
-				var/obj/item/weapon/card/id/I = user.get_active_hand()
+				var/obj/item/card/id/I = user.get_active_hand()
 				I = I ? I.GetIdCard() : null
-				if(!istype(I, /obj/item/weapon/card/id))
+				if(!istype(I, /obj/item/card/id))
 					to_chat(user, SPAN_WARNING("[\src] flashes a yellow LED near the ID scanner. Did you remember to scan your ID or PDA?"))
 					return TOPIC_HANDLED
 				if (check_access(I))
@@ -100,19 +100,19 @@
 		return TOPIC_REFRESH
 
 
-/obj/item/weapon/airlock_electronics/secure
+/obj/item/airlock_electronics/secure
 	name = "secure airlock electronics"
 	desc = "designed to be somewhat more resistant to hacking than standard electronics."
 	origin_tech = list(TECH_DATA = 2)
 	secure = TRUE
 
-/obj/item/weapon/airlock_electronics/brace
+/obj/item/airlock_electronics/brace
 	name = "airlock brace access circuit"
 	req_access = list()
 	locked = FALSE
 	lockable = FALSE
 
-/obj/item/weapon/airlock_electronics/brace/ui_interact(mob/user, ui_key = "main", datum/nanoui/ui = null, force_open = 1, datum/topic_state/state = GLOB.deep_inventory_state)
+/obj/item/airlock_electronics/brace/ui_interact(mob/user, ui_key = "main", datum/nanoui/ui = null, force_open = 1, datum/topic_state/state = GLOB.deep_inventory_state)
 	var/list/data = ui_data()
 
 	ui = SSnano.try_update_ui(user, src, ui_key, ui, data, force_open)
@@ -121,10 +121,10 @@
 		ui.set_initial_data(data)
 		ui.open()
 
-/obj/item/weapon/airlock_electronics/proc/set_access(var/obj/object)
+/obj/item/airlock_electronics/proc/set_access(obj/object)
 	if(!object.req_access)
 		object.check_access()
-	if(object.req_access.len)
+	if(length(object.req_access))
 		conf_access = list()
 		for(var/entry in object.req_access)
 			conf_access |= entry // This flattens the list, turning everything into AND

@@ -1,4 +1,4 @@
-# baystation12
+# Baystation [![License: AGPL v3](https://img.shields.io/badge/License-AGPL_v3.0-orange.svg)](https://opensource.org/licenses/AGPL-3.0) [![CodeQL](https://github.com/baystation12/baystation12/workflows/CodeQL/badge.svg)](https://github.com/Baystation12/Baystation12/actions/workflows/codeql-analysis.yml) [![CI Status](https://github.com/baystation12/baystation12/workflows/Run%20Tests/badge.svg)](https://github.com/Baystation12/Baystation12/actions/workflows/test.yml) [![codebeat badge](https://codebeat.co/badges/8ecb9a34-1bab-4d80-b34d-b16e8b216a03)](https://codebeat.co/projects/github-com-baystation12-baystation12-dev)
 
 [Website](http://baystation12.net/) - [Code](https://github.com/Z4ph0d42/420-Station) - [Discord](https://discord.gg/2eDSTdeR) - [IRC](https://kiwiirc.com/client/irc.sorcery.net/codershuttle): irc://irc.sorcery.net/#codershuttle
 
@@ -20,7 +20,7 @@ Please see [/docs/SECURITY.md](/docs/SECURITY.md) for this repository's security
 
 ### LICENSE
 
-The code for Baystation12 is licensed under the [GNU Affero General Public License v3](http://www.gnu.org/licenses/agpl.html), which can be found in full in [/LICENSE](/LICENSE).
+The code for Baystation is licensed under the [GNU Affero General Public License v3](https://www.gnu.org/licenses/agpl.html), which can be found in full in [/LICENSE](/LICENSE).
 
 Code with a git authorship date prior to `1420675200 +0000` (2015/01/08 00:00 GMT) is licensed under the GNU General Public License version 3, which can be found in full in [/docs/GPL3.txt](/docs/GPL3.txt)
 
@@ -30,7 +30,7 @@ If you wish to develop and host this codebase in a closed source manner you may 
 
 See [here](https://www.gnu.org/licenses/why-affero-gpl.html) for more information.
 
-All assets including icons and sound are under a [Creative Commons 3.0 BY-SA license](http://creativecommons.org/licenses/by-sa/3.0/) unless otherwise indicated.
+All assets including icons and sound are under a [Creative Commons 3.0 BY-SA license](https://creativecommons.org/licenses/by-sa/3.0/) unless otherwise indicated.
 
 ---
 

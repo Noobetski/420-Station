@@ -4,7 +4,6 @@
 	icon_state = "drone-standard"
 	module_category = ROBOT_MODULE_TYPE_FLYING
 	dismantle_type = /obj/item/robot_parts/robot_suit/flyer
-	speed = -1 // nyoom
 	power_efficiency = 0.75
 
 	// They are not very heavy or strong.
@@ -18,7 +17,6 @@
 	components["radio"] =          new/datum/robot_component/radio(src)
 	components["power cell"] =     new/datum/robot_component/cell(src)
 	components["diagnosis unit"] = new/datum/robot_component/diagnosis_unit(src)
-	components["camera"] =         new/datum/robot_component/camera(src)
 	components["comms"] =          new/datum/robot_component/binary_communication(src)
 	components["armour"] =         new/datum/robot_component/armour/light(src)
 
@@ -44,11 +42,11 @@
 	if(!QDELETED(src) && stat == DEAD)
 		stop_flying()
 
-/mob/living/silicon/robot/flying/Allow_Spacemove()
+/mob/living/silicon/robot/flying/Process_Spacemove()
 	return (pass_flags & PASS_FLAG_TABLE) || ..()
 
-/mob/living/silicon/robot/flying/can_fall(var/anchor_bypass = FALSE, var/turf/location_override = loc)
-	return !Allow_Spacemove()
+/mob/living/silicon/robot/flying/can_fall(anchor_bypass = FALSE, turf/location_override = loc)
+	return !Process_Spacemove()
 
 /mob/living/silicon/robot/flying/can_overcome_gravity()
-	return Allow_Spacemove()
+	return Process_Spacemove()

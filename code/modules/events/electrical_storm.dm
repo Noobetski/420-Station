@@ -4,7 +4,7 @@
 	endWhen = 60			// Set in start()
 	has_skybox_image = TRUE
 	var/list/valid_apcs		// Shuffled list of valid APCs.
-	var/global/lightning_color
+	var/static/lightning_color
 
 /datum/event/electrical_storm/get_skybox_image()
 	if(!lightning_color)
@@ -38,7 +38,7 @@
 	for(var/obj/machinery/power/shield_generator/G in SSmachines.machinery)
 		if((G.z in affecting_z) && G.running && G.check_flag(MODEFLAG_EM))
 			shields += G
-	if(shields.len)
+	if(length(shields))
 		var/obj/machinery/power/shield_generator/shield_gen = pick(shields)
 		//Minor breaches aren't enough to let through frying amounts of power
 		if(shield_gen.take_damage(30 * severity, SHIELD_DAMTYPE_EM) <= SHIELD_BREACHED_MINOR)
@@ -60,7 +60,7 @@
 
 		// Relatively small chance to emag the apc as apc_damage event does.
 		if(prob(0.2 * severity))
-			T.emagged = 1
+			T.emagged = TRUE
 			T.update_icon()
 
 		if(T.is_critical)

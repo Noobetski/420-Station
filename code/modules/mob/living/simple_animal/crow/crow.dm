@@ -1,4 +1,4 @@
-/obj/item/weapon/storage/messenger
+/obj/item/storage/messenger
 	name = "messenger bag"
 	desc = "A small green-grey messenger bag with a blue Corvid Couriers logo on it."
 	icon = 'icons/mob/simple_animal/crow.dmi'
@@ -16,34 +16,41 @@
 	icon_dead = "crow_dead"
 	pass_flags = PASS_FLAG_TABLE
 	mob_size = MOB_SMALL
+	density = FALSE
 
-	speak = list("Caw.", "Caw?", "Caw!", "CAW.")
 	speak_emote = list("caws")
-	emote_hear = list("caws")
-	emote_see = list("hops")
 
-	melee_damage_lower = 5
-	melee_damage_upper = 10
+	natural_weapon = /obj/item/natural_weapon/crow_claws
 
 	response_help  = "pets"
 	response_disarm = "gently moves aside"
 	response_harm   = "swats"
-	stop_automated_movement = TRUE
 	universal_speak = TRUE
 	pass_flags = PASS_FLAG_TABLE
 
-	var/obj/item/weapon/storage/messenger/messenger_bag
-	var/obj/item/weapon/card/id/access_card
+	var/obj/item/storage/messenger/messenger_bag
+	var/obj/item/card/id/access_card
 
-/mob/living/simple_animal/crow/New()
-	..()
+	say_list_type = /datum/say_list/crow
+
+/obj/item/natural_weapon/crow_claws
+	name = "claws"
+	gender = PLURAL
+	attack_verb = list("clawed")
+	sharp = TRUE
+	force = 7
+
+
+/mob/living/simple_animal/crow/Initialize()
+	. = ..()
 	messenger_bag = new(src)
 	update_icon()
+
 
 /mob/living/simple_animal/crow/GetIdCard()
 	return access_card
 
-/mob/living/simple_animal/crow/show_inv(var/mob/user)
+/mob/living/simple_animal/crow/show_inv(mob/user)
 	if(user.incapacitated())
 		return
 	var/list/dat = list()
@@ -77,31 +84,31 @@
 		if(removed)
 			removed.dropInto(loc)
 			usr.put_in_hands(removed)
-			visible_message("<span class='notice'>\The [usr] removes \the [removed] from \the [src]'s [href_list["remove_inv"]].</span>")
+			visible_message(SPAN_NOTICE("\The [usr] removes \the [removed] from \the [src]'s [href_list["remove_inv"]]."))
 			show_inv(usr)
 			update_icon()
 		else
-			to_chat(user, "<span class='warning'>There is nothing to remove from \the [src]'s [href_list["remove_inv"]].</span>")
+			to_chat(user, SPAN_WARNING("There is nothing to remove from \the [src]'s [href_list["remove_inv"]]."))
 		return TOPIC_HANDLED
 	if(href_list["add_inv"])
 		var/obj/item/equipping = user.get_active_hand()
 		if(!equipping)
-			to_chat(user, "<span class='warning'>You have nothing in your hand to put on \the [src]'s [href_list["add_inv"]].</span>")
+			to_chat(user, SPAN_WARNING("You have nothing in your hand to put on \the [src]'s [href_list["add_inv"]]."))
 			return 0
 		var/obj/item/equipped
 		var/checktype
 		switch(href_list["add_inv"])
 			if("access cuff")
 				equipped = access_card
-				checktype = /obj/item/weapon/card/id
+				checktype = /obj/item/card/id
 			if("back")
 				equipped = messenger_bag
-				checktype = /obj/item/weapon/storage/messenger
+				checktype = /obj/item/storage/messenger
 		if(equipped)
-			to_chat(user, "<span class='warning'>There is already something worn on \the [src]'s [href_list["add_inv"]].</span>")
+			to_chat(user, SPAN_WARNING("There is already something worn on \the [src]'s [href_list["add_inv"]]."))
 			return TOPIC_HANDLED
 		if(!istype(equipping, checktype))
-			to_chat(user, "<span class='warning'>\The [equipping] won't fit on \the [src]'s [href_list["add_inv"]].</span>")
+			to_chat(user, SPAN_WARNING("\The [equipping] won't fit on \the [src]'s [href_list["add_inv"]]."))
 			return TOPIC_HANDLED
 		switch(href_list["add_inv"])
 			if("access cuff")
@@ -110,7 +117,7 @@
 				messenger_bag = equipping
 		if(!user.unEquip(equipping, src))
 			return TOPIC_HANDLED
-		visible_message("<span class='notice'>\The [user] places \the [equipping] on to \the [src]'s [href_list["add_inv"]].</span>")
+		visible_message(SPAN_NOTICE("\The [user] places \the [equipping] on to \the [src]'s [href_list["add_inv"]]."))
 		update_icon()
 		show_inv(user)
 		return TOPIC_HANDLED
@@ -120,7 +127,7 @@
 	. = ..()
 	if(Adjacent(src))
 		if(messenger_bag)
-			if(messenger_bag.contents.len)
+			if(length(messenger_bag.contents))
 				to_chat(user, "It's wearing a little messenger bag with a Corvid Couriers logo on it. There's something stuffed inside.")
 			else
 				to_chat(user, "It's wearing a little messenger bag with a Corvid Couriers logo on it. It seems to be empty.")
@@ -129,13 +136,12 @@
 
 /mob/living/simple_animal/crow/on_update_icon()
 	..()
-	overlays -= "bag"
-	overlays -= "bag_dead"
+	ClearOverlays()
 	if(messenger_bag)
 		if(icon_state != icon_dead)
-			overlays |= "bag"
+			AddOverlays("bag")
 		else
-			overlays |= "bag_dead"
+			AddOverlays("bag_dead")
 
 /mob/living/simple_animal/crow/cyber
 	name = "cybercrow"
@@ -144,10 +150,13 @@
 
 /mob/living/simple_animal/crow/cyber/on_update_icon()
 	..()
-	overlays -= "cyber"
-	overlays -= "cyber_dead"
+	ClearOverlays()
 	if(icon_state != icon_dead)
-		overlays |= "cyber"
+		AddOverlays("cyber")
 	else
-		overlays |= "cyber_dead"
+		AddOverlays("cyber_dead")
 
+/datum/say_list/crow
+	speak = list("Caw.", "Caw?", "Caw!", "CAW.")
+	emote_hear = list("caws")
+	emote_see = list("hops")

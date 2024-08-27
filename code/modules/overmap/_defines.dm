@@ -3,11 +3,12 @@
 //Dimension of overmap (squares 4 lyfe)
 var/global/list/map_sectors = list()
 
-/area/overmap/
+/area/overmap
 	name = "System Map"
 	icon_state = "start"
 	requires_power = 0
 	base_turf = /turf/unsimulated/map
+	dynamic_lighting = 0
 
 /turf/unsimulated/map
 	icon = 'icons/turf/space.dmi'
@@ -16,7 +17,7 @@ var/global/list/map_sectors = list()
 
 /turf/unsimulated/map/edge
 	opacity = 1
-	density = 1
+	density = TRUE
 
 /turf/unsimulated/map/New()
 	..()
@@ -30,7 +31,7 @@ var/global/list/map_sectors = list()
 	if(y == 1 || y == GLOB.using_map.overmap_size)
 		numbers += list("[round(x/10)]","[round(x%10)]")
 
-	for(var/i = 1 to numbers.len)
+	for(var/i = 1 to length(numbers))
 		var/image/I = image('icons/effects/numbers.dmi',numbers[i])
 		I.pixel_x = 5*i - 2
 		I.pixel_y = world.icon_size/2 - 3
@@ -44,14 +45,14 @@ var/global/list/map_sectors = list()
 			I.pixel_x = 5*i - 2
 		if(x == GLOB.using_map.overmap_size)
 			I.pixel_x = 5*i + 2
-		overlays += I
+		AddOverlays(I)
 
 //list used to track which zlevels are being 'moved' by the proc below
-var/list/moving_levels = list()
+var/global/list/moving_levels = list()
 //Proc to 'move' stars in spess
 //yes it looks ugly, but it should only fire when state actually change.
 //null direction stops movement
-proc/toggle_move_stars(zlevel, direction)
+/proc/toggle_move_stars(zlevel, direction)
 	if(!zlevel)
 		return
 
@@ -77,3 +78,8 @@ proc/toggle_move_stars(zlevel, direction)
 						AM.throw_at(get_step(T,reverse_direction(direction)), 5, 1)
 						CHECK_TICK
 			CHECK_TICK
+
+/proc/is_edge_turf(turf/T) //borrowed from random_map.dm:45
+	var/area/A = get_area(T)
+	var/list/dimensions = A.get_dimensions()
+	return T.x <= TRANSITIONEDGE || T.x >= (dimensions["x"] - TRANSITIONEDGE + 1) || T.y <= TRANSITIONEDGE || T.y >= (dimensions["y"] - TRANSITIONEDGE + 1)

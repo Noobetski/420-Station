@@ -11,7 +11,7 @@
 /turf/simulated/floor/tiled/techfloor/grid,
 /area/map_template/crashed_pod)
 "ad" = (
-/obj/effect/decal/cleanable/dirt,
+/obj/decal/cleanable/dirt,
 /turf/simulated/floor/tiled/techfloor,
 /area/map_template/crashed_pod)
 "ay" = (
@@ -21,17 +21,17 @@
 /obj/machinery/airlock_sensor/airlock_exterior{
 	frequency = 1380;
 	id_tag = "crashedpodWest_sensor_external";
-	pixel_x = 0;
 	pixel_y = 32
 	},
 /obj/machinery/access_button/airlock_exterior{
 	frequency = 1380;
 	master_tag = "crashedpodWest";
-	pixel_x = 0;
 	pixel_y = 20;
 	pixel_z = 1
 	},
-/turf/simulated/floor/reinforced/airless,
+/turf/simulated/floor/reinforced{
+	map_airless = 1
+	},
 /area/map_template/crashed_pod)
 "bk" = (
 /obj/machinery/atmospherics/pipe/manifold/visible/fuel{
@@ -47,24 +47,21 @@
 	},
 /obj/machinery/embedded_controller/radio/airlock/airlock_controller{
 	cycle_to_external_air = 1;
-	dir = 2;
 	frequency = 1380;
 	id_tag = "crashedpodEast";
-	pixel_x = 0;
 	pixel_y = 26;
 	tag_airpump = "crashedpodEast_pump";
 	tag_chamber_sensor = "crashedpodEast_sensor_chamber";
 	tag_exterior_door = "crashedpodEast_exterior_door";
 	tag_exterior_sensor = "crashedpodEast_sensor_external";
-	tag_interior_door = "crashedpodEast_interior_door";
-	tag_interior_sensor = null
+	tag_interior_door = "crashedpodEast_interior_door"
 	},
 /obj/machinery/airlock_sensor{
 	frequency = 1380;
 	id_tag = "crashedpodEast_sensor_chamber";
 	pixel_x = -22
 	},
-/turf/simulated/floor/reinforced/airless,
+/turf/simulated/floor/reinforced,
 /area/map_template/crashed_pod)
 "bm" = (
 /obj/machinery/door/airlock/external{
@@ -72,23 +69,25 @@
 	id_tag = "crashedpodEast_exterior_door";
 	locked = 1
 	},
-/turf/simulated/floor/reinforced/airless,
+/turf/simulated/floor/reinforced{
+	map_airless = 1
+	},
 /area/map_template/crashed_pod)
 "bn" = (
 /obj/machinery/airlock_sensor/airlock_exterior{
 	frequency = 1380;
 	id_tag = "crashedpodEast_sensor_external";
-	pixel_x = 0;
 	pixel_y = 32
 	},
 /obj/machinery/access_button/airlock_exterior{
 	frequency = 1380;
 	master_tag = "crashedpodEast";
-	pixel_x = 0;
 	pixel_y = 20;
 	pixel_z = 1
 	},
-/turf/simulated/floor/reinforced/airless,
+/turf/simulated/floor/reinforced{
+	map_airless = 1
+	},
 /area/map_template/crashed_pod)
 "bo" = (
 /obj/machinery/atmospherics/pipe/simple/visible/fuel{
@@ -96,18 +95,20 @@
 	},
 /obj/machinery/atmospherics/unary/tank/air,
 /obj/machinery/light/small{
-	dir = 4;
-	pixel_y = 0
+	dir = 4
 	},
 /turf/simulated/floor/tiled/techfloor/grid,
 /area/map_template/crashed_pod)
 "bp" = (
 /obj/machinery/atmospherics/unary/vent_pump/high_volume/external_air{
-	dir = 2;
 	id_tag = "crashedpodEast_pump";
 	power_rating = 25000
 	},
-/turf/simulated/floor/reinforced/airless,
+/obj/item/device/radio/intercom/hailing{
+	dir = 8;
+	pixel_x = 24
+	},
+/turf/simulated/floor/reinforced,
 /area/map_template/crashed_pod)
 "bq" = (
 /obj/machinery/atmospherics/portables_connector{
@@ -122,7 +123,7 @@
 	frequency = 1380;
 	id_tag = "crashedpodEast_interior_door"
 	},
-/turf/simulated/floor/reinforced/airless,
+/turf/simulated/floor/reinforced,
 /area/map_template/crashed_pod)
 "bt" = (
 /obj/machinery/access_button/airlock_interior{
@@ -132,8 +133,7 @@
 	pixel_y = 22
 	},
 /obj/machinery/atmospherics/pipe/manifold/visible/blue{
-	dir = 4;
-	icon_state = "map"
+	dir = 4
 	},
 /turf/simulated/floor/tiled/techfloor/grid,
 /area/map_template/crashed_pod)
@@ -143,7 +143,9 @@
 	id_tag = "crashedpodWest_pump_out_external";
 	power_rating = 25000
 	},
-/turf/simulated/floor/reinforced/airless,
+/turf/simulated/floor/reinforced{
+	map_airless = 1
+	},
 /area/map_template/crashed_pod)
 "bE" = (
 /obj/machinery/door/airlock/external{
@@ -151,7 +153,9 @@
 	id_tag = "crashedpodWest_exterior_door";
 	locked = 1
 	},
-/turf/simulated/floor/reinforced/airless,
+/turf/simulated/floor/reinforced{
+	map_airless = 1
+	},
 /area/map_template/crashed_pod)
 "bF" = (
 /obj/machinery/atmospherics/unary/vent_pump/high_volume/external_air{
@@ -161,19 +165,16 @@
 	},
 /obj/machinery/embedded_controller/radio/airlock/airlock_controller{
 	cycle_to_external_air = 1;
-	dir = 2;
 	frequency = 1380;
 	id_tag = "crashedpodWest";
-	pixel_x = 0;
 	pixel_y = 26;
 	tag_airpump = "crashedpodWest_pump";
 	tag_chamber_sensor = "crashedpodWest_sensor_chamber";
 	tag_exterior_door = "crashedpodWest_exterior_door";
 	tag_exterior_sensor = "crashedpodWest_sensor_external";
-	tag_interior_door = "crashedpodWest_interior_door";
-	tag_interior_sensor = null
+	tag_interior_door = "crashedpodWest_interior_door"
 	},
-/turf/simulated/floor/reinforced/airless,
+/turf/simulated/floor/reinforced,
 /area/map_template/crashed_pod)
 "bG" = (
 /obj/machinery/airlock_sensor{
@@ -182,15 +183,13 @@
 	pixel_x = 22
 	},
 /obj/machinery/atmospherics/pipe/simple/visible/red{
-	dir = 4;
-	icon_state = "intact"
+	dir = 4
 	},
-/turf/simulated/floor/reinforced/airless,
+/turf/simulated/floor/reinforced,
 /area/map_template/crashed_pod)
 "bH" = (
 /obj/machinery/atmospherics/pipe/simple/visible/red{
-	dir = 10;
-	icon_state = "intact"
+	dir = 10
 	},
 /turf/simulated/wall/r_wall,
 /area/map_template/crashed_pod)
@@ -212,31 +211,28 @@
 /area/map_template/crashed_pod)
 "bL" = (
 /obj/machinery/atmospherics/pipe/simple/visible/red{
-	dir = 6;
-	icon_state = "intact"
+	dir = 6
 	},
 /turf/simulated/wall/r_wall,
 /area/map_template/crashed_pod)
 "bW" = (
-/obj/effect/landmark/clear,
+/obj/landmark/clear,
 /turf/template_noop,
 /area/template_noop)
 "bX" = (
 /obj/machinery/atmospherics/pipe/simple/visible/blue,
-/obj/item/weapon/pen,
+/obj/item/pen,
 /obj/machinery/atmospherics/pipe/simple/visible/red{
-	dir = 4;
-	icon_state = "intact"
+	dir = 4
 	},
 /turf/simulated/floor/tiled/techfloor/grid,
 /area/map_template/crashed_pod)
 "bY" = (
-/obj/machinery/atmospherics/unary/vent_pump/high_volume/external_air{
-	dir = 2;
-	id_tag = "crashedpodWest_pump";
-	power_rating = 25000
+/obj/item/device/radio/intercom/hailing{
+	dir = 4;
+	pixel_x = -24
 	},
-/turf/simulated/floor/reinforced/airless,
+/turf/simulated/floor/reinforced,
 /area/map_template/crashed_pod)
 "ca" = (
 /obj/machinery/atmospherics/pipe/manifold/visible/fuel{
@@ -262,7 +258,9 @@
 /turf/simulated/floor/tiled/techfloor/grid,
 /area/map_template/crashed_pod)
 "ej" = (
-/turf/simulated/floor/reinforced/airless,
+/turf/simulated/floor/reinforced{
+	map_airless = 1
+	},
 /area/map_template/crashed_pod)
 "ek" = (
 /obj/machinery/atmospherics/unary/vent_pump/high_volume/external_air{
@@ -270,22 +268,24 @@
 	id_tag = "crashedpodEast_pump_out_external";
 	power_rating = 25000
 	},
-/turf/simulated/floor/reinforced/airless,
+/turf/simulated/floor/reinforced{
+	map_airless = 1
+	},
 /area/map_template/crashed_pod)
 "el" = (
-/obj/machinery/atmospherics/pipe/simple/visible/blue,
-/obj/machinery/door/airlock/external{
-	frequency = 1380;
-	id_tag = "crashedpodWest_interior_door"
+/obj/machinery/atmospherics/unary/vent_pump/high_volume/external_air{
+	id_tag = "crashedpodWest_pump";
+	power_rating = 25000
 	},
-/turf/simulated/floor/reinforced/airless,
+/turf/simulated/floor/reinforced,
 /area/map_template/crashed_pod)
 "em" = (
 /obj/machinery/door/airlock/external{
 	frequency = 1380;
 	id_tag = "crashedpodWest_interior_door"
 	},
-/turf/simulated/floor/reinforced/airless,
+/obj/machinery/atmospherics/pipe/simple/visible/blue,
+/turf/simulated/floor/reinforced,
 /area/map_template/crashed_pod)
 "en" = (
 /obj/machinery/atmospherics/binary/pump{
@@ -300,37 +300,40 @@
 /area/map_template/crashed_pod)
 "ep" = (
 /obj/machinery/atmospherics/pipe/manifold/visible/blue{
-	dir = 4;
-	icon_state = "map"
+	dir = 4
 	},
 /turf/simulated/floor/tiled/techfloor/grid,
 /area/map_template/crashed_pod)
 "eq" = (
 /obj/machinery/atmospherics/pipe/simple/visible/red,
-/obj/effect/wallframe_spawn/reinforced/hull,
+/obj/wallframe_spawn/reinforced/hull,
 /turf/simulated/floor/plating,
 /area/map_template/crashed_pod)
 "eC" = (
+/obj/machinery/computer/air_control{
+	dir = 4;
+	name = "Atmospheric Sensors";
+	sensor_tag = "crashed_pod_out"
+	},
+/turf/simulated/floor/tiled/techfloor/grid,
+/area/map_template/crashed_pod)
+"eD" = (
+/obj/machinery/atmospherics/pipe/simple/visible/blue{
+	dir = 5
+	},
 /obj/machinery/access_button/airlock_interior{
 	frequency = 1380;
 	master_tag = "crashedpodWest";
 	pixel_x = -22;
 	pixel_y = 22
 	},
-/obj/machinery/atmospherics/pipe/simple/visible/blue{
-	dir = 5
-	},
-/turf/simulated/floor/tiled/techfloor/grid,
-/area/map_template/crashed_pod)
-"eD" = (
-/obj/machinery/atmospherics/pipe/simple/visible/blue{
-	dir = 4
-	},
 /turf/simulated/floor/tiled/techfloor/grid,
 /area/map_template/crashed_pod)
 "eE" = (
 /obj/machinery/atmospherics/unary/engine,
-/turf/simulated/floor/reinforced/airless,
+/turf/simulated/floor/reinforced{
+	map_airless = 1
+	},
 /area/map_template/crashed_pod)
 "eG" = (
 /obj/machinery/atmospherics/pipe/simple/visible/blue{
@@ -341,14 +344,13 @@
 /area/map_template/crashed_pod)
 "eH" = (
 /obj/machinery/atmospherics/pipe/manifold/visible/blue{
-	dir = 1;
-	icon_state = "map"
+	dir = 1
 	},
 /turf/simulated/floor/tiled/techfloor/grid,
 /area/map_template/crashed_pod)
 "eI" = (
 /obj/machinery/atmospherics/pipe/manifold/visible/blue,
-/obj/effect/decal/cleanable/dirt,
+/obj/decal/cleanable/dirt,
 /turf/simulated/floor/tiled/techfloor/grid,
 /area/map_template/crashed_pod)
 "eJ" = (
@@ -356,21 +358,19 @@
 	dir = 4
 	},
 /obj/machinery/atmospherics/pipe/simple/visible/red,
-/obj/item/weapon/wrench,
+/obj/item/wrench,
 /turf/simulated/floor/tiled/techfloor/grid,
 /area/map_template/crashed_pod)
 "eU" = (
-/obj/effect/wallframe_spawn/reinforced/hull,
+/obj/wallframe_spawn/reinforced/hull,
 /obj/machinery/atmospherics/pipe/simple/visible/red{
-	dir = 4;
-	icon_state = "intact"
+	dir = 4
 	},
 /turf/simulated/floor/plating,
 /area/map_template/crashed_pod)
 "eW" = (
 /obj/machinery/atmospherics/pipe/simple/visible/red{
-	dir = 4;
-	icon_state = "intact"
+	dir = 4
 	},
 /turf/simulated/floor/tiled/techfloor/grid,
 /area/map_template/crashed_pod)
@@ -395,25 +395,24 @@
 /area/map_template/crashed_pod)
 "ff" = (
 /obj/machinery/atmospherics/pipe/simple/visible/blue,
-/obj/effect/decal/cleanable/dirt,
+/obj/decal/cleanable/dirt,
 /turf/simulated/floor/tiled/techfloor/grid,
 /area/map_template/crashed_pod)
 "fg" = (
 /obj/machinery/atmospherics/pipe/manifold/visible/red{
-	dir = 8;
-	icon_state = "map"
+	dir = 8
 	},
 /obj/structure/closet/hydrant{
 	pixel_x = -27
 	},
-/obj/item/weapon/screwdriver,
+/obj/item/screwdriver,
 /turf/simulated/floor/tiled/techfloor/grid,
 /area/map_template/crashed_pod)
 "fh" = (
 /obj/machinery/atmospherics/unary/vent_scrubber/on{
 	dir = 8
 	},
-/obj/effect/decal/cleanable/dirt,
+/obj/decal/cleanable/dirt,
 /obj/item/solar_assembly,
 /obj/item/solar_assembly,
 /obj/item/solar_assembly,
@@ -427,7 +426,7 @@
 /obj/item/solar_assembly,
 /obj/item/solar_assembly,
 /obj/item/solar_assembly,
-/obj/effect/floor_decal/industrial/hatch/orange,
+/obj/floor_decal/industrial/hatch/orange,
 /obj/structure/cable{
 	d2 = 2;
 	icon_state = "0-2";
@@ -445,28 +444,28 @@
 /area/map_template/crashed_pod)
 "fi" = (
 /obj/item/device/multitool,
-/obj/item/weapon/screwdriver,
-/obj/item/weapon/cell/device/high,
-/obj/item/weapon/cell/device/high,
-/obj/item/weapon/cell/crap,
-/obj/item/weapon/storage/box/lights,
+/obj/item/screwdriver,
+/obj/item/cell/device/high,
+/obj/item/cell/device/high,
+/obj/item/cell/crap,
+/obj/item/storage/box/lights,
 /obj/item/device/scanner/gas,
-/obj/item/weapon/reagent_containers/food/drinks/cans/speer,
-/obj/item/weapon/reagent_containers/food/drinks/cans/speer,
-/obj/item/weapon/reagent_containers/food/drinks/cans/speer,
-/obj/item/weapon/storage/box/monkeycubes,
-/obj/item/weapon/reagent_containers/food/drinks/bottle/vodka,
-/obj/item/weapon/reagent_containers/food/drinks/bottle/specialwhiskey,
-/obj/item/weapon/tracker_electronics,
-/obj/item/weapon/pen/blue,
-/obj/item/weapon/pen/green,
-/obj/item/weapon/pen/red,
-/obj/effect/floor_decal/industrial/hatch/orange,
-/obj/item/stack/cable_coil/random,
-/obj/item/stack/cable_coil/random,
+/obj/item/reagent_containers/food/drinks/cans/speer,
+/obj/item/reagent_containers/food/drinks/cans/speer,
+/obj/item/reagent_containers/food/drinks/cans/speer,
+/obj/item/storage/box/monkeycubes,
+/obj/item/reagent_containers/food/drinks/bottle/vodka,
+/obj/item/reagent_containers/food/drinks/bottle/specialwhiskey,
+/obj/item/tracker_electronics,
+/obj/item/pen/blue,
+/obj/item/pen/green,
+/obj/item/pen/red,
+/obj/floor_decal/industrial/hatch/orange,
+/obj/random/single/color/cable_coil,
+/obj/random/single/color/cable_coil,
 /obj/structure/closet/crate,
-/obj/item/weapon/flame/lighter/random,
-/obj/item/weapon/storage/box/lights/tubes,
+/obj/item/flame/lighter/random,
+/obj/item/storage/box/lights/tubes,
 /obj/random/powercell,
 /obj/random/powercell,
 /obj/random/powercell,
@@ -474,14 +473,13 @@
 	dir = 1;
 	icon_state = "railing0-1"
 	},
-/obj/item/tape/engineering,
+/obj/item/taperoll/engineering,
 /turf/simulated/floor/tiled/techfloor/grid,
 /area/map_template/crashed_pod)
 "fj" = (
-/obj/effect/floor_decal/industrial/hatch/orange,
+/obj/floor_decal/industrial/hatch/orange,
 /obj/machinery/atmospherics/pipe/simple/visible/red{
-	dir = 5;
-	icon_state = "intact"
+	dir = 5
 	},
 /obj/structure/railing/mapped{
 	dir = 1;
@@ -499,7 +497,7 @@
 /turf/simulated/floor/tiled/techfloor/grid,
 /area/map_template/crashed_pod)
 "fl" = (
-/obj/effect/floor_decal/industrial/hatch/orange,
+/obj/floor_decal/industrial/hatch/orange,
 /obj/machinery/atmospherics/pipe/manifold/visible/red,
 /obj/structure/railing/mapped{
 	dir = 8;
@@ -519,33 +517,31 @@
 /obj/random/firstaid,
 /obj/random/firstaid,
 /obj/random/firstaid,
-/obj/item/weapon/storage/firstaid/surgery,
-/obj/item/weapon/storage/firstaid/stab,
-/obj/item/weapon/storage/pill_bottle/antidexafen,
-/obj/item/weapon/storage/pill_bottle/antidexafen,
-/obj/item/weapon/storage/med_pouch/radiation,
-/obj/item/weapon/storage/med_pouch/radiation,
-/obj/item/weapon/storage/med_pouch/radiation,
-/obj/item/weapon/storage/med_pouch/radiation,
-/obj/item/weapon/storage/pill_bottle/assorted,
+/obj/item/storage/firstaid/surgery,
+/obj/item/storage/firstaid/stab,
+/obj/item/storage/pill_bottle/antidexafen,
+/obj/item/storage/pill_bottle/antidexafen,
+/obj/item/storage/med_pouch/radiation,
+/obj/item/storage/med_pouch/radiation,
+/obj/item/storage/med_pouch/radiation,
+/obj/item/storage/med_pouch/radiation,
+/obj/item/storage/pill_bottle/assorted,
 /obj/machinery/atmospherics/pipe/simple/visible/red{
-	dir = 9;
-	icon_state = "intact"
+	dir = 9
 	},
-/obj/effect/floor_decal/industrial/hatch/orange,
+/obj/floor_decal/industrial/hatch/orange,
 /obj/structure/railing/mapped{
 	dir = 1;
 	icon_state = "railing0-1"
 	},
-/mob/living/simple_animal/mouse/brown/Tom,
+/mob/living/simple_animal/passive/mouse/brown/Tom,
 /turf/simulated/floor/tiled/techfloor/grid,
 /area/map_template/crashed_pod)
 "fn" = (
 /obj/machinery/atmospherics/unary/vent_pump/on{
 	dir = 4
 	},
-/obj/effect/floor_decal/industrial/hatch/orange,
-/obj/structure/reagent_dispensers/fueltank,
+/obj/floor_decal/industrial/hatch/orange,
 /obj/structure/railing/mapped{
 	dir = 1;
 	icon_state = "railing0-1"
@@ -554,6 +550,7 @@
 	dir = 4;
 	icon_state = "railing0-1"
 	},
+/obj/machinery/fabricator/hacked,
 /turf/simulated/floor/tiled/techfloor/grid,
 /area/map_template/crashed_pod)
 "fx" = (
@@ -562,15 +559,14 @@
 	dir = 4;
 	locked = 0;
 	pixel_x = -25;
-	pixel_y = 0;
 	req_access = list()
 	},
 /turf/simulated/floor/tiled/techfloor/grid,
 /area/map_template/crashed_pod)
 "fy" = (
-/obj/effect/decal/cleanable/dirt,
+/obj/decal/cleanable/dirt,
 /obj/machinery/pipedispenser,
-/obj/effect/floor_decal/industrial/hatch/orange,
+/obj/floor_decal/industrial/hatch/orange,
 /obj/structure/cable,
 /obj/machinery/power/terminal,
 /obj/structure/railing/mapped{
@@ -580,20 +576,20 @@
 /turf/simulated/floor/tiled/techfloor/grid,
 /area/map_template/crashed_pod)
 "fz" = (
-/obj/effect/decal/cleanable/dirt,
-/obj/effect/floor_decal/industrial/hatch/orange,
+/obj/decal/cleanable/dirt,
+/obj/floor_decal/industrial/hatch/orange,
 /obj/machinery/power/port_gen/pacman/super,
 /turf/simulated/floor/tiled/techfloor/grid,
 /area/map_template/crashed_pod)
 "fA" = (
-/obj/effect/decal/cleanable/dirt,
-/obj/effect/floor_decal/industrial/hatch/orange,
+/obj/decal/cleanable/dirt,
+/obj/floor_decal/industrial/hatch/orange,
 /obj/structure/closet/crate,
-/obj/item/weapon/storage/briefcase/inflatable,
-/obj/item/weapon/storage/briefcase/inflatable,
-/obj/item/weapon/storage/briefcase/inflatable,
-/obj/item/weapon/storage/briefcase/inflatable,
-/obj/item/weapon/storage/briefcase/inflatable,
+/obj/item/storage/briefcase/inflatable,
+/obj/item/storage/briefcase/inflatable,
+/obj/item/storage/briefcase/inflatable,
+/obj/item/storage/briefcase/inflatable,
+/obj/item/storage/briefcase/inflatable,
 /obj/item/device/geiger,
 /obj/item/device/geiger,
 /obj/random/powercell,
@@ -625,20 +621,20 @@
 /obj/item/device/oxycandle,
 /obj/item/device/oxycandle,
 /obj/structure/closet/crate,
-/obj/effect/floor_decal/industrial/hatch/orange,
-/obj/item/weapon/reagent_containers/glass/paint/random,
+/obj/floor_decal/industrial/hatch/orange,
+/obj/item/reagent_containers/glass/paint/random,
 /obj/random/powercell,
 /obj/random/powercell,
 /obj/structure/railing/mapped{
 	dir = 8;
 	icon_state = "railing0-1"
 	},
-/obj/item/weapon/book/manual/engineering_construction,
+/obj/item/book/manual/engineering_construction,
 /turf/simulated/floor/tiled/techfloor/grid,
 /area/map_template/crashed_pod)
 "fD" = (
 /obj/structure/closet/crate/freezer/rations,
-/obj/effect/floor_decal/industrial/hatch/orange,
+/obj/floor_decal/industrial/hatch/orange,
 /obj/machinery/power/terminal,
 /obj/structure/cable{
 	d2 = 4;
@@ -651,17 +647,18 @@
 /obj/random/handgun,
 /obj/random/handgun,
 /obj/random/handgun,
-/obj/item/weapon/pickaxe,
-/obj/item/weapon/pickaxe,
-/obj/item/weapon/pickaxe,
+/obj/item/pickaxe,
+/obj/item/pickaxe,
+/obj/item/pickaxe,
 /obj/item/stack/material/glass/fifty,
 /obj/item/stack/material/glass/fifty,
 /obj/item/stack/material/plasteel/fifty,
+/obj/item/stack/material/plastic/fifty,
 /obj/item/device/flashlight/lantern,
 /obj/item/device/flashlight/lantern,
-/obj/item/weapon/storage/box/glowsticks,
-/obj/item/weapon/storage/box/glowsticks,
-/obj/item/weapon/storage/box/glowsticks,
+/obj/item/storage/box/glowsticks,
+/obj/item/storage/box/glowsticks,
+/obj/item/storage/box/glowsticks,
 /obj/item/stack/material/steel/fifty,
 /obj/item/stack/material/steel/fifty,
 /obj/item/stack/material/steel/fifty,
@@ -669,7 +666,7 @@
 /obj/random/toolbox,
 /obj/random/toolbox,
 /obj/random/toolbox,
-/obj/effect/floor_decal/industrial/hatch/orange,
+/obj/floor_decal/industrial/hatch/orange,
 /obj/structure/cable{
 	d1 = 2;
 	d2 = 8;
@@ -679,7 +676,7 @@
 	dir = 4;
 	icon_state = "railing0-1"
 	},
-/obj/item/weapon/stock_parts/circuitboard/solar_control,
+/obj/item/stock_parts/circuitboard/solar_control,
 /turf/simulated/floor/tiled/techfloor/grid,
 /area/map_template/crashed_pod)
 "fP" = (
@@ -692,10 +689,8 @@
 /area/map_template/crashed_pod)
 "fQ" = (
 /obj/machinery/power/apc{
-	dir = 2;
 	locked = 0;
 	name = "south bump";
-	operating = 1;
 	pixel_y = -28;
 	req_access = list()
 	},
@@ -704,7 +699,7 @@
 	icon_state = "0-4"
 	},
 /obj/machinery/portable_atmospherics/canister/carbon_dioxide,
-/obj/effect/floor_decal/industrial/hatch/orange,
+/obj/floor_decal/industrial/hatch/orange,
 /obj/structure/cable{
 	d2 = 8;
 	icon_state = "0-8"
@@ -713,25 +708,24 @@
 /area/map_template/crashed_pod)
 "fR" = (
 /obj/structure/closet/crate,
-/obj/effect/floor_decal/industrial/hatch/orange,
+/obj/floor_decal/industrial/hatch/orange,
 /obj/structure/cable{
 	d1 = 4;
 	d2 = 8;
-	icon_state = "4-8";
-	pixel_x = 0
+	icon_state = "4-8"
 	},
 /obj/structure/railing/mapped{
 	dir = 4;
 	icon_state = "railing0-1"
 	},
-/obj/item/weapon/stock_parts/micro_laser/ultra,
-/obj/item/weapon/stock_parts/matter_bin/adv,
-/obj/item/weapon/stock_parts/circuitboard/biogenerator,
-/obj/item/weapon/stock_parts/matter_bin/super,
+/obj/item/stock_parts/micro_laser/ultra,
+/obj/item/stock_parts/matter_bin/adv,
+/obj/item/stock_parts/circuitboard/biogenerator,
+/obj/item/stock_parts/matter_bin/super,
 /obj/item/stack/material/uranium/ten,
-/obj/item/weapon/stock_parts/circuitboard/oxyregenerator,
-/obj/item/weapon/stock_parts/circuitboard/unary_atmos/heater,
-/obj/item/weapon/stock_parts/circuitboard/unary_atmos/cooler,
+/obj/item/stock_parts/circuitboard/oxyregenerator,
+/obj/item/stock_parts/circuitboard/unary_atmos/heater,
+/obj/item/stock_parts/circuitboard/unary_atmos/cooler,
 /obj/item/device/scanner/gas,
 /turf/simulated/floor/tiled/techfloor/grid,
 /area/map_template/crashed_pod)
@@ -739,14 +733,13 @@
 /obj/structure/cable{
 	d1 = 4;
 	d2 = 8;
-	icon_state = "4-8";
-	pixel_x = 0
+	icon_state = "4-8"
 	},
 /turf/simulated/floor/tiled/techfloor/grid,
 /area/map_template/crashed_pod)
 "fT" = (
 /obj/structure/cable,
-/obj/effect/floor_decal/industrial/hatch/orange,
+/obj/floor_decal/industrial/hatch/orange,
 /obj/structure/reagent_dispensers/watertank,
 /obj/machinery/light/spot,
 /obj/structure/railing/mapped{
@@ -756,7 +749,7 @@
 /turf/simulated/floor/tiled/techfloor/grid,
 /area/map_template/crashed_pod)
 "gd" = (
-/obj/effect/floor_decal/industrial/hatch/orange,
+/obj/floor_decal/industrial/hatch/orange,
 /obj/machinery/light/spot,
 /obj/structure/cable{
 	d2 = 4;
@@ -776,22 +769,21 @@
 /turf/simulated/floor/tiled/techfloor,
 /area/map_template/crashed_pod)
 "gg" = (
-/obj/effect/decal/cleanable/dirt,
+/obj/decal/cleanable/dirt,
 /turf/simulated/floor/tiled/techfloor/grid,
 /area/map_template/crashed_pod)
 "gh" = (
 /obj/structure/cable{
 	d1 = 4;
 	d2 = 8;
-	icon_state = "4-8";
-	pixel_x = 0
+	icon_state = "4-8"
 	},
-/obj/effect/floor_decal/industrial/hatch/orange,
+/obj/floor_decal/industrial/hatch/orange,
 /obj/structure/railing/mapped{
 	dir = 8;
 	icon_state = "railing0-1"
 	},
-/obj/machinery/fabricator/hacked,
+/obj/structure/reagent_dispensers/fueltank,
 /turf/simulated/floor/tiled/techfloor/grid,
 /area/map_template/crashed_pod)
 "gi" = (
@@ -804,7 +796,7 @@
 	d2 = 8;
 	icon_state = "0-8"
 	},
-/obj/effect/floor_decal/industrial/hatch/orange,
+/obj/floor_decal/industrial/hatch/orange,
 /turf/simulated/floor/tiled/techfloor/grid,
 /area/map_template/crashed_pod)
 "gv" = (
@@ -829,8 +821,8 @@
 /obj/item/clothing/under/color/orange,
 /obj/item/clothing/under/color/blackjumpshorts,
 /obj/item/clothing/under/color/black,
-/obj/effect/decal/cleanable/dirt,
-/obj/effect/floor_decal/industrial/hatch/orange,
+/obj/decal/cleanable/dirt,
+/obj/floor_decal/industrial/hatch/orange,
 /obj/structure/railing/mapped{
 	dir = 8;
 	icon_state = "railing0-1"
@@ -855,8 +847,8 @@
 /obj/item/clothing/under/color/orange,
 /obj/item/clothing/under/color/blackjumpshorts,
 /obj/item/clothing/under/color/black,
-/obj/effect/decal/cleanable/dirt,
-/obj/effect/floor_decal/industrial/hatch/orange,
+/obj/decal/cleanable/dirt,
+/obj/floor_decal/industrial/hatch/orange,
 /obj/structure/railing/mapped{
 	dir = 4;
 	icon_state = "railing0-1"
@@ -871,10 +863,13 @@
 /area/map_template/crashed_pod)
 "gz" = (
 /obj/structure/bed/chair/shuttle/black{
-	dir = 4;
-	icon_state = "shuttle_chair_preview"
+	dir = 4
 	},
-/obj/effect/submap_landmark/spawnpoint/crashed_pod_survivor,
+/obj/submap_landmark/spawnpoint/crashed_pod_survivor,
+/obj/item/device/radio/intercom/hailing{
+	dir = 4;
+	pixel_x = -24
+	},
 /turf/simulated/floor/tiled/dark/monotile,
 /area/map_template/crashed_pod)
 "gC" = (
@@ -886,13 +881,12 @@
 /area/map_template/crashed_pod)
 "gD" = (
 /obj/machinery/atmospherics/pipe/simple/visible/red,
-/obj/effect/decal/cleanable/filth,
+/obj/decal/cleanable/filth,
 /obj/item/device/binoculars,
 /obj/machinery/alarm{
 	dir = 4;
 	locked = 0;
 	pixel_x = -25;
-	pixel_y = 0;
 	req_access = list()
 	},
 /turf/simulated/floor/tiled/techfloor,
@@ -901,7 +895,7 @@
 /obj/machinery/sleeper{
 	dir = 8
 	},
-/obj/effect/floor_decal/industrial/outline/blue,
+/obj/floor_decal/industrial/outline/blue,
 /turf/simulated/floor/tiled/dark/monotile,
 /area/map_template/crashed_pod)
 "gF" = (
@@ -925,7 +919,7 @@
 /obj/item/clothing/under/color/orange,
 /obj/item/clothing/under/color/blackjumpshorts,
 /obj/item/clothing/under/color/black,
-/obj/effect/floor_decal/industrial/hatch/orange,
+/obj/floor_decal/industrial/hatch/orange,
 /obj/structure/railing/mapped{
 	dir = 8;
 	icon_state = "railing0-1"
@@ -939,35 +933,33 @@
 /area/map_template/crashed_pod)
 "gI" = (
 /obj/machinery/atmospherics/pipe/simple/visible/blue,
-/obj/effect/decal/cleanable/dirt,
+/obj/decal/cleanable/dirt,
 /turf/simulated/floor/tiled/techfloor,
 /area/map_template/crashed_pod)
 "gJ" = (
 /obj/machinery/atmospherics/pipe/simple/visible/blue,
-/obj/effect/decal/cleanable/dirt,
+/obj/decal/cleanable/dirt,
 /obj/item/toy/figure/engineer,
 /turf/simulated/floor/tiled/techfloor,
 /area/map_template/crashed_pod)
 "gK" = (
 /obj/structure/bed/chair/shuttle/black{
-	dir = 4;
-	icon_state = "shuttle_chair_preview"
+	dir = 4
 	},
-/obj/effect/decal/cleanable/vomit,
-/obj/effect/submap_landmark/spawnpoint/crashed_pod_survivor,
+/obj/decal/cleanable/vomit,
+/obj/submap_landmark/spawnpoint/crashed_pod_survivor,
 /turf/simulated/floor/tiled/dark/monotile,
 /area/map_template/crashed_pod)
 "gT" = (
 /obj/item/trash/liquidfood,
-/obj/effect/decal/cleanable/dirt,
+/obj/decal/cleanable/dirt,
 /turf/simulated/floor/tiled/techfloor,
 /area/map_template/crashed_pod)
 "gU" = (
 /obj/machinery/atmospherics/pipe/simple/visible/red{
-	dir = 5;
-	icon_state = "intact"
+	dir = 5
 	},
-/obj/effect/decal/cleanable/dirt,
+/obj/decal/cleanable/dirt,
 /obj/machinery/light/spot{
 	dir = 8
 	},
@@ -980,12 +972,12 @@
 /turf/simulated/floor/tiled/techfloor,
 /area/map_template/crashed_pod)
 "gW" = (
-/obj/effect/decal/cleanable/dirt,
-/obj/item/weapon/reagent_containers/food/drinks/cans/speer,
+/obj/decal/cleanable/dirt,
+/obj/item/reagent_containers/food/drinks/cans/speer,
 /turf/simulated/floor/tiled/techfloor,
 /area/map_template/crashed_pod)
 "gX" = (
-/obj/item/weapon/storage/backpack/dufflebag/eng,
+/obj/item/storage/backpack/dufflebag/eng,
 /turf/simulated/floor/tiled/techfloor,
 /area/map_template/crashed_pod)
 "gZ" = (
@@ -995,40 +987,40 @@
 /turf/simulated/floor/tiled/techfloor,
 /area/map_template/crashed_pod)
 "hh" = (
-/obj/effect/decal/cleanable/dirt,
+/obj/decal/cleanable/dirt,
 /obj/structure/closet/emcloset,
-/obj/item/weapon/crowbar,
-/obj/item/weapon/crowbar,
-/obj/effect/floor_decal/industrial/outline/blue,
+/obj/item/crowbar,
+/obj/item/crowbar,
+/obj/floor_decal/industrial/outline/blue,
 /obj/item/clothing/suit/space/emergency,
-/obj/item/weapon/tank/emergency/oxygen/double,
+/obj/item/tank/oxygen_emergency_double,
 /obj/item/clothing/head/helmet/space/emergency,
+/obj/item/device/suit_cooling_unit,
 /turf/simulated/floor/tiled/dark,
 /area/map_template/crashed_pod)
 "hi" = (
 /obj/structure/closet/emcloset,
-/obj/effect/floor_decal/industrial/outline/blue,
+/obj/floor_decal/industrial/outline/blue,
 /obj/item/clothing/suit/space/emergency,
-/obj/item/weapon/tank/emergency/oxygen/double,
+/obj/item/tank/oxygen_emergency_double,
 /obj/item/clothing/head/helmet/space/emergency,
-/obj/item/weapon/storage/briefcase/inflatable,
+/obj/item/storage/briefcase/inflatable,
+/obj/item/device/suit_cooling_unit,
 /turf/simulated/floor/tiled/dark,
 /area/map_template/crashed_pod)
 "hj" = (
 /obj/machinery/atmospherics/pipe/simple/visible/blue{
-	dir = 9;
-	icon_state = "intact"
+	dir = 9
 	},
 /obj/machinery/light/spot{
-	dir = 4;
-	icon_state = "tube_map"
+	dir = 4
 	},
 /turf/simulated/floor/tiled/techfloor,
 /area/map_template/crashed_pod)
 "hk" = (
 /obj/structure/table/steel_reinforced,
 /obj/machinery/recharger,
-/obj/item/weapon/reagent_containers/food/drinks/glass2/coffeecup/metal,
+/obj/item/reagent_containers/food/drinks/glass2/coffeecup/metal,
 /turf/simulated/floor/tiled/dark,
 /area/map_template/crashed_pod)
 "hm" = (
@@ -1040,42 +1032,62 @@
 /turf/simulated/floor/tiled/techfloor,
 /area/map_template/crashed_pod)
 "lG" = (
-/obj/effect/wallframe_spawn/reinforced/hull,
+/obj/wallframe_spawn/reinforced/hull,
 /turf/simulated/floor/plating,
 /area/map_template/crashed_pod)
 "pO" = (
-/obj/effect/decal/cleanable/dirt,
+/obj/decal/cleanable/dirt,
+/obj/machinery/radio_beacon,
 /turf/simulated/floor/tiled/dark,
 /area/map_template/crashed_pod)
 "vG" = (
-/obj/effect/decal/cleanable/dirt,
-/obj/effect/floor_decal/industrial/outline/blue,
+/obj/decal/cleanable/dirt,
+/obj/floor_decal/industrial/outline/blue,
 /obj/machinery/portable_atmospherics/powered/pump/filled,
 /turf/simulated/floor/tiled/dark,
 /area/map_template/crashed_pod)
 "ED" = (
-/obj/effect/submap_landmark/joinable_submap/crashed_pod,
+/obj/submap_landmark/joinable_submap/crashed_pod,
 /turf/simulated/floor/tiled/dark/monotile,
 /area/map_template/crashed_pod)
 "Gp" = (
-/obj/effect/decal/cleanable/dirt,
-/obj/effect/floor_decal/industrial/outline/blue,
+/obj/decal/cleanable/dirt,
+/obj/floor_decal/industrial/outline/blue,
 /obj/machinery/portable_atmospherics/powered/scrubber,
 /turf/simulated/floor/tiled/dark,
 /area/map_template/crashed_pod)
+"Hp" = (
+/obj/machinery/sleeper{
+	dir = 8
+	},
+/obj/floor_decal/industrial/outline/blue,
+/obj/item/device/radio/intercom/hailing{
+	dir = 8;
+	pixel_x = 24
+	},
+/turf/simulated/floor/tiled/dark/monotile,
+/area/map_template/crashed_pod)
+"Hx" = (
+/obj/machinery/air_sensor{
+	id_tag = "crashed_pod_out"
+	},
+/turf/simulated/floor/reinforced{
+	map_airless = 1
+	},
+/area/map_template/crashed_pod)
 "RN" = (
 /obj/structure/table/steel_reinforced,
-/obj/item/device/radio,
-/obj/item/device/radio,
-/obj/item/device/radio,
-/obj/item/device/radio,
-/obj/item/device/radio,
+/obj/item/device/radio/hailing,
+/obj/item/device/radio/hailing,
+/obj/item/device/radio/hailing,
+/obj/item/device/radio/hailing,
+/obj/item/device/radio/hailing,
 /obj/random/plushie,
-/obj/item/weapon/paper_bin,
+/obj/item/paper_bin,
 /turf/simulated/floor/tiled/dark,
 /area/map_template/crashed_pod)
 "ZI" = (
-/obj/effect/floor_decal/industrial/outline/blue,
+/obj/floor_decal/industrial/outline/blue,
 /obj/machinery/portable_atmospherics/powered/scrubber,
 /turf/simulated/floor/tiled/dark/monotile,
 /area/map_template/crashed_pod)
@@ -1102,7 +1114,7 @@ ab
 bb
 ej
 ej
-ej
+Hx
 bu
 ej
 ej
@@ -1135,7 +1147,7 @@ ab
 ab
 bF
 bY
-el
+ab
 eC
 fb
 fg
@@ -1151,7 +1163,7 @@ ab
 (5,1,1) = {"
 ab
 bG
-ej
+el
 em
 eD
 eW
@@ -1159,7 +1171,7 @@ fh
 fy
 gd
 ay
-gE
+Hp
 gE
 gV
 RN

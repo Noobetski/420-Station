@@ -11,23 +11,23 @@
 	name = "Records"
 	sort_order = 3
 
-/datum/category_item/player_setup_item/background/records/load_character(savefile/S)
-	from_save(S["public_record"],pref.public_record)
-	from_save(S["med_record"],pref.med_record)
-	from_save(S["sec_record"],pref.sec_record)
-	from_save(S["gen_record"],pref.gen_record)
-	from_save(S["memory"],pref.memory)
-	from_save(S["email_addr"], pref.email_addr)
-	from_save(S["email_pass"], pref.email_pass)
+/datum/category_item/player_setup_item/background/records/load_character(datum/pref_record_reader/R)
+	pref.public_record = R.read("public_record")
+	pref.med_record = R.read("med_record")
+	pref.sec_record = R.read("sec_record")
+	pref.gen_record = R.read("gen_record")
+	pref.memory = R.read("memory")
+	pref.email_addr = R.read("email_addr")
+	pref.email_pass = R.read("email_pass")
 
-/datum/category_item/player_setup_item/background/records/save_character(savefile/S)
-	to_save(S["public_record"],pref.public_record)
-	to_save(S["med_record"],pref.med_record)
-	to_save(S["sec_record"],pref.sec_record)
-	to_save(S["gen_record"],pref.gen_record)
-	to_save(S["memory"],pref.memory)
-	to_save(S["email_addr"], pref.email_addr)
-	to_save(S["email_pass"], pref.email_pass)
+/datum/category_item/player_setup_item/background/records/save_character(datum/pref_record_writer/W)
+	W.write("public_record", pref.public_record)
+	W.write("med_record", pref.med_record)
+	W.write("sec_record", pref.sec_record)
+	W.write("gen_record", pref.gen_record)
+	W.write("memory", pref.memory)
+	W.write("email_addr", pref.email_addr)
+	W.write("email_pass", pref.email_pass)
 
 /datum/category_item/player_setup_item/background/records/proc/allow_email_branch_check(datum/mil_branch/B)
 	return B.allow_custom_email
@@ -39,23 +39,23 @@
 	if (jobban_isbanned(user, "Records"))
 		. += "[SPAN_WARNING("You are banned from using character records.")]"
 	else
-		.+= UIBUTTON("set_public_record", TextPreview(pref.public_record, 40), "Public")
-		.+= UIBUTTON("set_medical_records", TextPreview(pref.med_record, 40), "Medical")
-		.+= UIBUTTON("set_general_records", TextPreview(pref.gen_record, 40), "Employment")
-		.+= UIBUTTON("set_security_records", TextPreview(pref.sec_record, 40), "Security")
-		.+= UIBUTTON("set_memory", TextPreview(pref.memory, 40), "Memory")
+		.+= TBTN("set_public_record", TextPreview(pref.public_record, 40), "Public")
+		.+= TBTN("set_medical_records", TextPreview(pref.med_record, 40), "Medical")
+		.+= TBTN("set_general_records", TextPreview(pref.gen_record, 40), "Employment")
+		.+= TBTN("set_security_records", TextPreview(pref.sec_record, 40), "Security")
+		.+= TBTN("set_memory", TextPreview(pref.memory, 40), "Memory")
 
 	. += "<br><b>Other</b>:"
-	var/set_addr_button = UIBUTTON("set_email_addr", pref.email_addr ? pref.email_addr : "(default)", "Email Address")
-	var/list/branches = pref.for_each_selected_branch(CALLBACK(src, .proc/allow_email_branch_check))
+	var/set_addr_button = TBTN("set_email_addr", pref.email_addr ? pref.email_addr : "(default)", "Email Address")
+	var/list/branches = pref.for_each_selected_branch(new Callback(src, .proc/allow_email_branch_check))
 	for (var/name in branches)
 		set_addr_button += "  " + (branches[name] ? UI_FONT_GOOD(name) : UI_FONT_BAD(name))
 	. += set_addr_button
 
-	. += UIBUTTON("set_email_pass", pref.email_pass ? pref.email_pass : "(random)", "Email Password")
+	. += TBTN("set_email_pass", pref.email_pass ? pref.email_pass : "(random)", "Email Password")
 	. = jointext(., "<br>")
 
-/datum/category_item/player_setup_item/background/records/OnTopic(var/href,var/list/href_list, var/mob/user)
+/datum/category_item/player_setup_item/background/records/OnTopic(href,list/href_list, mob/user)
 	if (href_list["set_public_record"])
 		var/new_public = sanitize(input(user,"Enter general public record information here.",CHARACTER_PREFERENCE_INPUT_TITLE, html_decode(pref.public_record)) as message|null, MAX_PAPER_MESSAGE_LEN, extra = 0)
 		if (!isnull(new_public) && !jobban_isbanned(user, "Records") && CanUseTopic(user))

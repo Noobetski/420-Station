@@ -1,6 +1,6 @@
 /obj/item/device/kit
 	icon_state = "modkit"
-	icon = 'icons/obj/device.dmi'
+	icon = 'icons/obj/modkit.dmi'
 	var/new_name = "exosuit"    //What is the variant called?
 	var/new_desc = "An exosuit." //How is the new exosuit described?
 	var/new_icon = "ripley"  //What base icon will the new exosuit use?
@@ -11,14 +11,14 @@
 	. = ..()
 	to_chat(user, "It has [uses] use\s left.")
 
-/obj/item/device/kit/inherit_custom_item_data(var/datum/custom_item/citem)
+/obj/item/device/kit/inherit_custom_item_data(datum/custom_item/citem)
 	new_name = citem.item_name
 	new_desc = citem.item_desc
 	new_icon = citem.item_icon_state
 	new_icon_file = CUSTOM_ITEM_OBJ
 	. = src
 
-/obj/item/device/kit/proc/use(var/amt, var/mob/user)
+/obj/item/device/kit/proc/use(amt, mob/user)
 	uses -= amt
 	playsound(get_turf(user), 'sound/items/Screwdriver.ogg', 50, 1)
 	if(uses<1)
@@ -33,13 +33,13 @@
 	var/new_light_overlay
 	var/new_mob_icon_file
 
-/obj/item/device/kit/suit/inherit_custom_item_data(var/datum/custom_item/citem)
+/obj/item/device/kit/suit/inherit_custom_item_data(datum/custom_item/citem)
 	. = ..()
 	if(citem.additional_data["light_overlay"])
 		new_light_overlay = citem.additional_data["light_overlay"]
 	new_mob_icon_file = CUSTOM_ITEM_MOB
 
-/obj/item/clothing/head/helmet/space/void/attackby(var/obj/item/O, var/mob/user)
+/obj/item/clothing/head/helmet/space/void/use_tool(obj/item/O, mob/living/user, list/click_params)
 	if(istype(O,/obj/item/device/kit/suit))
 		var/obj/item/device/kit/suit/kit = O
 		SetName("[kit.new_name] suit helmet")
@@ -52,15 +52,16 @@
 			icon_override = kit.new_mob_icon_file
 		if(kit.new_light_overlay)
 			light_overlay = kit.new_light_overlay
-		to_chat(user, "You set about modifying the helmet into [src].")
+		to_chat(user, SPAN_NOTICE("You set about modifying the helmet into \the [src]."))
 		var/mob/living/carbon/human/H = user
 		if(istype(H))
 			species_restricted = list(H.species.get_bodytype(H))
 		kit.use(1,user)
-		return 1
+		return TRUE
+
 	return ..()
 
-/obj/item/clothing/suit/space/void/attackby(var/obj/item/O, var/mob/user)
+/obj/item/clothing/suit/space/void/use_tool(obj/item/O, mob/living/user, list/click_params)
 	if(istype(O,/obj/item/device/kit/suit))
 		var/obj/item/device/kit/suit/kit = O
 		SetName("[kit.new_name] voidsuit")
@@ -71,12 +72,12 @@
 			icon = kit.new_icon_file
 		if(kit.new_mob_icon_file)
 			icon_override = kit.new_mob_icon_file
-		to_chat(user, "You set about modifying the suit into [src].")
+		to_chat(user, SPAN_NOTICE("You set about modifying the suit into \the [src]."))
 		var/mob/living/carbon/human/H = user
 		if(istype(H))
 			species_restricted = list(H.species.get_bodytype(H))
 		kit.use(1,user)
-		return 1
+		return TRUE
 	return ..()
 
 // Mechs are handled in their attackby (mech_interaction.dm).
@@ -90,12 +91,23 @@
 	to_chat(user, "This kit will add a '[new_name]' decal to a exosuit'.")
 
 // exosuit kits.
-/obj/item/device/kit/paint/powerloader/flames_red
+/obj/item/device/kit/paint/use(amt, mob/user)
+	playsound(get_turf(user), 'sound/items/Screwdriver.ogg', 50, 1)
+
+/obj/item/device/kit/paint/flames_red
 	name = "\"Firestarter\" exosuit customisation kit"
-	new_name = "red flames"
 	new_icon = "flames_red"
 
-/obj/item/device/kit/paint/powerloader/flames_blue
+/obj/item/device/kit/paint/flames_blue
 	name = "\"Burning Chrome\" exosuit customisation kit"
-	new_name = "blue flames"
 	new_icon = "flames_blue"
+
+/obj/item/device/kit/paint/camouflage
+	name = "\"Guerilla\" exosuit customisation kit"
+	desc = "The exact same pattern the 76th Armored Gauntlet used in the Gaia war, now available for general use."
+	new_icon = "cammo1"
+
+/obj/item/device/kit/paint/camouflage/forest
+	name = "\"Alpine\" exosuit customisation kit"
+	new_icon = "cammo2"
+	desc = "A muted pattern for alpine environments. Don't miss the forest for the trees!"

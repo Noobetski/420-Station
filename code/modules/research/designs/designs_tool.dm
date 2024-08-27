@@ -17,16 +17,16 @@
 	id = "brace"
 	req_tech = list(TECH_ENGINEERING = 3, TECH_MATERIAL = 2)
 	materials = list(MATERIAL_STEEL = 2000, MATERIAL_GLASS = 50)
-	build_path = /obj/item/weapon/airlock_brace
+	build_path = /obj/item/airlock_brace
 	sort_string = "VAGAC"
 
-/datum/design/item/tool/brace_jack
+/datum/design/item/tool/jack
 	name = "maintenance jack"
 	desc = "A special maintenance tool that can be used to remove airlock braces."
 	id = "bracejack"
 	req_tech = list(TECH_ENGINEERING = 3, TECH_MATERIAL = 2)
 	materials = list(MATERIAL_STEEL = 120)
-	build_path = /obj/item/weapon/crowbar/brace_jack
+	build_path = /obj/item/material/twohanded/jack
 	sort_string = "VAGAD"
 
 /datum/design/item/tool/clamp
@@ -61,7 +61,7 @@
 	id = "experimental_welder"
 	req_tech = list(TECH_ENGINEERING = 5, TECH_PHORON = 4)
 	materials = list(MATERIAL_STEEL = 120, MATERIAL_GLASS = 50)
-	build_path = /obj/item/weapon/weldingtool/experimental
+	build_path = /obj/item/weldingtool/experimental
 	sort_string = "VAGAG"
 
 /datum/design/item/tool/shield_diffuser
@@ -70,7 +70,7 @@
 	id = "portable_shield_diffuser"
 	req_tech = list(TECH_MAGNET = 5, TECH_POWER = 5, TECH_ESOTERIC = 2)
 	materials = list(MATERIAL_STEEL = 5000, MATERIAL_GLASS = 5000, MATERIAL_GOLD = 2000, MATERIAL_SILVER = 2000)
-	build_path = /obj/item/weapon/shield_diffuser
+	build_path = /obj/item/shield_diffuser
 	sort_string = "VAGAH"
 
 /datum/design/item/tool/rpd
@@ -79,7 +79,7 @@
 	id = "rpd"
 	req_tech = list(TECH_ENGINEERING = 6, TECH_MATERIAL = 6)
 	materials = list(MATERIAL_STEEL = 15000, MATERIAL_GLASS = 10000, MATERIAL_SILVER = 2000)
-	build_path = /obj/item/weapon/rpd
+	build_path = /obj/item/rpd
 	sort_string = "VAGAI"
 
 /datum/design/item/tool/oxycandle
@@ -91,3 +91,40 @@
 	chemicals = list(/datum/reagent/sodiumchloride = 20, /datum/reagent/acetone = 20)
 	build_path = /obj/item/device/oxycandle
 	sort_string = "VAGAJ"
+
+/datum/design/item/tool/arc_welder
+	name = "arc welding tool"
+	desc = "a portable welder that uses an internal powercell instead of welding fuel."
+	id = "arc_welder"
+	req_tech = list(TECH_ENGINEERING = 3, TECH_POWER = 4)
+	materials = list(MATERIAL_STEEL = 6000, MATERIAL_GLASS = 6000, MATERIAL_ALUMINIUM = 4000, MATERIAL_PHORON = 4000)
+	build_path = /obj/item/weldingtool/electric
+	sort_string = "VAGAK"
+
+/datum/design/item/tool/power_drill
+	name = "power drill"
+	desc = "a portable power drill that can swap between bolt and screw heads for a range of fixings"
+	id = "power_drill"
+	req_tech = list(TECH_ENGINEERING = 4, TECH_POWER = 4)
+	materials = list(MATERIAL_STEEL = 100, MATERIAL_ALUMINIUM = 100, MATERIAL_PLASTIC = 6000)
+	build_path = /obj/item/swapper/power_drill
+	sort_string = "VAGAL"
+
+/datum/design/item/tool/jaws_of_life
+	name = "hydraulic prying tool"
+	desc = "a portable hydraulic rescue tool that can swap between prying and cutting heads for a range of breaching techniques"
+	id = "jaws_of_life"
+	req_tech = list(TECH_ENGINEERING = 5, TECH_POWER = 4)
+	materials = list(MATERIAL_STEEL = 6000, MATERIAL_ALUMINIUM = 1000, MATERIAL_PLASTIC = 750)
+	build_path = /obj/item/swapper/jaws_of_life
+	sort_string = "VAGAM"
+
+
+/datum/design/item/tool/rcd
+	name = "rapid construction device"
+	desc = "a gun-shaped device that uses compressed matter to build and dismantle various structures."
+	id = "hand_rcd"
+	req_tech = list(TECH_ENGINEERING = 5, TECH_MATERIAL = 4)
+	materials = list(MATERIAL_STEEL = 25000, MATERIAL_PHORON = 4000, MATERIAL_GOLD = 2000, MATERIAL_SILVER = 2000)
+	build_path = /obj/item/rcd
+	sort_string = "VAGAN"

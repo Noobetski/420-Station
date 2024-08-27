@@ -1,5 +1,5 @@
 //Adminpaper - it's like paper, but more adminny!
-/obj/item/weapon/paper/admin
+/obj/item/paper/admin
 	name = "administrative paper"
 	desc = "If you see this, something has gone horribly wrong."
 	var/datum/admins/admindatum = null
@@ -8,7 +8,10 @@
 	var/isCrayon = 0
 	var/origin = null
 	var/mob/sender = null
-	var/obj/machinery/photocopier/faxmachine/destination
+	/// List (`/obj/machinery/photocopier/faxmachine`). List of fax machines matching the paper's target department.
+	var/list/destinations = list()
+	/// String. The paper's target department.
+	var/department = null
 
 	var/header = null
 	var/headerOn = TRUE
@@ -16,68 +19,69 @@
 	var/footer = null
 	var/footerOn = FALSE
 
-	var/logo_list = list("sollogo.png","eclogo.png","fleetlogo.png","exologo.png","ntlogo.png","daislogo.png","xynlogo.png","terralogo.png", "sfplogo.png")
+	var/logo_list = list("sollogo.png","eclogo.png","fleetlogo.png","exologo.png","ntlogo.png","daislogo.png","xynlogo.png","terralogo.png", "sfplogo.png", "falogo.png", "zhlogo.png")
 	var/logo = ""
 
 	var/unformatedText = ""
 
-/obj/item/weapon/paper/admin/New()
+/obj/item/paper/admin/New()
 	..()
 	generateInteractions()
 
 
-/obj/item/weapon/paper/admin/proc/generateInteractions()
+/obj/item/paper/admin/proc/generateInteractions()
 	//clear first
 	interactions = null
 
 	//Snapshot is crazy and likes putting each topic hyperlink on a seperate line from any other tags so it's nice and clean.
-	interactions += "<HR><center><font size= \"1\">The fax will transmit everything above this line</font><br>"
+	interactions += "<HR><center><span style='font-size: 10px'>The fax will transmit everything above this line</span><br>"
 	interactions += "<A href='?src=\ref[src];confirm=1'>Send fax</A> "
 	interactions += "<A href='?src=\ref[src];penmode=1'>Pen mode: [isCrayon ? "Crayon" : "Pen"]</A> "
 	interactions += "<A href='?src=\ref[src];cancel=1'>Cancel fax</A> "
 	interactions += "<BR>"
 	interactions += "<A href='?src=\ref[src];changelogo=1'>Change logo</A> "
+	interactions += "<A href='?src=\ref[src];changelanguage=1'>Change language ([language])</A> "
 	interactions += "<A href='?src=\ref[src];toggleheader=1'>Toggle Header</A> "
 	interactions += "<A href='?src=\ref[src];togglefooter=1'>Toggle Footer</A> "
 	interactions += "<A href='?src=\ref[src];clear=1'>Clear page</A> "
 	interactions += "</center>"
 
-/obj/item/weapon/paper/admin/proc/generateHeader()
+/obj/item/paper/admin/proc/generateHeader()
 	var/originhash = md5("[origin]")
 	var/challengehash = copytext(md5("[game_id]"),1,10) // changed to a hash of the game ID so it's more consistant but changes every round.
 	var/text = null
 	//TODO change logo based on who you're contacting.
 	text = "<center><img src = [logo]></br>"
 	text += "<b>[origin] Quantum Uplink Signed Message</b><br>"
-	text += "<font size = \"1\">Encryption key: [originhash]<br>"
-	text += "Challenge: [challengehash]<br></font></center><hr>"
+	text += "<span style='font-size: 10px'>Encryption key: [originhash]<br>"
+	text += "Challenge: [challengehash]<br></span></center><hr>"
 
 	header = text
 
-/obj/item/weapon/paper/admin/proc/generateFooter()
+/obj/item/paper/admin/proc/generateFooter()
 	var/text = null
 
-	text = "<hr><font size= \"1\">"
+	text = "<hr><span style='font-size: 10px'>"
 	text += "This transmission is intended only for the addressee and may contain confidential information. Any unauthorized disclosure is strictly prohibited. <br><br>"
 	text += "If this transmission is recieved in error, please notify both the sender and the office of [GLOB.using_map.boss_name] Internal Affairs immediately so that corrective action may be taken."
 	text += "Failure to comply is a breach of regulation and may be prosecuted to the fullest extent of the law, where applicable."
-	text += "</font>"
+	text += "</span>"
 
 	footer = text
 
 
-/obj/item/weapon/paper/admin/proc/adminbrowse()
+/obj/item/paper/admin/proc/adminbrowse()
 	updateinfolinks()
 	generateHeader()
 	generateFooter()
 	updateDisplay()
 
-obj/item/weapon/paper/admin/proc/updateDisplay()
+/obj/item/paper/admin/proc/updateDisplay()
 	show_browser(usr, "<HTML><HEAD><TITLE>[name]</TITLE></HEAD><BODY>[headerOn ? header : ""][info_links][stamps][footerOn ? footer : ""][interactions]</BODY></HTML>", "window=[name];can_close=0")
 
 
 
-/obj/item/weapon/paper/admin/Topic(href, href_list)
+/obj/item/paper/admin/Topic(href, href_list)
 	if(href_list["write"])
 		var/id = href_list["write"]
 
@@ -86,17 +90,17 @@ obj/item/weapon/paper/admin/proc/updateDisplay()
 		if(!t)
 			return
 
-		var last_fields_value = fields
+		var/last_fields_value = fields
 
 		unformatedText = t
 
 		//t = html_encode(t)
 		t = replacetext(t, "\n", "<BR>")
-		t = parsepencode(t,,, isCrayon) // Encode everything from pencode to html
+		t = parsepencode(t, null, null, isCrayon, null, TRUE) // Encode everything from pencode to html
 
 
 		if(fields > 50)//large amount of fields creates a heavy load on the server, see updateinfolinks() and addtofield()
-			to_chat(usr, "<span class='warning'>Too many fields. Sorry, you can't do this.</span>")
+			to_chat(usr, SPAN_WARNING("Too many fields. Sorry, you can't do this."))
 			fields = last_fields_value
 			return
 
@@ -123,7 +127,7 @@ obj/item/weapon/paper/admin/proc/updateDisplay()
 					info += footer
 				updateinfolinks()
 				close_browser(usr, "window=[name]")
-				admindatum.faxCallback(src, destination)
+				admindatum.faxCallback(src)
 		return
 
 	if(href_list["penmode"])
@@ -158,5 +162,7 @@ obj/item/weapon/paper/admin/proc/updateDisplay()
 		updateDisplay()
 		return
 
-/obj/item/weapon/paper/admin/get_signature()
-	return input(usr, "Enter the name you wish to sign the paper with (will prompt for multiple entries, in order of entry)", "Signature") as text|null
+	if (href_list["changelanguage"])
+		choose_language(usr, TRUE)
+		updateDisplay()
+		return

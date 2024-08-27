@@ -6,10 +6,10 @@
 	icon = 'icons/obj/closets/rescuebag.dmi'
 	icon_state = "folded"
 	origin_tech = list(TECH_BIO = 2)
-	var/obj/item/weapon/tank/airtank
+	var/obj/item/tank/airtank
 
 /obj/item/bodybag/rescue/loaded
-	airtank = /obj/item/weapon/tank/emergency/oxygen/double
+	airtank = /obj/item/tank/oxygen_emergency_double
 
 /obj/item/bodybag/rescue/Initialize()
 	. = ..()
@@ -29,22 +29,26 @@
 		airtank = null
 	qdel(src)
 
-/obj/item/bodybag/rescue/attackby(obj/item/W, mob/user, var/click_params)
-	if(istype(W,/obj/item/weapon/tank))
+/obj/item/bodybag/rescue/use_tool(obj/item/W, mob/living/user, list/click_params)
+	if(istype(W,/obj/item/tank))
 		if(airtank)
-			to_chat(user, "\The [src] already has an air tank installed.")
-			return 1
-		else if(user.unEquip(W))
-			W.forceMove(src)
-			airtank = W
-			to_chat(user, "You install \the [W] in \the [src].")
-			return 1
+			to_chat(user, SPAN_WARNING("\The [src] already has an air tank installed."))
+			return TRUE
+		if (!user.unEquip(W))
+			FEEDBACK_UNEQUIP_FAILURE(user, W)
+			return TRUE
+		W.forceMove(src)
+		airtank = W
+		to_chat(user, SPAN_NOTICE("You install \the [W] in \the [src]."))
+		return TRUE
+
 	else if(airtank && isScrewdriver(W))
-		to_chat(user, "You remove \the [airtank] from \the [src].")
+		to_chat(user, SPAN_NOTICE("You remove \the [airtank] from \the [src]."))
 		airtank.dropInto(loc)
 		airtank = null
-	else
-		..()
+		return TRUE
+
+	return ..()
 
 /obj/item/bodybag/rescue/examine(mob/user)
 	. = ..()
@@ -52,7 +56,7 @@
 		to_chat(user,"The pressure meter on \the [airtank] shows '[airtank.air_contents.return_pressure()] kPa'.")
 		to_chat(user,"The distribution valve on \the [airtank] is set to '[airtank.distribute_pressure] kPa'.")
 	else
-		to_chat(user, "<span class='warning'>The air tank is missing.</span>")
+		to_chat(user, SPAN_WARNING("The air tank is missing."))
 
 /obj/structure/closet/body_bag/rescue
 	name = "rescue bag"
@@ -61,7 +65,7 @@
 	icon = 'icons/obj/closets/rescuebag.dmi'
 	item_path = /obj/item/bodybag/rescue
 	storage_types = CLOSET_STORAGE_MOBS
-	var/obj/item/weapon/tank/airtank
+	var/obj/item/tank/airtank
 	var/datum/gas_mixture/atmo
 
 /obj/structure/closet/body_bag/rescue/Initialize()
@@ -74,7 +78,7 @@
 	QDEL_NULL(airtank)
 	return ..()
 
-/obj/structure/closet/body_bag/rescue/proc/set_tank(obj/item/weapon/tank/newtank)
+/obj/structure/closet/body_bag/rescue/proc/set_tank(obj/item/tank/newtank)
 	airtank = newtank
 	if(airtank)
 		airtank.forceMove(null)
@@ -82,29 +86,46 @@
 
 /obj/structure/closet/body_bag/rescue/on_update_icon()
 	..()
-	overlays.Cut()
+	ClearOverlays()
 	if(airtank)
-		overlays += image(icon, "tank")
+		AddOverlays(image(icon, "tank"))
 
-/obj/structure/closet/body_bag/rescue/attackby(obj/item/W, mob/user, var/click_params)
-	if(istype(W,/obj/item/weapon/tank/))
-		if(airtank)
-			to_chat(user, "\The [src] already has an air tank installed.")
-			return 1
-		else if(user.unEquip(W, src))
-			set_tank(W)
-			to_chat(user, "You install \the [W] in \the [src].")
-			return 1
-	else if(airtank && isScrewdriver(W))
-		to_chat(user, "You remove \the [airtank] from \the [src].")
+
+/obj/structure/closet/body_bag/rescue/use_tool(obj/item/tool, mob/user, list/click_params)
+	// Screwdriver - Remove air tank
+	if (isScrewdriver(tool))
+		if (!airtank)
+			USE_FEEDBACK_FAILURE("\The [src] has no airtank to remove.")
+			return TRUE
 		airtank.dropInto(loc)
-		airtank = null
 		update_icon()
-	else
-		..()
+		user.visible_message(
+			SPAN_NOTICE("\The [user] removes \the [src]'s [airtank.name] with \a [tool]."),
+			SPAN_NOTICE("You remove \the [src]'s [airtank.name] with \the [tool].")
+		)
+		airtank = null
+		return TRUE
 
-/obj/structure/closet/body_bag/rescue/fold(var/user)
-	var/obj/item/weapon/tank/my_tank = airtank
+	// Tank - Install air tank
+	if (istype(tool, /obj/item/tank))
+		if (airtank)
+			USE_FEEDBACK_FAILURE("\The [src] already has \a [airtank] installed.")
+			return TRUE
+		if (!user.unEquip(tool, src))
+			FEEDBACK_UNEQUIP_FAILURE(user, tool)
+			return TRUE
+		set_tank(tool)
+		user.visible_message(
+			SPAN_NOTICE("\The [user] installs \a [tool] into \the [src]."),
+			SPAN_NOTICE("You install \the [tool] into \the [src].")
+		)
+		return TRUE
+
+	return ..()
+
+
+/obj/structure/closet/body_bag/rescue/fold(user)
+	var/obj/item/tank/my_tank = airtank
 	airtank = null // Apparently this is required to avoid breaking my_tank checks further down after the parent proc runs qdel(src)
 	var/obj/item/bodybag/rescue/folded = ..()
 	if (folded && istype(folded))
@@ -133,9 +154,9 @@
 		to_chat(user,"The pressure meter on \the [airtank] shows '[airtank.air_contents.return_pressure()] kPa'.")
 		to_chat(user,"The distribution valve on \the [airtank] is set to '[airtank.distribute_pressure] kPa'.")
 	else
-		to_chat(user, "<span class='warning'>The air tank is missing.</span>")
+		to_chat(user, SPAN_WARNING("The air tank is missing."))
 	to_chat(user,"The pressure meter on [src] shows '[atmo.return_pressure()] kPa'.")
 	if(Adjacent(user)) //The bag's rather thick and opaque from a distance.
-		to_chat(user, "<span class='info'>You peer into \the [src].</span>")
+		to_chat(user, SPAN_INFO("You peer into \the [src]."))
 		for(var/mob/living/L in contents)
 			L.examine(arglist(args))

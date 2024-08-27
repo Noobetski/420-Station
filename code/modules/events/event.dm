@@ -10,7 +10,7 @@
 	var/list/role_weights = list()
 	var/datum/event/event_type
 
-/datum/event_meta/New(var/event_severity, var/event_name, var/datum/event/type, var/event_weight, var/list/job_weights, var/is_one_shot = 0, var/min_event_weight = 0, var/max_event_weight = 0, var/add_to_queue = 1)
+/datum/event_meta/New(event_severity, event_name, datum/event/type, event_weight, list/job_weights, is_one_shot = 0, min_event_weight = 0, max_event_weight = 0, add_to_queue = 1)
 	name = event_name
 	severity = event_severity
 	event_type = type
@@ -22,7 +22,7 @@
 	if(job_weights)
 		role_weights = job_weights
 
-/datum/event_meta/proc/get_weight(var/list/active_with_role)
+/datum/event_meta/proc/get_weight(list/active_with_role)
 	if(!enabled)
 		return 0
 
@@ -131,7 +131,7 @@
 	activeFor++
 
 //Called when start(), announce() and end() has all been called.
-/datum/event/proc/kill()
+/datum/event/proc/kill(reroll = FALSE)
 	// If this event was forcefully killed run end() for individual cleanup
 	if(isRunning)
 		isRunning = 0
@@ -143,7 +143,7 @@
 //Called during building of skybox to get overlays
 /datum/event/proc/get_skybox_image()
 
-/datum/event/New(var/datum/event_meta/EM)
+/datum/event/New(datum/event_meta/EM)
 	// event needs to be responsible for this, as stuff like APLUs currently make their own events for curious reasons
 	SSevent.active_events += src
 
@@ -164,5 +164,5 @@
 	if(!GLOB.using_map.use_overmap)
 		return station_name()
 
-	var/obj/effect/overmap/visitable/O = map_sectors["[pick(affecting_z)]"]
+	var/obj/overmap/visitable/O = map_sectors["[pick(affecting_z)]"]
 	return O ? O.name : "Unknown Location"

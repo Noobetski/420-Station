@@ -1,20 +1,20 @@
 /obj/machinery/wish_granter
-	name = "Wish Granter"
+	name = "\improper Wish Granter"
 	desc = "You're not so sure about this, anymore..."
-	icon = 'icons/obj/device.dmi'
+	icon = 'icons/obj/structures/syndicate_beacon.dmi'
 	icon_state = "syndbeacon"
 
 	use_power = POWER_USE_OFF
 	uncreated_component_parts = null
 	interact_offline = TRUE
-	anchored = 1
-	density = 1
+	anchored = TRUE
+	density = TRUE
 
 	var/charges = 1
 	var/insisting = 0
 
 // Just override; we're special.
-/obj/machinery/wish_granter/attack_hand(var/mob/user as mob)
+/obj/machinery/wish_granter/attack_hand(mob/user as mob)
 	usr.set_machine(src)
 
 	if(charges <= 0)
@@ -38,8 +38,8 @@
 		charges--
 		insisting = 0
 
-		if (!(MUTATION_HULK in user.mutations))
-			user.mutations.Add(MUTATION_HULK)
+		if (!(MUTATION_FERAL in user.mutations))
+			user.mutations.Add(MUTATION_FERAL)
 
 		if (!(MUTATION_LASER in user.mutations))
 			user.mutations.Add(MUTATION_LASER)

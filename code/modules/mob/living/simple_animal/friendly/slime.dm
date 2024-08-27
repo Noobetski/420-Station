@@ -11,11 +11,12 @@
 	response_help  = "pets"
 	response_disarm = "shoos"
 	response_harm   = "stomps on"
-	emote_see = list("jiggles", "bounces in place")
 	var/colour = "grey"
 	pass_flags = PASS_FLAG_TABLE
 
-/mob/living/simple_animal/slime/can_force_feed(var/feeder, var/food, var/feedback)
+	say_list_type = /datum/say_list/slime
+
+/mob/living/simple_animal/slime/can_force_feed(feeder, food, feedback)
 	if(feedback)
 		to_chat(feeder, "Where do you intend to put \the [food]? \The [src] doesn't have a mouth!")
 	return 0
@@ -32,12 +33,12 @@
 	response_help  = "pets"
 	response_disarm = "shoos"
 	response_harm   = "stomps on"
-	emote_see = list("jiggles", "bounces in place")
 	var/colour = "grey"
 
-/mob/living/simple_animal/adultslime/New()
-	..()
-	overlays += "aslime-:33"
+
+/mob/living/simple_animal/adultslime/Initialize(mapload)
+	. = ..()
+	AddOverlays("aslime-:33")
 
 
 /mob/living/simple_animal/slime/adult/death()
@@ -52,3 +53,6 @@
 	S2.icon_dead = "[src.colour] baby slime dead"
 	S2.colour = "[src.colour]"
 	qdel(src)
+
+/datum/say_list/slime
+	emote_see = list("jiggles", "bounces in place")

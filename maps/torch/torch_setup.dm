@@ -11,11 +11,11 @@
 	return jointext(., "<br>")
 
 /datum/map/torch/send_welcome()
-	var/obj/effect/overmap/visitable/ship/torch = SSshuttle.ship_by_type(/obj/effect/overmap/visitable/ship/torch)
+	var/obj/overmap/visitable/ship/torch = SSshuttle.ship_by_type(/obj/overmap/visitable/ship/torch)
 
-	var/welcome_text = "<center><img src = sollogo.png /><br /><font size = 3><b>CEV Zerzura</b> Sensor Readings:</font><br>"
+	var/welcome_text = "<center><img src = sollogo.png /><br />[FONT_LARGE("<b>CEV Zerzura</b> Sensor Readings:")]<br>"
 	welcome_text += "Report generated on [stationdate2text()] at [stationtime2text()]</center><br /><br />"
-	welcome_text += "<hr>Current system:<br /><b>[torch ? system_name() : "Unknown"]</b><br /><br>"
+	welcome_text += "<hr>Current system:<br /><b>[torch ? system_name : "Unknown"]</b><br /><br>"
 
 	if (torch) //If the overmap is disabled, it's possible for there to be no torch.
 		var/list/space_things = list()
@@ -26,31 +26,22 @@
 		welcome_text += "Scan results show the following points of interest:<br />"
 
 		for(var/zlevel in map_sectors)
-			var/obj/effect/overmap/visitable/O = map_sectors[zlevel]
+			var/obj/overmap/visitable/O = map_sectors[zlevel]
 			if(O.name == torch.name)
 				continue
-			if(istype(O, /obj/effect/overmap/visitable/ship/landable)) //Don't show shuttles
+			if(istype(O, /obj/overmap/visitable/ship/landable)) //Don't show shuttles
 				continue
 			if (O.hide_from_reports)
 				continue
 			space_things |= O
 
-		var/list/distress_calls
-		for(var/obj/effect/overmap/visitable/O in space_things)
+		for(var/obj/overmap/visitable/O in space_things)
 			var/location_desc = " at present co-ordinates."
 			if(O.loc != torch.loc)
-				var/bearing = round(90 - Atan2(O.x - torch.x, O.y - torch.y),5) //fucking triangles how do they work
-				if(bearing < 0)
-					bearing += 360
+				var/bearing = get_bearing(torch, O)
 				location_desc = ", bearing [bearing]."
-			if(O.has_distress_beacon)
-				LAZYADD(distress_calls, "[O.has_distress_beacon][location_desc]")
 			welcome_text += "<li>\A <b>[O.name]</b>[location_desc]</li>"
 
-		if(LAZYLEN(distress_calls))
-			welcome_text += "<br><b>Distress calls logged:</b><br>[jointext(distress_calls, "<br>")]<br>"
-		else
-			welcome_text += "<br>No distress calls logged.<br />"
 		welcome_text += "<hr>"
 
 	post_comm_message("CEV Zerzura Sensor Readings", welcome_text)

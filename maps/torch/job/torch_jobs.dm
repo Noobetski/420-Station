@@ -14,8 +14,8 @@
 		/datum/species/unathi  = list(HUMAN_ONLY_JOBS, /datum/job/liaison, /datum/job/warden), //Other jobs unavailable via branch restrictions,
 		/datum/species/unathi/yeosa = list(HUMAN_ONLY_JOBS, /datum/job/liaison, /datum/job/warden),
 		/datum/species/skrell  = list(HUMAN_ONLY_JOBS),
-		/datum/species/machine = list(HUMAN_ONLY_JOBS, /datum/job/liaison, /datum/job/psychiatrist),
-		/datum/species/diona   = list(HUMAN_ONLY_JOBS, /datum/job/officer, /datum/job/bodyguard, /datum/job/liaison, /datum/job/warden),	//Other jobs unavailable via branch restrictions,
+		/datum/species/machine = list(HUMAN_ONLY_JOBS, /datum/job/liaison, /datum/job/psychiatrist, /datum/job/bridgeofficer, /datum/job/senior_engineer, /datum/job/warden, /datum/job/qm, /datum/job/senior_scientist, /datum/job/chief_steward),
+		/datum/species/diona   = list(HUMAN_ONLY_JOBS, /datum/job/officer, /datum/job/liaison, /datum/job/warden, /datum/job/doctor, /datum/job/medical_trainee),	//Other jobs unavailable via branch restrictions,
 	)
 #undef HUMAN_ONLY_JOBS
 
@@ -42,14 +42,14 @@
 		ACCESS_REGION_COMMAND = list(access_change_ids),
 		ACCESS_REGION_GENERAL = list(access_change_ids),
 		ACCESS_REGION_SUPPLY = list(access_change_ids),
-		ACCESS_REGION_NT = list(access_change_ids)
+		ACCESS_REGION_SERVICE = list(access_change_ids)
 	)
 
 /datum/map/torch/setup_job_lists()
 	for(var/job_type in allowed_jobs)
 		var/datum/job/job = SSjobs.get_by_path(job_type)
 		// Most species are restricted from SCG security and command roles
-		if(job && (job.department_flag & COM) && job.allowed_branches.len && !(/datum/mil_branch/civilian in job.allowed_branches))
+		if(job && (job.department_flag & COM) && length(job.allowed_branches) && !(/datum/mil_branch/civilian in job.allowed_branches))
 			for(var/species_name in list(SPECIES_IPC, SPECIES_SKRELL, SPECIES_UNATHI))
 				var/datum/species/S = all_species[species_name]
 				var/species_blacklist = species_to_job_blacklist[S.type]
@@ -59,19 +59,19 @@
 				species_blacklist |= job.type
 
 // Some jobs for nabber grades defined here due to map-specific job datums.
-/decl/cultural_info/culture/nabber/New()
+/singleton/cultural_info/culture/nabber/New()
 	LAZYADD(valid_jobs, /datum/job/scientist_assistant)
 	..()
 
-/decl/cultural_info/culture/nabber/b/New()
+/singleton/cultural_info/culture/nabber/b/New()
 	LAZYADD(valid_jobs, /datum/job/cargo_tech)
 	..()
 
-/decl/cultural_info/culture/nabber/a/New()
+/singleton/cultural_info/culture/nabber/a/New()
 	LAZYADD(valid_jobs, /datum/job/engineer)
 	..()
 
-/decl/cultural_info/culture/nabber/a/plus/New()
+/singleton/cultural_info/culture/nabber/a/plus/New()
 	LAZYADD(valid_jobs, /datum/job/doctor)
 	..()
 

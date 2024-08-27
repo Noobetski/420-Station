@@ -1,13 +1,13 @@
 var/global/list/navbeacons = list()
 
 /obj/machinery/navbeacon
-	icon = 'icons/obj/objects.dmi'
+	icon = 'icons/obj/structures/nav_beacon.dmi'
 	icon_state = "navbeacon0-f"
 	name = "navigation beacon"
 	desc = "A radio beacon used for bot navigation."
-	level = 1
+	level = ATOM_LEVEL_UNDER_TILE
 	layer = ABOVE_WIRE_LAYER
-	anchored = 1
+	anchored = TRUE
 
 	var/open = 0		// true if cover is open
 	var/locked = 1		// true if controls are locked
@@ -24,8 +24,8 @@ var/global/list/navbeacons = list()
 
 	navbeacons += src
 
-/obj/machinery/navbeacon/hide(var/intact)
-	set_invisibility(intact ? 101 : 0)
+/obj/machinery/navbeacon/hide(intact)
+	set_invisibility(intact ? INVISIBILITY_ABSTRACT : 0)
 	update_icon()
 
 /obj/machinery/navbeacon/on_update_icon()
@@ -37,35 +37,39 @@ var/global/list/navbeacons = list()
 	else
 		icon_state = "[state]"
 
-/obj/machinery/navbeacon/attackby(var/obj/item/I, var/mob/user)
+/obj/machinery/navbeacon/use_tool(obj/item/I, mob/living/user, list/click_params)
 	var/turf/T = loc
 	if(!T.is_plating())
-		return		// prevent intraction when T-scanner revealed
+		return TRUE// prevent intraction when T-scanner revealed
 
 	if(isScrewdriver(I))
 		open = !open
-
-		user.visible_message("\The [user] [open ? "opens" : "closes"] cover of \the [src].", "You [open ? "open" : "close"] cover of \the [src].")
-
+		user.visible_message(
+			SPAN_NOTICE("\The [user] [open ? "opens" : "closes"] cover of \the [src]."),
+			SPAN_NOTICE("You [open ? "open" : "close"] cover of \the [src].")
+		)
 		update_icon()
+		return TRUE
 
-	else if(I.GetIdCard())
+	if (I.GetIdCard())
 		if(open)
-			if (src.allowed(user))
-				src.locked = !src.locked
-				to_chat(user, "Controls are now [src.locked ? "locked." : "unlocked."]")
+			if (allowed(user))
+				locked = !locked
+				to_chat(user, "Controls are now [locked ? "locked." : "unlocked."]")
 			else
-				to_chat(user, "<span class='warning'>Access denied.</span>")
+				to_chat(user, SPAN_WARNING("Access denied."))
 			updateDialog()
 		else
 			to_chat(user, "You must open the cover first!")
-	return
+		return TRUE
 
-/obj/machinery/navbeacon/interface_interact(var/mob/user)
+	return ..()
+
+/obj/machinery/navbeacon/interface_interact(mob/user)
 	interact(user)
 	return TRUE
 
-/obj/machinery/navbeacon/interact(var/mob/user)
+/obj/machinery/navbeacon/interact(mob/user)
 	var/ai = isAI(user)
 	var/turf/T = loc
 	if(!T.is_plating())

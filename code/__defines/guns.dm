@@ -4,8 +4,8 @@
 #define CALIBER_PISTOL_FLECHETTE "4mm"
 #define CALIBER_PISTOL_ANTIQUE	"~10mm"
 
-#define CALIBER_RIFLE			"7mmR"
-#define CALIBER_RIFLE_MILITARY  "5mmR"
+#define CALIBER_RIFLE			"5mmR"
+#define CALIBER_RIFLE_MILITARY  "7mmR"
 #define CALIBER_ANTIMATERIAL    "15mmR"
 
 #define CALIBER_SHOTGUN			"12g"
@@ -24,7 +24,9 @@
 #define MAGAZINE 		4	//The magazine item itself goes inside the gun
 
 
+#define GUN_BULK_LIGHT_RIFLE 4
 #define GUN_BULK_RIFLE  5
+#define GUN_BULK_HEAVY_RIFLE 6
 
 #define BULLET_IMPACT_NONE  "none"
 #define BULLET_IMPACT_METAL "metal"

@@ -1,14 +1,14 @@
 /datum/computer_file/program/power_monitor
 	filename = "powermonitor"
 	filedesc = "Power Monitoring"
-	nanomodule_path = /datum/nano_module/power_monitor/
+	nanomodule_path = /datum/nano_module/power_monitor
 	program_icon_state = "power_monitor"
 	program_key_state = "power_key"
 	program_menu_icon = "battery-3"
 	extended_desc = "This program connects to sensors to provide information about electrical systems"
 	ui_header = "power_norm.gif"
 	required_access = access_engine
-	requires_ntnet = 1
+	requires_ntnet = TRUE
 	network_destination = "power monitoring system"
 	size = 9
 	category = PROG_ENG
@@ -54,7 +54,7 @@
 
 // If PC is not null header template is loaded. Use PC.get_header_data() to get relevant nanoui data from it. All data entries begin with "PC_...."
 // In future it may be expanded to other modular computer devices.
-/datum/nano_module/power_monitor/ui_interact(mob/user, ui_key = "main", var/datum/nanoui/ui = null, var/force_open = 1, var/datum/topic_state/state = GLOB.default_state)
+/datum/nano_module/power_monitor/ui_interact(mob/user, ui_key = "main", datum/nanoui/ui = null, force_open = 1, datum/topic_state/state = GLOB.default_state)
 	var/list/data = host.initial_data()
 
 	var/list/sensors = list()
@@ -95,7 +95,7 @@
 				grid_sensors += S
 				GLOB.destroyed_event.register(S, src, /datum/nano_module/power_monitor/proc/remove_sensor)
 
-/datum/nano_module/power_monitor/proc/remove_sensor(var/removed_sensor, var/update_ui = TRUE)
+/datum/nano_module/power_monitor/proc/remove_sensor(removed_sensor, update_ui = TRUE)
 	if(active_sensor == removed_sensor)
 		active_sensor = null
 		if(update_ui)

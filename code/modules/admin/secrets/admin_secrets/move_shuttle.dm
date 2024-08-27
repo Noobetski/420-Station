@@ -1,11 +1,11 @@
 /datum/admin_secret_item/admin_secret/move_shuttle
 	name = "Move a Shuttle"
 
-/datum/admin_secret_item/admin_secret/move_shuttle/can_execute(var/mob/user)
+/datum/admin_secret_item/admin_secret/move_shuttle/can_execute(mob/user)
 	if(!SSshuttle) return 0
 	return ..()
 
-/datum/admin_secret_item/admin_secret/move_shuttle/execute(var/mob/user)
+/datum/admin_secret_item/admin_secret/move_shuttle/execute(mob/user)
 	. = ..()
 	if(!.)
 		return
@@ -19,10 +19,10 @@
 	var/datum/shuttle/S = SSshuttle.shuttles[shuttle_tag]
 
 	var/list/destinations = list()
-	for(var/obj/effect/shuttle_landmark/WP in world)
+	for(var/obj/shuttle_landmark/WP in world)
 		destinations += WP
 
-	var/obj/effect/shuttle_landmark/destination = input(user, "Select the destination.") as null|anything in destinations
+	var/obj/shuttle_landmark/destination = input(user, "Select the destination.") as null|anything in destinations
 	if (!destination) return
 
 	S.attempt_move(destination)

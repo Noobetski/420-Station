@@ -36,23 +36,27 @@
 		return
 	return TRUE
 
-/obj/item/device/scanner/afterattack(atom/A, mob/user, proximity)
-	if(!proximity)
-		return
+/obj/item/device/scanner/use_after(atom/target, mob/living/user, click_parameters)
 	if(!can_use(user))
 		return
-	if(is_valid_scan_target(A) && A.simulated)
-		user.visible_message("<span class='notice'>[user] runs \the [src] over \the [A].</span>", range = 2)
+	if(is_valid_scan_target(target))
+		user.visible_message(
+			SPAN_NOTICE("\The [user] runs \the [src] over \the [target]."),
+			SPAN_NOTICE("You run \the [src] over \the [target]."),
+			range = 2
+		)
 		if(scan_sound)
 			playsound(src, scan_sound, 30)
-		if(use_delay && !do_after(user, use_delay, A))
-			to_chat(user, "You stop scanning \the [A] with \the [src].")
-			return
-		scan(A, user)
+		if(use_delay && !do_after(user, use_delay, target, DO_PUBLIC_UNIQUE))
+			to_chat(user, "You stop scanning \the [target] with \the [src].")
+			return TRUE
+		scan(target, user)
 		if(!scan_title)
-			scan_title = "[capitalize(name)] scan - [A]"
+			scan_title = "[capitalize(name)] scan - [target]"
+		return TRUE
 	else
-		to_chat(user, "You cannot get any results from \the [A] with \the [src].")
+		to_chat(user, "You cannot get any results from \the [target] with \the [src].")
+		return TRUE
 
 /obj/item/device/scanner/proc/is_valid_scan_target(atom/O)
 	return FALSE
@@ -71,7 +75,7 @@
 		return
 	print_report(user)
 
-/obj/item/device/scanner/OnTopic(var/user, var/list/href_list)
+/obj/item/device/scanner/OnTopic(user, list/href_list)
 	if(href_list["print"])
 		print_report(user)
 		return 1
@@ -81,11 +85,11 @@
 		scan_title = null
 		return 1
 
-/obj/item/device/scanner/proc/print_report(var/mob/living/user)
+/obj/item/device/scanner/proc/print_report(mob/living/user)
 	if(!scan_data)
 		to_chat(user, "There is no scan data to print.")
 		return
-	var/obj/item/weapon/paper/P = new(get_turf(src), scan_data, "paper - [scan_title]")
+	var/obj/item/paper/P = new(get_turf(src), scan_data, "paper - [scan_title]")
 	if(printout_color)
 		P.color = printout_color
 	user.put_in_hands(P)

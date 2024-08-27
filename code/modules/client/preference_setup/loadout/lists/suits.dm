@@ -5,33 +5,33 @@
 
 /datum/gear/suit/poncho
 	display_name = "poncho selection"
-	path = /obj/item/clothing/suit/poncho/colored
+	path = /obj/item/clothing/suit/poncho
 	cost = 1
 	flags = GEAR_HAS_TYPE_SELECTION
 
 /datum/gear/suit/security_poncho
 	display_name = "poncho, security"
-	path = /obj/item/clothing/suit/poncho/roles/security
+	path = /obj/item/clothing/suit/poncho/security
 
 /datum/gear/suit/medical_poncho
 	display_name = "poncho, medical"
-	path = /obj/item/clothing/suit/poncho/roles/medical
+	path = /obj/item/clothing/suit/poncho/medical
 
 /datum/gear/suit/engineering_poncho
 	display_name = "poncho, engineering"
-	path = /obj/item/clothing/suit/poncho/roles/engineering
+	path = /obj/item/clothing/suit/poncho/engineering
 
 /datum/gear/suit/science_poncho
 	display_name = "poncho, science"
-	path = /obj/item/clothing/suit/poncho/roles/science
+	path = /obj/item/clothing/suit/poncho/science
 
 /datum/gear/suit/nanotrasen_poncho
 	display_name = "poncho, NanoTrasen"
-	path = /obj/item/clothing/suit/poncho/roles/science/nanotrasen
+	path = /obj/item/clothing/suit/poncho/nanotrasen
 
 /datum/gear/suit/cargo_poncho
 	display_name = "poncho, supply"
-	path = /obj/item/clothing/suit/poncho/roles/cargo
+	path = /obj/item/clothing/suit/poncho/cargo
 
 /datum/gear/suit/suit_jacket
 	display_name = "standard suit jackets"
@@ -50,10 +50,27 @@
 	path = /obj/item/clothing/suit/storage/toggle/suit
 	flags = GEAR_HAS_COLOR_SELECTION
 
+/datum/gear/suit/custom_suit_jacket_double
+	display_name = "suit jacket (double-breasted), colour select"
+	path = /obj/item/clothing/suit/storage/toggle/suit_double
+	flags = GEAR_HAS_COLOR_SELECTION
+
 /datum/gear/suit/hazard
 	display_name = "hazard vests"
 	path = /obj/item/clothing/suit/storage/hazardvest
 	flags = GEAR_HAS_TYPE_SELECTION
+
+/datum/gear/suit/chest_rig
+	display_name = "chest rig"
+	path = /obj/item/clothing/suit/storage
+
+/datum/gear/suit/chest_rig/New()
+	..()
+	var/chest_rigs = list()
+	chest_rigs += /obj/item/clothing/suit/storage/engineering_chest_rig
+	chest_rigs += /obj/item/clothing/suit/storage/security_chest_rig
+	chest_rigs += /obj/item/clothing/suit/storage/medical_chest_rig
+	gear_tweaks += new/datum/gear_tweak/path/specified_types_list(chest_rigs)
 
 /datum/gear/suit/highvis
 	display_name = "high-visibility jacket"
@@ -109,6 +126,7 @@
 	jackets += /obj/item/clothing/suit/storage/leather_jacket
 	jackets += /obj/item/clothing/suit/storage/toggle/brown_jacket
 	jackets += /obj/item/clothing/suit/storage/mbill
+	jackets += /obj/item/clothing/suit/storage/toggle/leather_hoodie
 	gear_tweaks += new/datum/gear_tweak/path/specified_types_list(jackets)
 
 /datum/gear/suit/wintercoat
@@ -137,6 +155,7 @@
 /datum/gear/suit/medcoat
 	display_name = "medical suit selection"
 	path = /obj/item/clothing/suit
+	flags = GEAR_HAS_NO_CUSTOMIZATION
 
 /datum/gear/suit/medcoat/New()
 	..()
@@ -154,3 +173,13 @@
 	trenchcoats += /obj/item/clothing/suit/storage/det_trench/grey
 	trenchcoats += /obj/item/clothing/suit/leathercoat
 	gear_tweaks += new/datum/gear_tweak/path/specified_types_list(trenchcoats)
+
+
+/datum/gear/suit/pullover
+	display_name = "sweater, pullover"
+	path = /obj/item/clothing/suit/storage/pullover
+
+
+/datum/gear/suit/zipper
+	display_name = "sweater, zip up"
+	path = /obj/item/clothing/suit/storage/toggle/zipper

@@ -57,7 +57,7 @@ other types of metals and chemistry for reagents).
 
 //Returns a new instance of the item for this design
 //This is to allow additional initialization to be performed, including possibly additional contructor arguments.
-/datum/design/proc/Fabricate(var/newloc, var/fabricator)
+/datum/design/proc/Fabricate(newloc, fabricator)
 	return new build_path(newloc)
 
 /datum/design/item
@@ -67,6 +67,7 @@ other types of metals and chemistry for reagents).
 GLOBAL_LIST_INIT(build_path_to_design_datum_path, populate_design_datum_index())
 
 /proc/populate_design_datum_index()
+	RETURN_TYPE(/list)
 	. = list()
 	for(var/path in typesof(/datum/design))
 		var/datum/design/fake_design = path

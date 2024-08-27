@@ -1,9 +1,11 @@
+#include "../../../../packs/factions/scgec/_pack.dm"
+
 /datum/map_template/ruin/exoplanet/ec_old_crash
 	name = "Expeditionary Ship"
 	id = "ec_old_wreck"
 	description = "An abandoned ancient STL exploration ship."
 	suffixes = list("ec_old_crash/ec_old_crash.dmm")
-	cost = 0.5
+	spawn_cost = 0.5
 	apc_test_exempt_areas = list(
 		/area/map_template/ecship/engine = NO_SCRUBBER|NO_VENT|NO_APC,
 		/area/map_template/ecship/cockpit = NO_SCRUBBER|NO_APC
@@ -14,6 +16,7 @@
 /area/map_template/ecship/crew
 	name = "\improper Crew Area"
 	icon_state = "crew_quarters"
+	turfs_airless = TRUE
 
 /area/map_template/ecship/science
 	name = "\improper Science Module"
@@ -30,11 +33,11 @@
 /area/map_template/ecship/engine
 	name = "\improper Engine Exterior"
 	icon_state = "engine"
-	area_flags = AREA_FLAG_EXTERNAL
 
 /area/map_template/ecship/cockpit
 	name = "\improper Cockpit"
 	icon_state = "bridge"
+	turfs_airless = TRUE
 
 //Low pressure setup
 /obj/machinery/atmospherics/unary/vent_pump/low
@@ -48,31 +51,23 @@
 /turf/simulated/floor/tiled/white/lowpressure
 	initial_gas = list(GAS_CO2 = MOLES_O2STANDARD)
 
-/obj/item/weapon/disk/astrodata
-	name = "astronomical data disk"
-	desc = "A disk with a wealth of astronomical data recorded. Astrophysicists at the EC Observatory would love to see this."
-	icon = 'icons/obj/cloning.dmi'
-	icon_state = "datadisk0"
-	item_state = "card-id"
-	w_class = ITEM_SIZE_SMALL
-
-/obj/item/weapon/ecletters
+/obj/item/ecletters
 	name = "bundle of letters"
 	icon = 'icons/obj/bureaucracy.dmi'
 	icon_state = "docs_part"
 	item_state = "paper"
 
-/obj/item/weapon/ecletters/Initialize()
+/obj/item/ecletters/Initialize()
 	. = ..()
-	desc = "A bunch of letters from Expeditionary Corps explorers to their family and loved ones, dated [game_year - 142]. They're not hopeful."
+	desc = "A bunch of letters from Expeditionary Corps explorers to their family and loved ones, dated [GLOB.using_map.game_year - 142]. They're not hopeful."
 
-/obj/item/weapon/paper/ecrashlog
+/obj/item/paper/ecrashlog
 	name = "handwritten note"
 
-/obj/item/weapon/paper/ecrashlog/Initialize()
+/obj/item/paper/ecrashlog/Initialize()
 	. = ..()
 	var/shipname = "TEV [pick("Magellan", "Gagarin", "Drake", "Horizon", "Aurora")]"
-	var/decl/cultural_info/S = SSculture.get_culture(CULTURE_HUMAN_EARTH)
+	var/singleton/cultural_info/S = SSculture.get_culture(CULTURE_HUMAN_EARTH)
 	var/new_info = {"
 	I am Lieutenant Hao Ru, captain of [shipname], of the Terran Commonwealth Expeditionary Corps.<br>
 	We are dying. The Ran Mission has failed.<br>
@@ -89,7 +84,7 @@
 	Senior Explorer [S.get_random_name(pick(MALE,FEMALE))]<br>
 	Explorer [S.get_random_name(pick(MALE,FEMALE))]<br>
 	I am Lieutenant Hao Ru, captain of [shipname] of the Terran Commonwealth Expeditionary Corps. I will be joining my crew in cryo now.<br>
-	<i>3rd December [game_year - 142]</i></tt>
+	<i>3rd December [GLOB.using_map.game_year - 142]</i></tt>
 	"}
 	set_content(new_info)
 

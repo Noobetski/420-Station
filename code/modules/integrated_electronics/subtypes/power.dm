@@ -1,4 +1,4 @@
-/obj/item/integrated_circuit/power/
+/obj/item/integrated_circuit/power
 	category_text = "Power - Active"
 
 /obj/item/integrated_circuit/power/transmitter
@@ -40,11 +40,11 @@
 	var/obj/O = get_pin_data_as_type(IC_INPUT, 1, /obj)
 	if(!O)
 		return FALSE
-	if(istype(O, /obj/item/weapon/gun/energy))
+	if(istype(O, /obj/item/gun/energy))
 		return FALSE
 	if(!assembly)
 		return FALSE // Pointless to do everything else if there's no battery to draw from.
-	var/obj/item/weapon/cell/cell = O.get_cell()
+	var/obj/item/cell/cell = O.get_cell()
 	if(cell)
 		var/transfer_amount = amount_to_move
 		var/turf/A = get_turf(src)
@@ -83,8 +83,8 @@
 	if(..()) // If the above code succeeds, do this below.
 		var/atom/movable/acting_object = get_object()
 		if(prob(20))
-			var/datum/effect/effect/system/spark_spread/s = new()
+			var/datum/effect/spark_spread/s = new()
 			s.set_up(12, 1, src)
 			s.start()
-			acting_object.visible_message("<span class='warning'>\The [acting_object] makes some sparks!</span>")
+			acting_object.visible_message(SPAN_WARNING("\The [acting_object] makes some sparks!"))
 		return TRUE

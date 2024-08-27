@@ -1,4 +1,8 @@
-// Updates whatever openspace components may be mimicing us. On turfs this queues an openturf update on the above openturf, on movables this updates their bound movable (if present). Meaningless on any type other than `/turf` or `/atom/movable` (incl. children).
+/**
+ * Updates whatever openspace components may be mimicing us. On turfs this queues an openturf update on the above
+ * openturf, on movables this updates their bound movable (if present). Meaningless on any type other than `/turf` or
+ * `/atom/movable` (incl. children).
+ */
 /atom/proc/update_above()
 	return
 
@@ -6,8 +10,7 @@
 	var/turf/T = GetBelow(src)
 	while (T && (T.z_flags & ZM_MIMIC_BELOW))
 		T = GetBelow(T)
-
-	return istype(T, /turf/space)
+	return isspaceturf(T)
 
 /turf/update_icon()
 	..()

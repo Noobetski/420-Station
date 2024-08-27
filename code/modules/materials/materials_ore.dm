@@ -1,29 +1,31 @@
-/obj/item/weapon/ore
+/obj/item/ore
+	force = 5
+	throwforce = 5
 	name = "ore"
 	icon_state = "lump"
 	icon = 'icons/obj/materials/ore.dmi'
 	randpixel = 8
-	w_class = 2
+	w_class = ITEM_SIZE_SMALL
 	var/material/material
 	var/datum/geosample/geologic_data
 
-/obj/item/weapon/ore/get_material()
+/obj/item/ore/get_material()
 	return material
 
-/obj/item/weapon/ore/attackby(obj/item/weapon/W as obj, mob/user as mob)
+/obj/item/ore/use_tool(obj/item/W, mob/living/user, list/click_params)
 	if(istype(W,/obj/item/device/core_sampler))
 		var/obj/item/device/core_sampler/C = W
 		C.sample_item(src, user)
-	else
-		return ..()
+		return TRUE
+	return ..()
 
-/obj/item/weapon/ore/New(var/newloc, var/_mat)
+/obj/item/ore/New(newloc, _mat)
 	if(_mat)
 		matter = list()
 		matter[_mat] = SHEET_MATERIAL_AMOUNT
 	..(newloc)
 
-/obj/item/weapon/ore/Initialize()
+/obj/item/ore/Initialize()
 	for(var/stuff in matter)
 		var/material/M = SSmaterials.get_material_by_name(stuff)
 		if(M)
@@ -36,11 +38,13 @@
 				desc = M.ore_desc
 			if(icon_state == "dust")
 				slot_flags = SLOT_HOLSTER
+				throwforce = 0
+				force = 0 
 			break
 	. = ..()
 
 // POCKET SAND!
-/obj/item/weapon/ore/throw_impact(atom/hit_atom)
+/obj/item/ore/throw_impact(atom/hit_atom)
 	..()
 	if(icon_state == "dust")
 		var/mob/living/carbon/human/H = hit_atom
@@ -51,29 +55,29 @@
 			QDEL_IN(src, 1)
 
 // Map definitions.
-/obj/item/weapon/ore/uranium/New(var/newloc)
+/obj/item/ore/uranium/New(newloc)
 	..(newloc, MATERIAL_PITCHBLENDE)
-/obj/item/weapon/ore/iron/New(var/newloc)
+/obj/item/ore/iron/New(newloc)
 	..(newloc, MATERIAL_HEMATITE)
-/obj/item/weapon/ore/coal/New(var/newloc)
+/obj/item/ore/coal/New(newloc)
 	..(newloc, MATERIAL_GRAPHITE)
-/obj/item/weapon/ore/glass/New(var/newloc)
+/obj/item/ore/glass/New(newloc)
 	..(newloc, MATERIAL_SAND)
-/obj/item/weapon/ore/silver/New(var/newloc)
+/obj/item/ore/silver/New(newloc)
 	..(newloc, MATERIAL_SILVER)
-/obj/item/weapon/ore/gold/New(var/newloc)
+/obj/item/ore/gold/New(newloc)
 	..(newloc, MATERIAL_GOLD)
-/obj/item/weapon/ore/diamond/New(var/newloc)
+/obj/item/ore/diamond/New(newloc)
 	..(newloc, MATERIAL_DIAMOND)
-/obj/item/weapon/ore/osmium/New(var/newloc)
+/obj/item/ore/osmium/New(newloc)
 	..(newloc, MATERIAL_PLATINUM)
-/obj/item/weapon/ore/hydrogen/New(var/newloc)
+/obj/item/ore/hydrogen/New(newloc)
 	..(newloc, MATERIAL_HYDROGEN)
-/obj/item/weapon/ore/slag/New(var/newloc)
+/obj/item/ore/slag/New(newloc)
 	..(newloc, MATERIAL_WASTE)
-/obj/item/weapon/ore/phoron/New(var/newloc)
+/obj/item/ore/phoron/New(newloc)
 	..(newloc, MATERIAL_PHORON)
-/obj/item/weapon/ore/aluminium/New(var/newloc)
+/obj/item/ore/aluminium/New(newloc)
 	..(newloc, MATERIAL_BAUXITE)
-/obj/item/weapon/ore/rutile/New(var/newloc)
+/obj/item/ore/rutile/New(newloc)
 	..(newloc, MATERIAL_RUTILE)

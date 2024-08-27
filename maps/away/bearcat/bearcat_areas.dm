@@ -39,7 +39,7 @@
 /area/ship/scrap/crew/toilets
 	name = "Bathrooms"
 	icon_state = "toilet"
-	turf_initializer = /decl/turf_initializer/maintenance
+	turf_initializer = /singleton/turf_initializer/maintenance
 
 /area/ship/scrap/crew/wash
 	name = "Washroom"
@@ -64,11 +64,9 @@
 	name = "Firefighting Equipment Comparment"
 	icon_state = "green"
 
-/area/ship/scrap/unused
-	name = "Compartment 2-B"
+/area/ship/scrap/tcomms
+	name = "Telecomms Compartment"
 	icon_state = "yellow"
-	turf_initializer = /decl/turf_initializer/maintenance
-	ambience = list('sound/ambience/ambigen3.ogg','sound/ambience/ambigen4.ogg','sound/ambience/ambigen5.ogg','sound/ambience/ambigen6.ogg','sound/ambience/ambimo1.ogg','sound/ambience/ambimo2.ogg')
 
 /area/ship/scrap/hidden
 	name = "Unknown" //shielded compartment
@@ -85,10 +83,12 @@
 /area/ship/scrap/broken1
 	name = "Robotic Maintenance"
 	icon_state = "green"
+	turfs_airless = TRUE
 
 /area/ship/scrap/broken2
 	name = "Compartment 1-B"
 	icon_state = "yellow"
+	turfs_airless = TRUE
 
 /area/ship/scrap/gambling
 	name = "Compartment 1-C"
@@ -126,11 +126,13 @@
 	name = "Atmospherics Comparment"
 	icon_state = "atmos"
 	ambience = list('sound/ambience/ambigen3.ogg','sound/ambience/ambigen4.ogg','sound/ambience/ambigen5.ogg','sound/ambience/ambigen6.ogg','sound/ambience/ambigen7.ogg','sound/ambience/ambigen8.ogg','sound/ambience/ambigen9.ogg','sound/ambience/ambigen10.ogg','sound/ambience/ambigen11.ogg','sound/ambience/ambiatm1.ogg')
+	turfs_airless = TRUE
 
 /area/ship/scrap/maintenance/power
 	name = "Power Compartment"
 	icon_state = "engine_smes"
 	ambience = list('sound/ambience/ambigen3.ogg','sound/ambience/ambigen4.ogg','sound/ambience/ambigen5.ogg','sound/ambience/ambigen6.ogg','sound/ambience/ambigen7.ogg','sound/ambience/ambigen8.ogg','sound/ambience/ambigen9.ogg','sound/ambience/ambigen10.ogg','sound/ambience/ambigen11.ogg','sound/ambience/ambieng1.ogg')
+	turfs_airless = TRUE
 
 /area/ship/scrap/maintenance/engine
 	icon_state = "engine"
@@ -138,12 +140,15 @@
 
 /area/ship/scrap/maintenance/engine/aft
 	name = "Main Engine Bay"
+	turfs_airless = TRUE
 
 /area/ship/scrap/maintenance/engine/port
 	name = "Port Thruster"
+	turfs_airless = TRUE
 
 /area/ship/scrap/maintenance/engine/starboard
 	name = "Starboard Thruster"
+	turfs_airless = TRUE
 
 /area/ship/scrap/command/hallway
 	name = "Command Deck"

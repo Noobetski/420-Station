@@ -1,6 +1,7 @@
 /obj/item/device/scanner/xenobio
 	name = "xenolife scanner"
 	desc = "Multipurpose organic life scanner. With spectral breath analyzer you can find out what snacks Ian had! Or what gasses alien life breathes."
+	icon = 'icons/obj/tools/xenolife_scanner.dmi'
 	icon_state = "xenobio"
 	item_state = "analyzer"
 	scan_sound = 'sound/effects/scanbeep.ogg'
@@ -10,14 +11,14 @@
 	var/list/valid_targets = list(
 		/mob/living/carbon/human,
 		/mob/living/simple_animal,
-		/mob/living/carbon/slime
+		/mob/living/carbon/slime,
 	)
 
 /obj/item/device/scanner/xenobio/is_valid_scan_target(atom/O)
 	if(is_type_in_list(O, valid_targets))
 		return TRUE
-	if(istype(O, /obj/structure/stasis_cage))
-		var/obj/structure/stasis_cage/cagie = O
+	if(istype(O, /obj/machinery/stasis_cage))
+		var/obj/machinery/stasis_cage/cagie = O
 		return !!cagie.contained
 	return FALSE
 
@@ -26,7 +27,8 @@
 	scan_data = xenobio_scan_results(O)
 	user.show_message(SPAN_NOTICE(scan_data))
 
-/proc/list_gases(var/gases)
+/proc/list_gases(gases)
+	RETURN_TYPE(/list)
 	. = list()
 	for(var/g in gases)
 		. += "[gas_data.name[g]] ([gases[g]]%)"
@@ -34,14 +36,14 @@
 
 /proc/xenobio_scan_results(mob/target)
 	. = list()
-	if(istype(target, /obj/structure/stasis_cage))
-		var/obj/structure/stasis_cage/cagie = target
+	if(istype(target, /obj/machinery/stasis_cage))
+		var/obj/machinery/stasis_cage/cagie = target
 		target = cagie.contained
 	if(istype(target, /mob/living/carbon/human))
 		var/mob/living/carbon/human/H = target
 		. += "Data for [H]:"
 		. += "Species:\t[H.species]"
-		if(H.species.breath_type) 
+		if(H.species.breath_type)
 			. += "Breathes:\t[gas_data.name[H.species.breath_type]]"
 		if(H.species.exhale_type)
 			. += "Exhales:\t[gas_data.name[H.species.exhale_type]]"
@@ -59,30 +61,26 @@
 		if(A.minbodytemp && A.maxbodytemp)
 			. += "Temperature comfort zone:\t[A.minbodytemp] K to [A.maxbodytemp] K"
 		var/area/map = locate(/area/overmap)
-		for(var/obj/effect/overmap/visitable/sector/exoplanet/P in map)
+		for(var/obj/overmap/visitable/sector/exoplanet/P in map)
 			if((A in P.animals) || is_type_in_list(A, P.repopulate_types))
-				var/list/discovered = SSstatistics.get_field(STAT_XENOFAUNA_SCANNED)
-				if(!discovered)
-					discovered = list()
-				discovered |= "[P.name]-[A.type]"
-				SSstatistics.set_field(STAT_XENOFAUNA_SCANNED, discovered)
+				GLOB.stat_fauna_scanned |= "[P.name]-[A.type]"
 				. += "New xenofauna species discovered!"
 				break
-	else if(istype(target, /mob/living/carbon/slime/))
+	else if(istype(target, /mob/living/carbon/slime))
 		var/mob/living/carbon/slime/T = target
 		. += "Slime scan result for \the [T]:"
 		. += "[T.colour] [T.is_adult ? "adult" : "baby"] slime"
 		. += "Nutrition:\t[T.nutrition]/[T.get_max_nutrition()]"
 		if(T.nutrition < T.get_starve_nutrition())
-			. += "<span class='alert'>Warning:\tthe slime is starving!</span>"
+			. += SPAN_CLASS("alert", "Warning:\tthe slime is starving!")
 		else if (T.nutrition < T.get_hunger_nutrition())
-			. += "<span class='warning'>Warning:\tthe slime is hungry.</span>"
+			. += SPAN_WARNING("Warning:\tthe slime is hungry.")
 		. += "Electric charge strength:\t[T.powerlevel]"
 		. += "Health:\t[round((T.health * 100) / T.maxHealth)]%"
 
 		var/list/mutations = T.GetMutations()
 
-		if(!mutations.len)
+		if(!length(mutations))
 			. += "This slime will never mutate."
 		else
 			var/list/mutationChances = list()
@@ -90,9 +88,9 @@
 				if(i == T.colour)
 					continue
 				if(mutationChances[i])
-					mutationChances[i] += T.mutation_chance / mutations.len
+					mutationChances[i] += T.mutation_chance / length(mutations)
 				else
-					mutationChances[i] = T.mutation_chance / mutations.len
+					mutationChances[i] = T.mutation_chance / length(mutations)
 
 			var/list/mutationTexts = list("[T.colour] ([100 - T.mutation_chance]%)")
 			for(var/i in mutationChances)

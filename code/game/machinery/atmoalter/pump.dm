@@ -1,13 +1,13 @@
 /obj/machinery/portable_atmospherics/powered/pump
 	name = "portable air pump"
 
-	icon = 'icons/obj/atmos.dmi'
+	icon = 'icons/obj/atmospherics/atmos.dmi'
 	icon_state = "psiphon:0"
-	density = 1
+	density = TRUE
 	w_class = ITEM_SIZE_NORMAL
 	base_type = /obj/machinery/portable_atmospherics/powered/pump
 
-	var/direction_out = 0 //0 = siphoning, 1 = releasing
+	var/direction_out = 1 //0 = siphoning, 1 = releasing
 	var/target_pressure = ONE_ATMOSPHERE
 
 	var/pressuremin = 0
@@ -17,6 +17,9 @@
 
 	power_rating = 7500 //7500 W ~ 10 HP
 	power_losses = 150
+
+	machine_name = "portable pump"
+	machine_desc = "Used to equalize the pressure of the atmosphere in a surrounding area with its own contents, or to draw in air from the area around it. Runs on a battery backup; can be connected to atmospherics networks."
 
 /obj/machinery/portable_atmospherics/powered/pump/filled
 	start_pressure = 90 * ONE_ATMOSPHERE
@@ -28,21 +31,21 @@
 	src.air_contents.adjust_multi(GAS_OXYGEN, air_mix[GAS_OXYGEN], GAS_NITROGEN, air_mix[GAS_NITROGEN])
 
 /obj/machinery/portable_atmospherics/powered/pump/on_update_icon()
-	overlays.Cut()
+	ClearOverlays()
 
-	if((use_power == POWER_USE_ACTIVE) && !(stat & NOPOWER))
+	if((use_power == POWER_USE_ACTIVE) && is_powered())
 		icon_state = "psiphon:1"
 	else
 		icon_state = "psiphon:0"
 
 	if(holding)
-		overlays += "siphon-open"
+		AddOverlays("siphon-open")
 
 	if(connected_port)
-		overlays += "siphon-connector"
+		AddOverlays("siphon-connector")
 
 /obj/machinery/portable_atmospherics/powered/pump/emp_act(severity)
-	if(stat & (BROKEN|NOPOWER))
+	if(inoperable())
 		..(severity)
 		return
 
@@ -52,7 +55,7 @@
 	if(prob(100/severity))
 		direction_out = !direction_out
 
-	target_pressure = rand(0,1300)
+	target_pressure = rand(0, 10 * ONE_ATMOSPHERE)
 	update_icon()
 
 	..(severity)
@@ -61,7 +64,7 @@
 	..()
 	var/power_draw = -1
 
-	if((use_power == POWER_USE_ACTIVE) && !(stat & NOPOWER))
+	if((use_power == POWER_USE_ACTIVE) && is_powered())
 		var/datum/gas_mixture/environment
 		if(holding)
 			environment = holding.air_contents
@@ -103,13 +106,13 @@
 
 	src.updateDialog()
 
-/obj/machinery/portable_atmospherics/powered/pump/interface_interact(var/mob/user)
+/obj/machinery/portable_atmospherics/powered/pump/interface_interact(mob/user)
 	ui_interact(user)
 	return TRUE
 
 /obj/machinery/portable_atmospherics/powered/pump/ui_interact(mob/user, ui_key = "rcon", datum/nanoui/ui=null, force_open=1)
 	var/list/data[0]
-	var/obj/item/weapon/cell/cell = get_cell()
+	var/obj/item/cell/cell = get_cell()
 	data["portConnected"] = connected_port ? 1 : 0
 	data["tankPressure"] = round(air_contents.return_pressure() > 0 ? air_contents.return_pressure() : 0)
 	data["targetpressure"] = round(target_pressure)

@@ -22,7 +22,7 @@
 	var/list/missing_mobs = expected_mobs - actual_mobs
 	var/list/excessive_mobs= actual_mobs - expected_mobs
 
-	if(missing_mobs.len || excessive_mobs.len)
+	if(length(missing_mobs) || length(excessive_mobs))
 		fail("[helper_proc] did not return the expected mobs. Expected [english_list(expected_mobs)], was [english_list(actual_mobs)]")
 		log_debug(mob_one.virtual_mob.sight)
 		log_debug(mob_one.virtual_mob.see_invisible)
@@ -96,17 +96,17 @@
 	. = ..()
 
 /datum/unit_test/virtual/helper/proc/standard_setup()
-	mob_one   = get_named_instance(/mob/fake_mob, get_turf(locate(/obj/effect/landmark/virtual_spawn/one)),   "Test Mob 1")
-	mob_two   = get_named_instance(/mob/fake_mob, get_turf(locate(/obj/effect/landmark/virtual_spawn/two)),   "Test Mob 2")
-	mob_three = get_named_instance(/mob/fake_mob, get_turf(locate(/obj/effect/landmark/virtual_spawn/three)), "Test Mob 3")
+	mob_one   = get_named_instance(/mob/fake_mob, get_turf(locate(/obj/landmark/virtual_spawn/one)),   "Test Mob 1")
+	mob_two   = get_named_instance(/mob/fake_mob, get_turf(locate(/obj/landmark/virtual_spawn/two)),   "Test Mob 2")
+	mob_three = get_named_instance(/mob/fake_mob, get_turf(locate(/obj/landmark/virtual_spawn/three)), "Test Mob 3")
 
 /datum/unit_test/virtual/helper/proc/standard_cleanup()
 	QDEL_NULL(mob_one)
 	QDEL_NULL(mob_two)
 	QDEL_NULL(mob_three)
 
-/obj/effect/landmark/virtual_spawn/one
-/obj/effect/landmark/virtual_spawn/two
-/obj/effect/landmark/virtual_spawn/three
+/obj/landmark/virtual_spawn/one
+/obj/landmark/virtual_spawn/two
+/obj/landmark/virtual_spawn/three
 
 #endif

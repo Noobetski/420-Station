@@ -1,5 +1,5 @@
 //TODO: Convert this over for languages.
-/mob/living/carbon/brain/say(var/message)
+/mob/living/carbon/brain/say(message)
 	if (silent)
 		return
 
@@ -12,7 +12,7 @@
 		if(speaking)
 			message = copytext(message, 2+length(speaking.key))
 		var/verb = "says"
-		var/ending = copytext(message, length(message))
+		var/ending = copytext(message, -1)
 		if (speaking)
 			verb = speaking.get_spoken_verb(ending)
 		else
@@ -28,11 +28,11 @@
 				message = Gibberish(message, (emp_damage*6))//scrambles the message, gets worse when emp_damage is higher
 
 		if(speaking && speaking.flags & HIVEMIND)
-			speaking.broadcast(src,trim(message))
+			speaking.broadcast(src,trimtext(message))
 			return
 
 		if(istype(container, /obj/item/device/mmi/radio_enabled))
 			var/obj/item/device/mmi/radio_enabled/R = container
 			if(R.radio)
 				spawn(0) R.radio.hear_talk(src, sanitize(message), verb, speaking)
-		..(trim(message), speaking, verb)
+		..(trimtext(message), speaking, verb)

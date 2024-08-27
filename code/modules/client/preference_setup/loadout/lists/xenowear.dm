@@ -1,9 +1,9 @@
 // Alien clothing.
 
 // Unathi clothing
-/datum/gear/suit/unathi/
+/datum/gear/suit/unathi
 	sort_category = "Xenowear"
-	category = /datum/gear/suit/unathi/
+	category = /datum/gear/suit/unathi
 	whitelisted = list(SPECIES_UNATHI, SPECIES_YEOSA)
 
 /datum/gear/suit/unathi/mantle
@@ -34,9 +34,9 @@
 	cost = 2
 
 //Skrell Chains
-/datum/gear/ears/skrell/
+/datum/gear/ears/skrell
 	sort_category = "Xenowear"
-	category = /datum/gear/ears/skrell/
+	category = /datum/gear/ears/skrell
 	whitelisted = list(SPECIES_SKRELL)
 
 /datum/gear/ears/skrell/chains
@@ -86,13 +86,6 @@
 	sort_category = "Xenowear"
 
 // IPC clothing
-/datum/gear/mask/ipc_monitor
-	display_name = "display monitor (IPC)"
-	path = /obj/item/clothing/mask/monitor
-	sort_category = "Xenowear"
-	whitelisted = list(SPECIES_IPC)
-	cost = 0
-
 /datum/gear/suit/lab_xyn_machine
 	display_name = "Xynergy labcoat"
 	path = /obj/item/clothing/suit/storage/toggle/labcoat/xyn_machine
@@ -115,6 +108,17 @@
 /datum/gear/shoes/wrk_toeless
 	display_name = "toeless workboots"
 	path = /obj/item/clothing/shoes/workboots/toeless
+	sort_category = "Xenowear"
+
+/datum/gear/shoes/clogs_toeless
+	display_name = "toeless foam clogs"
+	path = /obj/item/clothing/shoes/foamclog/toeless
+	flags = GEAR_HAS_COLOR_SELECTION
+	sort_category = "Xenowear"
+
+/datum/gear/shoes/flipflobsters_toeless
+	display_name = "toeless flip flobsters"
+	path = /obj/item/clothing/shoes/foamclog/flipflobster/toeless
 	sort_category = "Xenowear"
 
 // Pre-modified gloves
@@ -162,29 +166,8 @@
 	whitelisted = list(SPECIES_UNATHI, SPECIES_YEOSA)
 
 // Vox clothing
-/datum/gear/mask/gas/vox
+/datum/gear/vox_mask
 	display_name = "vox breathing mask"
 	path = /obj/item/clothing/mask/gas/vox
 	sort_category = "Xenowear"
-	whitelisted = list(SPECIES_VOX, SPECIES_VOX_ARMALIS)
-
-// Space-Adapted Human clothing
-/datum/gear/accessory/space_adapted
-	sort_category = "Xenowear"
-	category = /datum/gear/accessory/space_adapted
-	whitelisted = list(SPECIES_SPACER)
-
-/datum/gear/accessory/space_adapted/venter
-	display_name = "venter assembly"
-	path = /obj/item/clothing/accessory/space_adapted/venter
-	flags = GEAR_HAS_COLOR_SELECTION
-
-/datum/gear/accessory/space_adapted/legbrace
-	display_name = "legbrace"
-	path = /obj/item/clothing/accessory/space_adapted/bracer
-	flags = GEAR_HAS_COLOR_SELECTION
-
-/datum/gear/accessory/space_adapted/neckbrace
-	display_name = "neckbrace"
-	path = /obj/item/clothing/accessory/space_adapted/bracer/neckbrace
-	flags = GEAR_HAS_COLOR_SELECTION
+	whitelisted = list(SPECIES_VOX)

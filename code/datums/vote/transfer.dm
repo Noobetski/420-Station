@@ -1,5 +1,5 @@
-#define CHOICE_TRANSFER "Initiate crew transfer"
-#define CHOICE_EXTEND "Extend the round ([config.vote_autotransfer_interval / 600] minutes)"
+#define CHOICE_TRANSFER "Initiate bluespace jump"
+#define CHOICE_EXTEND "Extend the round ([config.vote_autotransfer_interval] minutes)"
 #define CHOICE_ADD_ANTAG "Add antagonist"
 
 /datum/vote/transfer
@@ -11,16 +11,16 @@
 		return
 	if(!evacuation_controller || !evacuation_controller.should_call_autotransfer_vote())
 		return FALSE
-	if(!automatic && !config.allow_vote_restart && !is_admin(creator))
+	if(!automatic && !config.allow_vote_restart && !isadmin(creator))
 		return FALSE // Admins and autovotes bypass the config setting.
 	if(check_rights(R_INVESTIGATE, 0, creator))
 		return //Mods bypass further checks.
-	var/decl/security_state/security_state = decls_repository.get_decl(GLOB.using_map.security_state)
+	var/singleton/security_state/security_state = GET_SINGLETON(GLOB.using_map.security_state)
 	if (!automatic && security_state.current_security_level_is_same_or_higher_than(security_state.high_security_level))
-		to_chat(creator, "The current alert status is too high to call for a crew transfer!")
+		to_chat(creator, "The current alert status is too high to call for a bluespace jump!")
 		return FALSE
 	if(GAME_STATE <= RUNLEVEL_SETUP)
-		to_chat(creator, "The crew transfer button has been disabled!")
+		to_chat(creator, "The bluespace jump button has been disabled!")
 		return FALSE
 
 /datum/vote/transfer/setup_vote(mob/creator, automatic)
@@ -45,7 +45,7 @@
 		else
 			factor = 1.4
 	choices[CHOICE_TRANSFER] = round(choices[CHOICE_TRANSFER] * factor)
-	to_world("<font color='purple'>Crew Transfer Factor: [factor]</font>")
+	to_world(SPAN_COLOR("purple", "Bluespace Jump Factor: [factor]"))
 
 /datum/vote/transfer/report_result()
 	if(..())
@@ -55,17 +55,32 @@
 	else if(result[1] == CHOICE_ADD_ANTAG)
 		SSvote.queued_auto_vote = /datum/vote/add_antagonist
 
-/datum/vote/transfer/mob_not_participating(mob/user)
-	if((. = ..()))
-		return
-	if(config.vote_no_dead_crew_transfer)
-		return !isliving(user) || ismouse(user) || is_drone(user)
+
+/datum/vote/transfer/mob_can_vote(mob/voter)
+	if (check_rights(R_MOD, FALSE, voter))
+		return TRUE
+	if (config.vote_no_dead)
+		if (voter.stat == DEAD)
+			return FALSE
+		if (isghost(voter))
+			return FALSE
+	if (config.vote_no_dead_crew_transfer)
+		if (voter.stat == DEAD)
+			return FALSE
+		if (!isliving(voter))
+			return FALSE
+		if (ismouse(voter))
+			return FALSE
+		if (isdrone(voter))
+			return FALSE
+	return TRUE
+
 
 /datum/vote/transfer/check_toggle()
 	return config.allow_vote_restart ? "Allowed" : "Disallowed"
 
 /datum/vote/transfer/toggle(mob/user)
-	if(is_admin(user))
+	if(isadmin(user))
 		config.allow_vote_restart = !config.allow_vote_restart
 
 #undef CHOICE_TRANSFER

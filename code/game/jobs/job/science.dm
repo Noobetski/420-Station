@@ -14,11 +14,7 @@
 	access = list(access_rd, access_bridge, access_tox, access_morgue,
 			            access_tox_storage, access_teleporter, access_sec_doors, access_heads,
 			            access_research, access_robotics, access_xenobiology, access_ai_upload, access_tech_storage,
-			            access_RC_announce, access_keycard_auth, access_tcomsat, access_gateway, access_xenoarch, access_network)
-	minimal_access = list(access_rd, access_bridge, access_tox, access_morgue,
-			            access_tox_storage, access_teleporter, access_sec_doors, access_heads,
-			            access_research, access_robotics, access_xenobiology, access_ai_upload, access_tech_storage,
-			            access_RC_announce, access_keycard_auth, access_tcomsat, access_gateway, access_xenoarch, access_network)
+			            access_RC_announce, access_keycard_auth, access_tcomsat, access_gateway, access_xenoarch, access_network, access_network_admin, access_research_storage)
 	minimal_player_age = 14
 	ideal_character_age = 18
 	outfit_type = /decl/hierarchy/outfit/job/science/rd
@@ -38,7 +34,7 @@
 	minimal_access = list(access_tox, access_tox_storage, access_research, access_xenoarch)
 	alt_titles = list("Xenoarcheologist", "Anomalist", "Phoron Researcher")
 	minimal_player_age = 7
-	outfit_type = /decl/hierarchy/outfit/job/science/scientist
+	outfit_type = /singleton/hierarchy/outfit/job/science/scientist
 
 /datum/job/xenobiologist
 	title = "Xenobiologist"
@@ -55,7 +51,7 @@
 	minimal_access = list(access_research, access_xenobiology, access_hydroponics)
 	alt_titles = list("Xenobotanist")
 	minimal_player_age = 7
-	outfit_type = /decl/hierarchy/outfit/job/science/xenobiologist
+	outfit_type = /singleton/hierarchy/outfit/job/science/xenobiologist
 
 /datum/job/roboticist
 	title = "Roboticist"
@@ -72,4 +68,4 @@
 	minimal_access = list(access_robotics, access_tech_storage, access_morgue, access_research) //As a job that handles so many corpses, it makes sense for them to have morgue access.
 	alt_titles = list("Biomechanical Engineer","Mechatronic Engineer")
 	minimal_player_age = 3
-	outfit_type = /decl/hierarchy/outfit/job/science/roboticist
+	outfit_type = /singleton/hierarchy/outfit/job/science/roboticist

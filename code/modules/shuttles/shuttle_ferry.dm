@@ -4,8 +4,8 @@
 	var/location = 0	//0 = at area_station, 1 = at area_offsite
 	var/direction = 0	//0 = going to station, 1 = going to offsite.
 
-	var/obj/effect/shuttle_landmark/waypoint_station  //This variable is type-abused initially: specify the landmark_tag, not the actual landmark.
-	var/obj/effect/shuttle_landmark/waypoint_offsite  //This variable is type-abused initially: specify the landmark_tag, not the actual landmark.
+	var/obj/shuttle_landmark/waypoint_station  //This variable is type-abused initially: specify the landmark_tag, not the actual landmark.
+	var/obj/shuttle_landmark/waypoint_offsite  //This variable is type-abused initially: specify the landmark_tag, not the actual landmark.
 
 	category = /datum/shuttle/autodock/ferry
 
@@ -28,11 +28,11 @@
 		return waypoint_station
 	return waypoint_offsite
 
-/datum/shuttle/autodock/ferry/short_jump(var/destination)
+/datum/shuttle/autodock/ferry/short_jump(destination)
 	direction = !location
 	..()
 
-/datum/shuttle/autodock/ferry/long_jump(var/destination, var/obj/effect/shuttle_landmark/interim, var/travel_time)
+/datum/shuttle/autodock/ferry/long_jump(destination, obj/shuttle_landmark/interim, travel_time)
 	direction = !location
 	..()
 

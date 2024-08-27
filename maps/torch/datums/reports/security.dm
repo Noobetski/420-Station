@@ -10,7 +10,7 @@
 /datum/computer_file/report/recipient/sec/incident
 	form_name = "SCG-SEC-01"
 	title = "Security Incident Report"
-	available_on_ntnet = 1
+	available_on_ntnet = TRUE
 
 /datum/computer_file/report/recipient/sec/incident/generate_fields()
 	..()
@@ -20,20 +20,20 @@
 	add_field(/datum/report_field/simple_text, "Offense/Incident Type")
 	add_field(/datum/report_field/date, "Date")
 	add_field(/datum/report_field/time, "Time of incident")
-	add_field(/datum/report_field/people/list_from_manifest, "Assisting Officer(s)")
+	add_field(/datum/report_field/people/list_from_manifest, "Assisting Security Personnel")
 	add_field(/datum/report_field/simple_text, "Location")
 	add_field(/datum/report_field/text_label/instruction, "(V-Victim, S-Suspect, W-Witness, M-Missing, A-Arrested, RP-Reporting Person, D-Deceased)")
 	add_field(/datum/report_field/pencode_text, "Personnel involved in Incident")
 	add_field(/datum/report_field/text_label/instruction, "(D-Damaged, E-Evidence, L-Lost, R-Recovered, S-Stolen)")
 	add_field(/datum/report_field/pencode_text, "Description of Items/Property")
 	add_field(/datum/report_field/pencode_text, "Narrative")
-	add_field(/datum/report_field/signature, "Reporting Officer's signature")
+	add_field(/datum/report_field/signature, "Reporting Security Personnel's signature")
 	set_access(access_edit = access_security)
 
 /datum/computer_file/report/recipient/sec/investigation
 	form_name = "SCG-SEC-02"
 	title = "Investigation Report"
-	available_on_ntnet = 1
+	available_on_ntnet = TRUE
 
 /datum/computer_file/report/recipient/sec/investigation/generate_fields()
 	..()
@@ -51,7 +51,7 @@
 /datum/computer_file/report/recipient/sec/evidence
 	form_name = "SCG-SEC-02b"
 	title = "Evidence and Property Form"
-	available_on_ntnet = 1
+	available_on_ntnet = TRUE
 
 /datum/computer_file/report/recipient/sec/evidence/generate_fields()
 	..()
@@ -70,7 +70,7 @@
 /datum/computer_file/report/recipient/sec/statement
 	form_name = "SCG-SEC-02c"
 	title = "Written Statement"
-	available_on_ntnet = 1
+	available_on_ntnet = TRUE
 
 /datum/computer_file/report/recipient/sec/statement/generate_fields()
 	..()
@@ -86,14 +86,14 @@
 	add_field(/datum/report_field/text_label/instruction, "(D-Damaged, E-Evidence, L-Lost, R-Recovered, S-Stolen)")
 	add_field(/datum/report_field/pencode_text, "Description of Items/Property")
 	add_field(/datum/report_field/pencode_text, "Narrative")
-	add_field(/datum/report_field/text_label/instruction, "By submitting this form, I understand this is considered a formal police report. I understand that all information written above is truthful and accurate. I understand that intentionally filing a fraudulent police report is a criminal offense that will be prosecuted to the fullest extent of the law.  As this is a binding legal document, I understand that by filing this form that any intentionally false information may warrant disciplinary action against myself. This statement was given on my own volition to assist with documenting the above summarized incident.")
+	add_field(/datum/report_field/text_label/instruction, "By submitting this form, I understand this is considered a formal security report. I understand that all information written above is truthful and accurate. I understand that intentionally filing a fraudulent security report is a criminal offense that will be prosecuted to the fullest extent of the law.  As this is a binding legal document, I understand that by filing this form that any intentionally false information may warrant disciplinary action against myself. This statement was given on my own volition to assist with documenting the above summarized incident.")
 	add_field(/datum/report_field/signature, "Signature")
 	set_access(access_edit = access_security)
 
 /datum/computer_file/report/recipient/sec/arrest
 	form_name = "SCG-SEC-03"
 	title = "Arrest Report"
-	available_on_ntnet = 1
+	available_on_ntnet = TRUE
 
 /datum/computer_file/report/recipient/sec/arrest/generate_fields()
 	..()
@@ -118,14 +118,14 @@
 	add_field(/datum/report_field/simple_text, "Suit Sensors locked to MAX?")
 	add_field(/datum/report_field/simple_text, "If needed, provided timely medical aid?")
 	add_field(/datum/report_field/simple_text, "IF YES, what injuries are pre-existing?")
-	add_field(/datum/report_field/text_label/instruction, "This document MUST be submitted to, and reviwed by, the Chief of Security or Brig Chief.")
-	add_field(/datum/report_field/signature, "Reporting Officer's signature")
+	add_field(/datum/report_field/text_label/instruction, "This document MUST be submitted to, and reviewed by, the Chief of Security or Brig Chief.")
+	add_field(/datum/report_field/signature, "Reporting Security Personnel's signature")
 	set_access(access_edit = access_security)
 
 /datum/computer_file/report/recipient/sec/restraining
 	form_name = "SCG-SEC-04"
 	title = "Restraining Order"
-	available_on_ntnet = 1
+	available_on_ntnet = TRUE
 
 /datum/computer_file/report/recipient/sec/restraining/generate_fields()
 	..()
@@ -142,7 +142,7 @@
 /datum/computer_file/report/recipient/sec/ltc
 	form_name = "SCG-SEC-05"
 	title = "License to Carry"
-	available_on_ntnet = 1
+	available_on_ntnet = TRUE
 
 /datum/computer_file/report/recipient/sec/ltc/generate_fields()
 	..()

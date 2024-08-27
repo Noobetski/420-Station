@@ -11,6 +11,12 @@
 /hook/startup
 
 /**
+ * Game Ready hook.
+ * Called in master.dm once initialization is complete.
+ */
+/hook/game_ready
+
+/**
  * Roundstart hook.
  * Called in ticker.dm when a round starts.
  */
@@ -80,14 +86,14 @@
 /**
  * Employee reassignment hook.
  * Called in card.dm when someone's card is reassigned at the HoP's desk.
- * Parameters: var/obj/item/weapon/card/id
+ * Parameters: var/obj/item/card/id
  */
 /hook/reassign_employee
 
 /**
  * Employee terminated hook.
  * Called in card.dm when someone's card is terminated at the HoP's desk.
- * Parameters: var/obj/item/weapon/card/id
+ * Parameters: var/obj/item/card/id
  */
 /hook/terminate_employee
 
@@ -97,3 +103,17 @@
  * Parameters: var/obj/structure/closet/crate/sold, var/area/shuttle
  */
 /hook/sell_crate
+
+/**
+ * Anomaly cage sold hook.
+ * Called in supplyshuttle.dm when a anomaly container is sold on the shuttle.
+ * Parameters: var/obj/machinery/anomaly_container/sold, var/area/shuttle
+ */
+/hook/sell_anomalycage
+
+/**
+ * Animal sold hook.
+ * Called in supplyshuttle.dm when a anomaly container is sold on the shuttle.
+ * Parameters: var/obj/structure/stasis_cage/sold, var/area/shuttle
+ */
+/hook/sell_animal

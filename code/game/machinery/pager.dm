@@ -1,9 +1,9 @@
 /obj/machinery/pager
 	name = "departmental pager button"
-	icon = 'icons/obj/objects.dmi'
+	icon = 'icons/obj/structures/buttons.dmi'
 	icon_state = "doorbell"
 	desc = "A button used to request the presence of anyone in the department."
-	anchored = 1
+	anchored = TRUE
 	idle_power_usage = 2
 	var/acknowledged = 0
 	var/last_paged
@@ -16,8 +16,8 @@
 		var/area/A = get_area(src)
 		location = A.name
 
-/obj/machinery/pager/attackby(obj/item/weapon/W, mob/user as mob)
-	return attack_hand(user)
+/obj/machinery/pager/use_tool(obj/item/tool, mob/living/user, list/click_params)
+	return attack_hand(user) || ..()
 
 /obj/machinery/pager/interface_interact(mob/living/user)
 	if(!CanInteract(user, GLOB.default_state))
@@ -40,9 +40,9 @@
 	acknowledged = 0
 	if(paged)
 		playsound(src, 'sound/machines/ping.ogg', 60)
-		to_chat(user,"<span class='notice'>Page received by [paged] devices.</span>")
+		to_chat(user,SPAN_NOTICE("Page received by [paged] devices."))
 	else
-		to_chat(user,"<span class='warning'>No valid destinations were found for the page.</span>")
+		to_chat(user,SPAN_WARNING("No valid destinations were found for the page."))
 
 /obj/machinery/pager/Topic(href, href_list)
 	if(..())
@@ -51,7 +51,7 @@
 		return
 	if(!acknowledged && href_list["ack"])
 		playsound(src, 'sound/machines/ping.ogg', 60)
-		visible_message("<span class='notice'>Page acknowledged.</span>")
+		visible_message(SPAN_NOTICE("Page acknowledged."))
 		acknowledged = 1
 		var/obj/machinery/message_server/MS = get_message_server(z)
 		if(!MS)

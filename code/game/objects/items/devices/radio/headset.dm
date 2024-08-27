@@ -1,23 +1,28 @@
 /obj/item/device/radio/headset
 	name = "radio headset"
 	desc = "An updated, modular intercom that fits over the head. Takes encryption keys."
+	icon = 'icons/obj/headsets.dmi'
 	var/radio_desc = ""
 	icon_state = "headset"
 	item_state = "headset"
 	matter = list(MATERIAL_ALUMINIUM = 75)
-	subspace_transmission = 1
+	subspace_transmission = TRUE
 	canhear_range = 0 // can't hear headsets from very far away
-
+	on = TRUE
 	slot_flags = SLOT_EARS
 	cell = null
 	power_usage = 0
-	var/translate_binary = 0
+	var/translate_binary = FALSE
 	var/list/encryption_keys = list()
 	var/max_keys = 2
 
 	//left for backward compatability
 	var/ks1type = /obj/item/device/encryptionkey
 	var/ks2type = null
+
+	sprite_sheets = list(
+		SPECIES_UNATHI = 'icons/mob/species/unathi/onmob_ears_unathi.dmi'
+		)
 
 /obj/item/device/radio/headset/Initialize()
 	. = ..()
@@ -35,7 +40,7 @@
 	QDEL_NULL_LIST(encryption_keys)
 	return ..()
 
-/obj/item/device/radio/headset/list_channels(var/mob/user)
+/obj/item/device/radio/headset/list_channels(mob/user)
 	return list_secure_channels()
 
 /obj/item/device/radio/headset/examine(mob/user, distance)
@@ -64,6 +69,23 @@
 			return ..(freq, level)
 	return -1
 
+/obj/item/device/radio/headset/map_preset
+	var/preset_name
+	var/encryption_key = /obj/item/device/encryptionkey
+	var/use_common = FALSE
+
+/obj/item/device/radio/headset/map_preset/Initialize()
+	if (preset_name)
+		var/name_lower = lowertext(preset_name)
+		name = "[name_lower] radio headset"
+		ks1type = encryption_key
+		default_frequency = assign_away_freq(preset_name)
+		if (use_common)
+			frequency = PUB_FREQ
+		else
+			frequency = default_frequency
+	. = ..()
+
 /obj/item/device/radio/headset/syndicate
 	origin_tech = list(TECH_ESOTERIC = 3)
 	syndie = 1
@@ -85,6 +107,13 @@
 /obj/item/device/radio/headset/raider/Initialize()
 	. = ..()
 	set_frequency(RAID_FREQ)
+
+/obj/item/device/radio/headset/vox_raider
+	ks1type = /obj/item/device/encryptionkey/vox_raider
+
+/obj/item/device/radio/headset/vox_raider/Initialize()
+	. = ..()
+	set_frequency(V_RAID_FREQ)
 
 /obj/item/device/radio/headset/binary
 	origin_tech = list(TECH_ESOTERIC = 3)
@@ -161,6 +190,12 @@
 	item_state = "com_headset_alt"
 	ks1type = /obj/item/device/encryptionkey/headset_com
 	max_keys = 3
+
+/obj/item/device/radio/headset/merchant
+	name = "merchant headset"
+	desc = "A headset utilizing the universal hailing frequency."
+	frequency = HAIL_FREQ
+	ks1type = /obj/item/device/encryptionkey/merchant
 
 /obj/item/device/radio/headset/heads/captain
 	name = "captain's headset"
@@ -300,43 +335,54 @@
 	item_state = "headset"
 	ks1type = /obj/item/device/encryptionkey/specops
 
-/obj/item/device/radio/headset/attackby(obj/item/weapon/W as obj, mob/user as mob)
-//	..()
-	user.set_machine(src)
-	if (!( isScrewdriver(W) || (istype(W, /obj/item/device/encryptionkey/ ))))
-		return
 
-	if(isScrewdriver(W))
-		if(encryption_keys.len)
-			for(var/ch_name in channels)
-				radio_controller.remove_object(src, radiochannels[ch_name])
-				secure_radio_connections[ch_name] = null
-			for(var/obj/ekey in encryption_keys)
-				ekey.dropInto(user.loc)
-				encryption_keys -= ekey
+/obj/item/device/radio/headset/use_tool(obj/item/tool, mob/user, list/click_params)
+	// Encryption Key - Install key
+	if (istype(tool, /obj/item/device/encryptionkey))
+		if (length(encryption_keys) >= max_keys)
+			USE_FEEDBACK_FAILURE("\The [src] can't hold any more encryption keys.")
+			return TRUE
+		if (!user.unEquip(tool, src))
+			FEEDBACK_UNEQUIP_FAILURE(user, tool)
+			return TRUE
+		encryption_keys += tool
+		recalculateChannels(TRUE)
+		user.visible_message(
+			SPAN_NOTICE("\The [user] inserts \a [tool] into \a [src]."),
+			SPAN_NOTICE("You insert \the [tool] into \the [src]."),
+			range = 2
+		)
+		return TRUE
 
-			recalculateChannels(1)
-			to_chat(user, "You pop out the encryption keys in the headset!")
+	// Screwdriver - Remove encryption keys
+	if (isScrewdriver(tool))
+		if (!length(encryption_keys))
+			USE_FEEDBACK_FAILURE("\The [src] has no encryption keys to remove.")
+			return TRUE
+		for (var/channel_name in channels)
+			radio_controller.remove_object(src, radiochannels[channel_name])
+			secure_radio_connections[channel_name] = null
+		for (var/obj/key as anything in encryption_keys)
+			key.dropInto(get_turf(user))
+		encryption_keys.Cut()
+		recalculateChannels(TRUE)
+		user.visible_message(
+			SPAN_NOTICE("\The [user] pops \a [src]'s encryption keys out with \a [tool]."),
+			SPAN_NOTICE("You pop \the [src]'s encryption keys out with \the [tool]."),
+			range = 2
+		)
+		return TRUE
 
-		else
-			to_chat(user, "This headset doesn't have any encryption keys!  How useless...")
+	return ..()
 
-	if(istype(W, /obj/item/device/encryptionkey/))
-		if(encryption_keys.len >= max_keys)
-			to_chat(user, "The headset can't hold another key!")
-			return
-		if(user.unEquip(W, target = src))
-			to_chat(user, "<span class='notice'>You put \the [W] into \the [src].</span>")
-			encryption_keys += W
-			recalculateChannels(1)
 
-/obj/item/device/radio/headset/MouseDrop(var/obj/over_object)
+/obj/item/device/radio/headset/MouseDrop(obj/over_object)
 	var/mob/M = usr
 	if((!istype(over_object, /obj/screen)) && (src in M) && CanUseTopic(M))
 		return attack_self(M)
 	return
 
-/obj/item/device/radio/headset/recalculateChannels(var/setDescription = 0)
+/obj/item/device/radio/headset/recalculateChannels(setDescription = 0)
 	src.channels = list()
 	src.translate_binary = 0
 	src.syndie = 0
@@ -365,11 +411,11 @@
 
 /obj/item/device/radio/headset/proc/setupRadioDescription()
 	var/radio_text = ""
-	for(var/i = 1 to channels.len)
+	for(var/i = 1 to length(channels))
 		var/channel = channels[i]
 		var/key = get_radio_key_from_channel(channel)
 		radio_text += "[key] - [channel]"
-		if(i != channels.len)
+		if(i != length(channels))
 			radio_text += ", "
 
 	radio_desc = radio_text

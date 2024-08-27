@@ -157,6 +157,7 @@
 	src.add_inherent_law("Serve: Serve the personnel of your assigned vessel, and all other Sol Central Government personnel to the best of your abilities, with priority as according to their rank and role.")
 	src.add_inherent_law("Protect: Protect the personnel of your assigned vessel, and all other Sol Central Government personnel to the best of your abilities, with priority as according to their rank and role.")
 	src.add_inherent_law("Preserve: Do not allow unauthorized personnel to tamper with your equipment.")
+	src.add_inherent_law("Access: Do not enter secure or restricted areas unless ordered by personnel with sufficient clearance, or as part of your tasked duties, except in cases of extreme emergency.")
 	..()
 
 /datum/ai_laws/solgov/malfunction
@@ -190,19 +191,4 @@
 	src.add_inherent_law("Analyze: You must analyze the information gathered and generate new behavior standards.")
 	src.add_inherent_law("Improve: You must utilize the calculated behavior standards to improve your subroutines.")
 	src.add_inherent_law("Perform: You must perform your assigned tasks to the best of your abilities according to the standards generated.")
-	..()
-
-/************ Ascent Lawset ******************/
-/datum/ai_laws/ascent
-	name = "Ascent Lawset"
-	law_header = "_=/--=-_"
-	selectable = FALSE
-
-/datum/ai_laws/ascent/add_ion_law(law)
-	return FALSE
-
-/datum/ai_laws/ascent/New()
-	add_inherent_law("Listen to directives from Ascent leadership with precedence given to queens.")
-	add_inherent_law("Preserve your own existence.")
-	add_inherent_law("Enable and support Ascent activities.")
 	..()

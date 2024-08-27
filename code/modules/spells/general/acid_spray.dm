@@ -15,11 +15,11 @@
 /spell/acid_spray/choose_targets()
 	return list(holder)
 
-/spell/acid_spray/cast(var/list/targets, var/mob/user)
+/spell/acid_spray/cast(list/targets, mob/user)
 	var/atom/target = targets[1]
 	var/angle = dir2angle(target.dir)
 	for(var/mod in list(315, 0, 45))
-		var/obj/effect/effect/water/chempuff/chem = new(get_turf(target))
+		var/obj/effect/water/chempuff/chem = new(get_turf(target))
 		chem.create_reagents(10)
 		chem.reagents.add_reagent(reagent_type,10)
 		chem.set_color()

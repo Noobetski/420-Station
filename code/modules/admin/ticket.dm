@@ -1,5 +1,5 @@
-var/list/tickets = list()
-var/list/ticket_panels = list()
+var/global/list/tickets = list()
+var/global/list/ticket_panels = list()
 
 /datum/ticket
 	var/datum/client_lite/owner
@@ -10,20 +10,37 @@ var/list/ticket_panels = list()
 	var/id
 	var/opened_time
 	var/timeout = FALSE
+	var/last_message_time
 
-/datum/ticket/New(var/datum/client_lite/owner)
+/datum/ticket/New(datum/client_lite/owner)
 	src.owner = owner
 	tickets |= src
-	id = tickets.len
+	id = length(tickets)
 	opened_time = world.time
-	addtimer(CALLBACK(src, .proc/timeoutcheck), 5 MINUTES)
+	addtimer(new Callback(src, .proc/timeoutcheck), 5 MINUTES, TIMER_STOPPABLE)
 
 /datum/ticket/proc/timeoutcheck()
 	if(status == TICKET_OPEN)
+		message_staff(SPAN_DANGER("[owner.key_name(0)] has not received a reply to their initial ahelp after 5 minutes!"))
+		addtimer(new Callback(src, .proc/timeoutchecklast), 5 MINUTES, TIMER_STOPPABLE)
+
+
+/datum/ticket/proc/timeoutchecklast()
+	if (status == TICKET_OPEN)
+		message_staff(SPAN_DANGER("[owner.key_name(0)]'s ticket has timed out after 10 minutes with no staff response!"))
 		timeout = TRUE
 		close()
 
-/datum/ticket/proc/close(var/datum/client_lite/closed_by)
+/datum/ticket/proc/timeoutchecktaken()
+	if (status == TICKET_ASSIGNED)
+		if (is_active())
+			addtimer(new Callback(src, .proc/timeoutchecktaken), 30 MINUTES, TIMER_STOPPABLE)
+			return
+		for (var/datum/client_lite/C in assigned_admins)
+			to_chat(client_by_ckey(C.ckey), SPAN_NOTICE(SPAN_BOLD("Your ticket with [client_by_ckey(owner.ckey)] has timed out and auto-closed.")))
+		close(assigned_admins[1])
+
+/datum/ticket/proc/close(datum/client_lite/closed_by)
 	if(status == TICKET_CLOSED)
 		return
 
@@ -38,18 +55,18 @@ var/list/ticket_panels = list()
 	src.status = TICKET_CLOSED
 
 	if(timeout == TRUE)
-		to_chat(client_by_ckey(src.owner.ckey), "<span class='notice'><b>Your ticket has timed out. Please adminhelp again if your issue is not resolved.</b></span>")
+		to_chat(client_by_ckey(src.owner.ckey), SPAN_NOTICE("<b>Your ticket has timed out. Please adminhelp again if your issue is not resolved.</b>"))
 	else
 		src.closed_by = closed_by
-		to_chat(client_by_ckey(src.owner.ckey), "<span class='notice'><b>Your ticket has been closed by [closed_by.key].</b></span>")
-		message_staff("<span class='notice'><b>[src.owner.key_name(0)]</b>'s ticket has been closed by <b>[closed_by.key]</b>.</span>")
-		send2adminirc("[src.owner.key_name(0)]'s ticket has been closed by [closed_by.key].")
+		to_chat(client_by_ckey(src.owner.ckey), SPAN_NOTICE("<b>Your ticket has been closed by [closed_by.key].</b>"))
+		message_staff(SPAN_NOTICE("<b>[src.owner.key_name(0)]</b>'s ticket has been closed by <b>[closed_by.key]</b>."))
+		send_to_admin_discord(EXCOM_MSG_AHELP, "[src.owner.key_name(0)]'s ticket has been closed by [closed_by.key].")
 
 	update_ticket_panels()
 
 	return 1
 
-/datum/ticket/proc/take(var/datum/client_lite/assigned_admin)
+/datum/ticket/proc/take(datum/client_lite/assigned_admin)
 	if(status == TICKET_CLOSED)
 		return
 
@@ -62,11 +79,12 @@ var/list/ticket_panels = list()
 	assigned_admins |= assigned_admin
 	src.status = TICKET_ASSIGNED
 
-	message_staff("<span class='notice'><b>[assigned_admin.key]</b> has assigned themself to <b>[src.owner.key_name(0)]'s</b> ticket.</span>")
-	send2adminirc("[assigned_admin.key] has assigned themself to [src.owner.key_name(0)]'s ticket.")
-	to_chat(client_by_ckey(src.owner.ckey), "<span class='notice'><b>[assigned_admin.key] has added themself to your ticket and should respond shortly. Thanks for your patience!</b></span>")
+	message_staff(SPAN_NOTICE("<b>[assigned_admin.key]</b> has assigned themself to <b>[src.owner.key_name(0)]'s</b> ticket."))
+	send_to_admin_discord(EXCOM_MSG_AHELP, "[assigned_admin.key] has assigned themself to [src.owner.key_name(0)]'s ticket.")
+	to_chat(client_by_ckey(src.owner.ckey), SPAN_NOTICE("<b>[assigned_admin.key] has added themself to your ticket and should respond shortly. Thanks for your patience!</b>"))
 
 	update_ticket_panels()
+	addtimer(new Callback(src, .proc/timeoutchecktaken), 30 MINUTES, TIMER_STOPPABLE)
 
 	return 1
 
@@ -82,7 +100,8 @@ var/list/ticket_panels = list()
 	for(var/datum/client_lite/assigned_admin in assigned_admins)
 		. |= assigned_admin.key
 
-proc/get_open_ticket_by_client(var/datum/client_lite/owner)
+/proc/get_open_ticket_by_client(datum/client_lite/owner)
+	RETURN_TYPE(/datum/ticket)
 	for(var/datum/ticket/ticket in tickets)
 		if(ticket.owner.ckey == owner.ckey && (ticket.status == TICKET_OPEN || ticket.status == TICKET_ASSIGNED))
 			return ticket // there should only be one open ticket by a client at a time, so no need to keep looking
@@ -91,10 +110,14 @@ proc/get_open_ticket_by_client(var/datum/client_lite/owner)
 	if(status != TICKET_ASSIGNED)
 		return 0
 
+	if(world.time - last_message_time > 30 MINUTES)
+		return FALSE
+
 	for(var/datum/client_lite/admin in assigned_admins)
 		var/client/admin_client = client_by_ckey(admin.ckey)
 		if(admin_client && !admin_client.is_afk())
 			return 1
+
 
 	return 0
 
@@ -104,7 +127,7 @@ proc/get_open_ticket_by_client(var/datum/client_lite/owner)
 	var/msg
 	var/time_stamp
 
-/datum/ticket_msg/New(var/msg_from, var/msg_to, var/msg)
+/datum/ticket_msg/New(msg_from, msg_to, msg)
 	src.msg_from = msg_from
 	src.msg_to = msg_to
 	src.msg = msg
@@ -122,7 +145,7 @@ proc/get_open_ticket_by_client(var/datum/client_lite/owner)
 	var/list/dat = list()
 
 	var/list/ticket_dat = list()
-	for(var/id = tickets.len, id >= 1, id--)
+	for(var/id = length(tickets), id >= 1, id--)
 		var/datum/ticket/ticket = tickets[id]
 		if(C.holder || ticket.owner.ckey == C.ckey)
 			var/client/owner_client = client_by_ckey(ticket.owner.ckey)
@@ -162,7 +185,7 @@ proc/get_open_ticket_by_client(var/datum/client_lite/owner)
 				ticket_dat += "</i>"
 			ticket_dat += "</li>"
 
-	if(ticket_dat.len)
+	if(length(ticket_dat))
 		dat += "<br /><div style='width:50%;float:left;'><p><b>Available tickets:</b></p><ul>[jointext(ticket_dat, null)]</ul></div>"
 
 		if(open_ticket)
@@ -173,7 +196,7 @@ proc/get_open_ticket_by_client(var/datum/client_lite/owner)
 				var/msg_to = msg.msg_to ? msg.msg_to : "Adminhelp"
 				msg_dat += "<li>\[[msg.time_stamp]\] [msg.msg_from] -> [msg_to]: [C.holder ? generate_ahelp_key_words(C.mob, msg.msg) : msg.msg]</li>"
 
-			if(msg_dat.len)
+			if(length(msg_dat))
 				dat += "<ul>[jointext(msg_dat, null)]</ul></div>"
 			else
 				dat += "<p>No messages to display.</p></div>"
@@ -232,7 +255,7 @@ proc/get_open_ticket_by_client(var/datum/client_lite/owner)
 						usr.client.cmd_admin_pm(admin_client, ticket = ticket)
 						break
 				if(!admin_found)
-					to_chat(usr, "<span class='warning'>Error: Private-Message: Client not found. They may have lost connection, so please be patient!</span>")
+					to_chat(usr, SPAN_WARNING("Error: Private-Message: Client not found. They may have lost connection, so please be patient!"))
 			else
 				usr.client.adminhelp(input(usr,"", "adminhelp \"text\"") as text)
 

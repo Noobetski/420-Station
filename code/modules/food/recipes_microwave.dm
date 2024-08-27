@@ -1,180 +1,199 @@
-
-// see code/datums/recipe.dm
-
-
-/* No telebacon. just no...
-/datum/recipe/telebacon
-	items = list(
-		/obj/item/weapon/reagent_containers/food/snacks/meat,
-		/obj/item/device/assembly/signaler
+/datum/microwave_recipe/friedegg
+	required_reagents = list(
+		/datum/reagent/sodiumchloride = 1,
+		/datum/reagent/blackpepper = 1
 	)
-	result = /obj/item/weapon/reagent_containers/food/snacks/telebacon
-
-I said no!
-/datum/recipe/syntitelebacon
-	items = list(
-		/obj/item/weapon/reagent_containers/food/snacks/meat/syntiflesh,
-		/obj/item/device/assembly/signaler
+	required_items = list(
+		/obj/item/reagent_containers/food/snacks/egg
 	)
-	result = /obj/item/weapon/reagent_containers/food/snacks/telebacon
-*/
+	result_path = /obj/item/reagent_containers/food/snacks/friedegg
 
-/datum/recipe/friedegg
-	reagents = list(/datum/reagent/sodiumchloride = 1, /datum/reagent/blackpepper = 1)
-	items = list(
-		/obj/item/weapon/reagent_containers/food/snacks/egg
+
+/datum/microwave_recipe/friedegg2
+	required_items = list(
+		/obj/item/reagent_containers/food/snacks/egg,
+		/obj/item/reagent_containers/food/snacks/egg
 	)
-	result = /obj/item/weapon/reagent_containers/food/snacks/friedegg
+	result_path = /obj/item/reagent_containers/food/snacks/friedegg
 
-/datum/recipe/friedegg2
-	items = list(
-		/obj/item/weapon/reagent_containers/food/snacks/egg,
-		/obj/item/weapon/reagent_containers/food/snacks/egg,
+
+/datum/microwave_recipe/boiledegg
+	required_reagents = list(
+		/datum/reagent/water = 10
 	)
-	result = /obj/item/weapon/reagent_containers/food/snacks/friedegg
-
-/datum/recipe/boiledegg
-	reagents = list(/datum/reagent/water = 10)
-	items = list(
-		/obj/item/weapon/reagent_containers/food/snacks/egg
+	required_items = list(
+		/obj/item/reagent_containers/food/snacks/egg
 	)
-	result = /obj/item/weapon/reagent_containers/food/snacks/boiledegg
+	result_path = /obj/item/reagent_containers/food/snacks/boiledegg
 
-/datum/recipe/dionaroast
-	fruit = list("apple" = 1)
-	reagents = list(/datum/reagent/acid/polyacid = 5) //It dissolves the carapace. Still poisonous, though.
-	items = list(/obj/item/weapon/holder/diona)
-	result = /obj/item/weapon/reagent_containers/food/snacks/dionaroast
 
-/datum/recipe/classichotdog
-	items = list(
-		/obj/item/weapon/reagent_containers/food/snacks/bun,
-		/obj/item/weapon/holder/corgi
+/datum/microwave_recipe/dionaroast
+	required_reagents = list(
+		/datum/reagent/acid/polyacid = 5
 	)
-	result = /obj/item/weapon/reagent_containers/food/snacks/classichotdog
-
-/datum/recipe/jellydonut
-	reagents = list(/datum/reagent/drink/juice/berry = 5, /datum/reagent/sugar = 5)
-	items = list(
-		/obj/item/weapon/reagent_containers/food/snacks/doughslice
+	required_items = list(
+		/obj/item/holder/diona
 	)
-	result = /obj/item/weapon/reagent_containers/food/snacks/donut/jelly
-
-/datum/recipe/jellydonut/slime
-	reagents = list(/datum/reagent/slimejelly = 5, /datum/reagent/sugar = 5)
-	items = list(
-		/obj/item/weapon/reagent_containers/food/snacks/doughslice
+	required_produce = list(
+		"apple" = 1
 	)
-	result = /obj/item/weapon/reagent_containers/food/snacks/donut/slimejelly
+	result_path = /obj/item/reagent_containers/food/snacks/dionaroast
 
-/datum/recipe/jellydonut/cherry
-	reagents = list(/datum/reagent/nutriment/cherryjelly = 5, /datum/reagent/sugar = 5)
-	items = list(
-		/obj/item/weapon/reagent_containers/food/snacks/doughslice
+
+/datum/microwave_recipe/classichotdog
+	required_items = list(
+		/obj/item/reagent_containers/food/snacks/bun,
+		/obj/item/holder/corgi
 	)
-	result = /obj/item/weapon/reagent_containers/food/snacks/donut/cherryjelly
+	result_path = /obj/item/reagent_containers/food/snacks/classichotdog
 
-/datum/recipe/donut
-	reagents = list(/datum/reagent/sugar = 5)
-	items = list(
-		/obj/item/weapon/reagent_containers/food/snacks/doughslice
+
+/datum/microwave_recipe/jellydonut
+	required_reagents = list(
+		/datum/reagent/drink/juice/berry = 5,
+		/datum/reagent/sugar = 5
 	)
-	result = /obj/item/weapon/reagent_containers/food/snacks/donut/normal
-
-/datum/recipe/meatburger
-	items = list(
-		/obj/item/weapon/reagent_containers/food/snacks/bun,
-		/obj/item/weapon/reagent_containers/food/snacks/cutlet
+	required_items = list(
+		/obj/item/reagent_containers/food/snacks/doughslice
 	)
-	result = /obj/item/weapon/reagent_containers/food/snacks/meatburger
+	result_path = /obj/item/reagent_containers/food/snacks/donut/jelly
 
-/datum/recipe/brainburger
-	items = list(
-		/obj/item/weapon/reagent_containers/food/snacks/bun,
+
+/datum/microwave_recipe/jellydonut/slime
+	required_reagents = list(
+		/datum/reagent/slimejelly = 5,
+		/datum/reagent/sugar = 5
+	)
+	required_items = list(
+		/obj/item/reagent_containers/food/snacks/doughslice
+	)
+	result_path = /obj/item/reagent_containers/food/snacks/donut/slimejelly
+
+
+/datum/microwave_recipe/jellydonut/cherry
+	required_reagents = list(
+		/datum/reagent/nutriment/cherryjelly = 5,
+		/datum/reagent/sugar = 5
+	)
+	required_items = list(
+		/obj/item/reagent_containers/food/snacks/doughslice
+	)
+	result_path = /obj/item/reagent_containers/food/snacks/donut/cherryjelly
+
+
+/datum/microwave_recipe/donut
+	required_reagents = list(
+		/datum/reagent/sugar = 5
+	)
+	required_items = list(
+		/obj/item/reagent_containers/food/snacks/doughslice
+	)
+	result_path = /obj/item/reagent_containers/food/snacks/donut/normal
+
+
+/datum/microwave_recipe/meatburger
+	required_items = list(
+		/obj/item/reagent_containers/food/snacks/bun,
+		/obj/item/reagent_containers/food/snacks/cutlet
+	)
+	result_path = /obj/item/reagent_containers/food/snacks/meatburger
+
+
+/datum/microwave_recipe/brainburger
+	required_items = list(
+		/obj/item/reagent_containers/food/snacks/bun,
 		/obj/item/organ/internal/brain
 	)
-	result = /obj/item/weapon/reagent_containers/food/snacks/brainburger
+	result_path = /obj/item/reagent_containers/food/snacks/brainburger
 
-/datum/recipe/roburger
-	items = list(
-		/obj/item/weapon/reagent_containers/food/snacks/bun,
+
+/datum/microwave_recipe/roburger
+	required_items = list(
+		/obj/item/reagent_containers/food/snacks/bun,
 		/obj/item/robot_parts/head
 	)
-	result = /obj/item/weapon/reagent_containers/food/snacks/roburger
+	result_path = /obj/item/reagent_containers/food/snacks/roburger
 
-/datum/recipe/xenoburger
-	items = list(
-		/obj/item/weapon/reagent_containers/food/snacks/bun,
-		/obj/item/weapon/reagent_containers/food/snacks/xenomeat
+
+/datum/microwave_recipe/xenoburger
+	required_items = list(
+		/obj/item/reagent_containers/food/snacks/bun,
+		/obj/item/reagent_containers/food/snacks/xenomeat
 	)
-	result = /obj/item/weapon/reagent_containers/food/snacks/xenoburger
+	result_path = /obj/item/reagent_containers/food/snacks/xenoburger
 
-/datum/recipe/fishburger
-	items = list(
-		/obj/item/weapon/reagent_containers/food/snacks/bun,
-		/obj/item/weapon/reagent_containers/food/snacks/fish
+
+/datum/microwave_recipe/fishburger
+	required_items = list(
+		/obj/item/reagent_containers/food/snacks/bun,
+		/obj/item/reagent_containers/food/snacks/fish
 	)
-	result = /obj/item/weapon/reagent_containers/food/snacks/fishburger
+	result_path = /obj/item/reagent_containers/food/snacks/fishburger
 
-/datum/recipe/tofuburger
-	items = list(
-		/obj/item/weapon/reagent_containers/food/snacks/bun,
-		/obj/item/weapon/reagent_containers/food/snacks/tofu
+
+/datum/microwave_recipe/tofuburger
+	required_items = list(
+		/obj/item/reagent_containers/food/snacks/bun,
+		/obj/item/reagent_containers/food/snacks/tofu
 	)
-	result = /obj/item/weapon/reagent_containers/food/snacks/tofuburger
+	result_path = /obj/item/reagent_containers/food/snacks/tofuburger
 
-/datum/recipe/ghostburger
-	items = list(
-		/obj/item/weapon/reagent_containers/food/snacks/bun,
-		/obj/item/weapon/ectoplasm //where do you even find this stuff
+
+/datum/microwave_recipe/ghostburger
+	required_items = list(
+		/obj/item/reagent_containers/food/snacks/bun,
+		/obj/item/ectoplasm
 	)
-	result = /obj/item/weapon/reagent_containers/food/snacks/ghostburger
+	result_path = /obj/item/reagent_containers/food/snacks/ghostburger
 
-/datum/recipe/clownburger
-	items = list(
-		/obj/item/weapon/reagent_containers/food/snacks/bun,
+
+/datum/microwave_recipe/clownburger
+	required_items = list(
+		/obj/item/reagent_containers/food/snacks/bun,
 		/obj/item/clothing/mask/gas/clown_hat
 	)
-	result = /obj/item/weapon/reagent_containers/food/snacks/clownburger
+	result_path = /obj/item/reagent_containers/food/snacks/clownburger
 
-/datum/recipe/mimeburger
-	items = list(
-		/obj/item/weapon/reagent_containers/food/snacks/bun,
+
+/datum/microwave_recipe/mimeburger
+	required_items = list(
+		/obj/item/reagent_containers/food/snacks/bun,
 		/obj/item/clothing/head/beret
 	)
-	result = /obj/item/weapon/reagent_containers/food/snacks/mimeburger
+	result_path = /obj/item/reagent_containers/food/snacks/mimeburger
 
 
-/datum/recipe/kampferburger
-	items = list(
+
+/datum/microwave_recipe/kampferburger
+	required_items = list(
 		/obj/item/weapon/reagent_containers/food/snacks/meat/roachmeat,
 		/obj/item/weapon/reagent_containers/food/snacks/bun
 	)
-	result = /obj/item/weapon/reagent_containers/food/snacks/kampferburger
+	result_path = /obj/item/weapon/reagent_containers/food/snacks/kampferburger
 
-/datum/recipe/panzerburger
-	items = list(
+/datum/microwave_recipe/panzerburger
+	required_items = list(
 		/obj/item/weapon/reagent_containers/food/snacks/meat/roachmeat/panzer,
 		/obj/item/weapon/reagent_containers/food/snacks/bun
 	)
-	result = /obj/item/weapon/reagent_containers/food/snacks/panzerburger
+	result_path = /obj/item/weapon/reagent_containers/food/snacks/panzerburger
 
-/datum/recipe/jagerburger
-	items = list(
+/datum/microwave_recipe/jagerburger
+	required_items = list(
 		/obj/item/weapon/reagent_containers/food/snacks/meat/roachmeat/jager,
 		/obj/item/weapon/reagent_containers/food/snacks/bun
 	)
-	result = /obj/item/weapon/reagent_containers/food/snacks/jagerburger
+	result_path = /obj/item/weapon/reagent_containers/food/snacks/jagerburger
 
-/datum/recipe/seucheburger
-	items = list(
+/datum/microwave_recipe/seucheburger
+	required_items = list(
 		/obj/item/weapon/reagent_containers/food/snacks/meat/roachmeat/seuche,
 		/obj/item/weapon/reagent_containers/food/snacks/bun
 	)
-	result = /obj/item/weapon/reagent_containers/food/snacks/seucheburger
+	result_path = /obj/item/weapon/reagent_containers/food/snacks/seucheburger
 
-/datum/recipe/bigroachburger
-	items = list(
+/datum/microwave_recipe/bigroachburger
+	required_items = list(
 		/obj/item/weapon/reagent_containers/food/snacks/meat/roachmeat,
 		/obj/item/weapon/reagent_containers/food/snacks/meat/roachmeat/seuche,
 		/obj/item/weapon/reagent_containers/food/snacks/meat/roachmeat/panzer,
@@ -182,909 +201,1651 @@ I said no!
 		/obj/item/weapon/reagent_containers/food/snacks/bun,
 		/obj/item/weapon/reagent_containers/food/snacks/egg
 	)
-	result = /obj/item/weapon/reagent_containers/food/snacks/bigroachburger
+	result_path = /obj/item/weapon/reagent_containers/food/snacks/bigroachburger
 
-/datum/recipe/fuhrerburger
-	items = list(
+/datum/microwave_recipe/fuhrerburger
+	required_items = list(
 		/obj/item/weapon/reagent_containers/food/snacks/meat/roachmeat/fuhrer,
 		/obj/item/weapon/reagent_containers/food/snacks/meat/roachmeat/fuhrer,
 		/obj/item/weapon/reagent_containers/food/snacks/bun,
 		/obj/item/weapon/reagent_containers/food/snacks/egg
 	)
-	result = /obj/item/weapon/reagent_containers/food/snacks/fuhrerburger
+	result_path = /obj/item/weapon/reagent_containers/food/snacks/fuhrerburger
 
-/datum/recipe/kaiserburger
-	items = list(
+/datum/microwave_recipe/kaiserburger
+	required_items = list(
 		/obj/item/weapon/reagent_containers/food/snacks/meat/roachmeat/kaiser,
 		/obj/item/weapon/reagent_containers/food/snacks/meat/roachmeat/kaiser,
 		/obj/item/weapon/reagent_containers/food/snacks/bun,
 		/obj/item/weapon/reagent_containers/food/snacks/egg
 	)
-	result = /obj/item/weapon/reagent_containers/food/snacks/kaiserburger
+	result_path = /obj/item/weapon/reagent_containers/food/snacks/kaiserburger
 
-/datum/recipe/bunbun
-	items = list(
-		/obj/item/weapon/reagent_containers/food/snacks/bun,
-		/obj/item/weapon/reagent_containers/food/snacks/bun
+/datum/microwave_recipe/bunbun
+	required_items = list(
+		/obj/item/reagent_containers/food/snacks/bun,
+		/obj/item/reagent_containers/food/snacks/bun
 	)
-	result = /obj/item/weapon/reagent_containers/food/snacks/bunbun
+	result_path = /obj/item/reagent_containers/food/snacks/bunbun
 
-/datum/recipe/hotdog
-	items = list(
-		/obj/item/weapon/reagent_containers/food/snacks/bun,
-		/obj/item/weapon/reagent_containers/food/snacks/sausage
+
+/datum/microwave_recipe/hotdog
+	required_items = list(
+		/obj/item/reagent_containers/food/snacks/bun,
+		/obj/item/reagent_containers/food/snacks/sausage
 	)
-	result = /obj/item/weapon/reagent_containers/food/snacks/hotdog
+	result_path = /obj/item/reagent_containers/food/snacks/hotdog
 
-/datum/recipe/waffles
-	reagents = list(/datum/reagent/nutriment/batter/cakebatter = 20)
-	result = /obj/item/weapon/reagent_containers/food/snacks/waffles
 
-/datum/recipe/pancakesblu
-	reagents = list(/datum/reagent/nutriment/batter = 20)
-	fruit = list("blueberries" = 2)
-	result = /obj/item/weapon/reagent_containers/food/snacks/pancakesblu
-
-/datum/recipe/pancakes
-	reagents = list(/datum/reagent/nutriment/batter = 20)
-	result = /obj/item/weapon/reagent_containers/food/snacks/pancakes
-
-/datum/recipe/donkpocket
-	items = list(
-		/obj/item/weapon/reagent_containers/food/snacks/doughslice,
-		/obj/item/weapon/reagent_containers/food/snacks/meatball
+/datum/microwave_recipe/waffles
+	required_reagents = list(
+		/datum/reagent/nutriment/batter/cakebatter = 20
 	)
-	result = /obj/item/weapon/reagent_containers/food/snacks/donkpocket //SPECIAL
-	proc/warm_up(var/obj/item/weapon/reagent_containers/food/snacks/donkpocket/being_cooked)
-		being_cooked.heat()
-	make_food(var/obj/container as obj)
-		var/obj/item/weapon/reagent_containers/food/snacks/donkpocket/being_cooked = ..(container)
-		warm_up(being_cooked)
-		return being_cooked
+	result_path = /obj/item/reagent_containers/food/snacks/waffles
 
-/datum/recipe/donkpocket2
-	items = list(
-		/obj/item/weapon/reagent_containers/food/snacks/doughslice,
-		/obj/item/weapon/reagent_containers/food/snacks/rawmeatball
+
+/datum/microwave_recipe/pancakesblu
+	required_reagents = list(
+		/datum/reagent/nutriment/batter = 20
 	)
-	result = /obj/item/weapon/reagent_containers/food/snacks/donkpocket //SPECIAL
-
-/datum/recipe/donkpocket2/proc/warm_up(var/obj/item/weapon/reagent_containers/food/snacks/donkpocket/being_cooked)
-	being_cooked.heat()
-
-/datum/recipe/donkpocket2/make_food(var/obj/container as obj)
-	var/obj/item/weapon/reagent_containers/food/snacks/donkpocket/being_cooked = ..(container)
-	warm_up(being_cooked)
-	return being_cooked
-
-/datum/recipe/donkpocket/warm
-	reagents = list() //This is necessary since this is a child object of the above recipe and we don't want donk pockets to need flour
-	items = list(
-		/obj/item/weapon/reagent_containers/food/snacks/donkpocket
+	required_produce = list(
+		"blueberries" = 2
 	)
-	result = /obj/item/weapon/reagent_containers/food/snacks/donkpocket //SPECIAL
-	make_food(var/obj/container as obj)
-		var/obj/item/weapon/reagent_containers/food/snacks/donkpocket/being_cooked = locate() in container
-		if(being_cooked && !being_cooked.warm)
-			warm_up(being_cooked)
-		return being_cooked
+	result_path = /obj/item/reagent_containers/food/snacks/pancakesblu
 
-/datum/recipe/meatbread
-	items = list(
-		/obj/item/weapon/reagent_containers/food/snacks/dough,
-		/obj/item/weapon/reagent_containers/food/snacks/dough,
-		/obj/item/weapon/reagent_containers/food/snacks/cutlet,
-		/obj/item/weapon/reagent_containers/food/snacks/cutlet,
-		/obj/item/weapon/reagent_containers/food/snacks/cheesewedge,
-		/obj/item/weapon/reagent_containers/food/snacks/cheesewedge,
+
+/datum/microwave_recipe/pancakes
+	required_reagents = list(
+		/datum/reagent/nutriment/batter = 20
 	)
-	result = /obj/item/weapon/reagent_containers/food/snacks/sliceable/meatbread
+	result_path = /obj/item/reagent_containers/food/snacks/pancakes
 
-/datum/recipe/xenomeatbread
-	items = list(
-		/obj/item/weapon/reagent_containers/food/snacks/dough,
-		/obj/item/weapon/reagent_containers/food/snacks/dough,
-		/obj/item/weapon/reagent_containers/food/snacks/xenomeat,
-		/obj/item/weapon/reagent_containers/food/snacks/xenomeat,
-		/obj/item/weapon/reagent_containers/food/snacks/cheesewedge,
-		/obj/item/weapon/reagent_containers/food/snacks/cheesewedge,
+
+/datum/microwave_recipe/hot_donkpocket
+	required_reagents = list()
+	required_items = list(
+		/obj/item/reagent_containers/food/snacks/donkpocket
 	)
-	result = /obj/item/weapon/reagent_containers/food/snacks/sliceable/xenomeatbread
+	result_path = /obj/item/reagent_containers/food/snacks/donkpocket
 
-/datum/recipe/bananabread
-	fruit = list("banana" = 2)
-	reagents = list(/datum/reagent/drink/milk = 5, /datum/reagent/sugar = 5)
-	items = list(
-		/obj/item/weapon/reagent_containers/food/snacks/dough,
-		/obj/item/weapon/reagent_containers/food/snacks/dough,
+
+/datum/microwave_recipe/hot_donkpocket/CreateResult(obj/machinery/microwave/microwave)
+	var/obj/item/reagent_containers/food/snacks/donkpocket/donk = locate() in microwave
+	donk?.SetHot()
+	return donk
+
+
+/datum/microwave_recipe/meatbread
+	required_items = list(
+		/obj/item/reagent_containers/food/snacks/dough,
+		/obj/item/reagent_containers/food/snacks/dough,
+		/obj/item/reagent_containers/food/snacks/cutlet,
+		/obj/item/reagent_containers/food/snacks/cutlet,
+		/obj/item/reagent_containers/food/snacks/cheesewedge,
+		/obj/item/reagent_containers/food/snacks/cheesewedge
 	)
-	result = /obj/item/weapon/reagent_containers/food/snacks/sliceable/bananabread
+	result_path = /obj/item/reagent_containers/food/snacks/sliceable/meatbread
 
-/datum/recipe/omelette
-	items = list(
-		/obj/item/weapon/reagent_containers/food/snacks/egg,
-		/obj/item/weapon/reagent_containers/food/snacks/egg,
-		/obj/item/weapon/reagent_containers/food/snacks/cheesewedge,
+
+/datum/microwave_recipe/xenomeatbread
+	required_items = list(
+		/obj/item/reagent_containers/food/snacks/dough,
+		/obj/item/reagent_containers/food/snacks/dough,
+		/obj/item/reagent_containers/food/snacks/xenomeat,
+		/obj/item/reagent_containers/food/snacks/xenomeat,
+		/obj/item/reagent_containers/food/snacks/cheesewedge,
+		/obj/item/reagent_containers/food/snacks/cheesewedge
 	)
-	result = /obj/item/weapon/reagent_containers/food/snacks/omelette
+	result_path = /obj/item/reagent_containers/food/snacks/sliceable/xenomeatbread
 
-/datum/recipe/muffin
-	reagents = list(/datum/reagent/nutriment/batter/cakebatter = 10)
-	result = /obj/item/weapon/reagent_containers/food/snacks/muffin
 
-/datum/recipe/eggplantparm
-	fruit = list("eggplant" = 1)
-	items = list(
-		/obj/item/weapon/reagent_containers/food/snacks/cheesewedge,
-		/obj/item/weapon/reagent_containers/food/snacks/cheesewedge
-		)
-	result = /obj/item/weapon/reagent_containers/food/snacks/eggplantparm
-
-/datum/recipe/soylenviridians
-	fruit = list("soybeans" = 1)
-	reagents = list(/datum/reagent/nutriment/flour = 10)
-	result = /obj/item/weapon/reagent_containers/food/snacks/soylenviridians
-
-/datum/recipe/soylentgreen
-	reagents = list(/datum/reagent/nutriment/flour = 10)
-	items = list(
-		/obj/item/weapon/reagent_containers/food/snacks/meat/human,
-		/obj/item/weapon/reagent_containers/food/snacks/meat/human
+/datum/microwave_recipe/bananabread
+	required_reagents = list(
+		/datum/reagent/drink/milk = 5,
+		/datum/reagent/sugar = 5
 	)
-	result = /obj/item/weapon/reagent_containers/food/snacks/soylentgreen
-
-/datum/recipe/meatpie
-	items = list(
-		/obj/item/weapon/reagent_containers/food/snacks/sliceable/flatdough,
-		/obj/item/weapon/reagent_containers/food/snacks/cutlet
+	required_items = list(
+		/obj/item/reagent_containers/food/snacks/dough,
+		/obj/item/reagent_containers/food/snacks/dough
 	)
-	result = /obj/item/weapon/reagent_containers/food/snacks/meatpie
-
-/datum/recipe/tofupie
-	items = list(
-		/obj/item/weapon/reagent_containers/food/snacks/sliceable/flatdough,
-		/obj/item/weapon/reagent_containers/food/snacks/tofu,
+	required_produce = list(
+		"banana" = 2
 	)
-	result = /obj/item/weapon/reagent_containers/food/snacks/tofupie
+	result_path = /obj/item/reagent_containers/food/snacks/sliceable/bananabread
 
-/datum/recipe/xemeatpie
-	items = list(
-		/obj/item/weapon/reagent_containers/food/snacks/sliceable/flatdough,
-		/obj/item/weapon/reagent_containers/food/snacks/xenomeat,
+
+/datum/microwave_recipe/omelette
+	required_items = list(
+		/obj/item/reagent_containers/food/snacks/egg,
+		/obj/item/reagent_containers/food/snacks/egg,
+		/obj/item/reagent_containers/food/snacks/cheesewedge
 	)
-	result = /obj/item/weapon/reagent_containers/food/snacks/xemeatpie
+	result_path = /obj/item/reagent_containers/food/snacks/omelette
 
-/datum/recipe/bananapie
-	fruit = list("banana" = 1)
-	reagents = list(/datum/reagent/sugar = 5)
-	items = list(/obj/item/weapon/reagent_containers/food/snacks/sliceable/flatdough)
-	result = /obj/item/weapon/reagent_containers/food/snacks/bananapie
 
-/datum/recipe/cherrypie
-	fruit = list("cherries" = 1)
-	reagents = list(/datum/reagent/sugar = 10)
-	items = list(
-		/obj/item/weapon/reagent_containers/food/snacks/sliceable/flatdough,
+/datum/microwave_recipe/muffin
+	required_reagents = list(
+		/datum/reagent/nutriment/batter/cakebatter = 10
 	)
-	result = /obj/item/weapon/reagent_containers/food/snacks/cherrypie
+	result_path = /obj/item/reagent_containers/food/snacks/muffin
 
-/datum/recipe/berryclafoutis
-	fruit = list("berries" = 1)
-	items = list(
-		/obj/item/weapon/reagent_containers/food/snacks/sliceable/flatdough,
+
+/datum/microwave_recipe/eggplantparm
+	required_items = list(
+		/obj/item/reagent_containers/food/snacks/cheesewedge,
+		/obj/item/reagent_containers/food/snacks/cheesewedge
 	)
-	result = /obj/item/weapon/reagent_containers/food/snacks/berryclafoutis
-
-/datum/recipe/wingfangchu
-	reagents = list(/datum/reagent/nutriment/soysauce = 5)
-	items = list(
-		/obj/item/weapon/reagent_containers/food/snacks/xenomeat,
+	required_produce = list(
+		"eggplant" = 1
 	)
-	result = /obj/item/weapon/reagent_containers/food/snacks/wingfangchu
+	result_path = /obj/item/reagent_containers/food/snacks/eggplantparm
 
-/datum/recipe/chaosdonut
-	reagents = list(/datum/reagent/frostoil = 5, /datum/reagent/capsaicin = 5, /datum/reagent/sugar = 5)
-	items = list(
-		/obj/item/weapon/reagent_containers/food/snacks/doughslice
+
+/datum/microwave_recipe/soylenviridians
+	required_reagents = list(
+		/datum/reagent/nutriment/flour = 10
 	)
-	result = /obj/item/weapon/reagent_containers/food/snacks/donut/chaos
+	required_produce = list(
+		"soybeans" = 1
+	)
+	result_path = /obj/item/reagent_containers/food/snacks/soylenviridians
 
-/datum/recipe/meatkabob
-	items = list(
+
+/datum/microwave_recipe/soylentgreen
+	required_reagents = list(
+		/datum/reagent/nutriment/flour = 10
+	)
+	required_items = list(
+		/obj/item/reagent_containers/food/snacks/meat/human,
+		/obj/item/reagent_containers/food/snacks/meat/human
+	)
+	result_path = /obj/item/reagent_containers/food/snacks/soylentgreen
+
+
+/datum/microwave_recipe/meatpie
+	required_items = list(
+		/obj/item/reagent_containers/food/snacks/sliceable/flatdough,
+		/obj/item/reagent_containers/food/snacks/cutlet
+	)
+	result_path = /obj/item/reagent_containers/food/snacks/meatpie
+
+
+/datum/microwave_recipe/tofupie
+	required_items = list(
+		/obj/item/reagent_containers/food/snacks/sliceable/flatdough,
+		/obj/item/reagent_containers/food/snacks/tofu
+	)
+	result_path = /obj/item/reagent_containers/food/snacks/tofupie
+
+
+/datum/microwave_recipe/xemeatpie
+	required_items = list(
+		/obj/item/reagent_containers/food/snacks/sliceable/flatdough,
+		/obj/item/reagent_containers/food/snacks/xenomeat
+	)
+	result_path = /obj/item/reagent_containers/food/snacks/xemeatpie
+
+
+/datum/microwave_recipe/bananapie
+	required_reagents = list(
+		/datum/reagent/sugar = 5
+	)
+	required_items = list(
+		/obj/item/reagent_containers/food/snacks/sliceable/flatdough
+	)
+	required_produce = list(
+		"banana" = 1
+	)
+	result_path = /obj/item/reagent_containers/food/snacks/bananapie
+
+
+/datum/microwave_recipe/cherrypie
+	required_reagents = list(
+		/datum/reagent/sugar = 10
+	)
+	required_items = list(
+		/obj/item/reagent_containers/food/snacks/sliceable/flatdough
+	)
+	required_produce = list(
+		"cherries" = 1
+	)
+	result_path = /obj/item/reagent_containers/food/snacks/cherrypie
+
+
+/datum/microwave_recipe/berryclafoutis
+	required_items = list(
+		/obj/item/reagent_containers/food/snacks/sliceable/flatdough
+	)
+	required_produce = list(
+		"berries" = 1
+	)
+	result_path = /obj/item/reagent_containers/food/snacks/berryclafoutis
+
+
+/datum/microwave_recipe/chaosdonut
+	required_reagents = list(
+		/datum/reagent/frostoil = 5,
+		/datum/reagent/capsaicin = 5,
+		/datum/reagent/sugar = 5
+	)
+	required_items = list(
+		/obj/item/reagent_containers/food/snacks/doughslice
+	)
+	result_path = /obj/item/reagent_containers/food/snacks/donut/chaos
+
+
+/datum/microwave_recipe/meatkabob
+	required_items = list(
 		/obj/item/stack/material/rods,
-		/obj/item/weapon/reagent_containers/food/snacks/cutlet,
-		/obj/item/weapon/reagent_containers/food/snacks/cutlet
+		/obj/item/reagent_containers/food/snacks/cutlet,
+		/obj/item/reagent_containers/food/snacks/cutlet
 	)
-	result = /obj/item/weapon/reagent_containers/food/snacks/meatkabob
+	result_path = /obj/item/reagent_containers/food/snacks/meatkabob
 
-/datum/recipe/tofukabob
-	items = list(
+
+/datum/microwave_recipe/tofukabob
+	required_items = list(
 		/obj/item/stack/material/rods,
-		/obj/item/weapon/reagent_containers/food/snacks/tofu,
-		/obj/item/weapon/reagent_containers/food/snacks/tofu,
+		/obj/item/reagent_containers/food/snacks/tofu,
+		/obj/item/reagent_containers/food/snacks/tofu
 	)
-	result = /obj/item/weapon/reagent_containers/food/snacks/tofukabob
+	result_path = /obj/item/reagent_containers/food/snacks/tofukabob
 
-/datum/recipe/tofubread
-	items = list(
-		/obj/item/weapon/reagent_containers/food/snacks/dough,
-		/obj/item/weapon/reagent_containers/food/snacks/dough,
-		/obj/item/weapon/reagent_containers/food/snacks/dough,
-		/obj/item/weapon/reagent_containers/food/snacks/tofu,
-		/obj/item/weapon/reagent_containers/food/snacks/tofu,
-		/obj/item/weapon/reagent_containers/food/snacks/tofu,
-		/obj/item/weapon/reagent_containers/food/snacks/cheesewedge,
-		/obj/item/weapon/reagent_containers/food/snacks/cheesewedge,
-		/obj/item/weapon/reagent_containers/food/snacks/cheesewedge,
+
+/datum/microwave_recipe/tofubread
+	required_items = list(
+		/obj/item/reagent_containers/food/snacks/dough,
+		/obj/item/reagent_containers/food/snacks/dough,
+		/obj/item/reagent_containers/food/snacks/dough,
+		/obj/item/reagent_containers/food/snacks/tofu,
+		/obj/item/reagent_containers/food/snacks/tofu,
+		/obj/item/reagent_containers/food/snacks/tofu,
+		/obj/item/reagent_containers/food/snacks/cheesewedge,
+		/obj/item/reagent_containers/food/snacks/cheesewedge,
+		/obj/item/reagent_containers/food/snacks/cheesewedge
 	)
-	result = /obj/item/weapon/reagent_containers/food/snacks/sliceable/tofubread
+	result_path = /obj/item/reagent_containers/food/snacks/sliceable/tofubread
 
-/datum/recipe/loadedbakedpotato
-	fruit = list("potato" = 1)
-	items = list(/obj/item/weapon/reagent_containers/food/snacks/cheesewedge)
-	result = /obj/item/weapon/reagent_containers/food/snacks/loadedbakedpotato
 
-/datum/recipe/cheesyfries
-	items = list(
-		/obj/item/weapon/reagent_containers/food/snacks/fries,
-		/obj/item/weapon/reagent_containers/food/snacks/cheesewedge,
+/datum/microwave_recipe/loadedbakedpotato
+	required_items = list(
+		/obj/item/reagent_containers/food/snacks/cheesewedge
 	)
-	result = /obj/item/weapon/reagent_containers/food/snacks/cheesyfries
-
-/datum/recipe/cubancarp
-	fruit = list("chili" = 1)
-	reagents = list(/datum/reagent/nutriment/batter = 10)
-	items = list(
-		/obj/item/weapon/reagent_containers/food/snacks/fish
+	required_produce = list(
+		"potato" = 1
 	)
-	result = /obj/item/weapon/reagent_containers/food/snacks/cubancarp
+	result_path = /obj/item/reagent_containers/food/snacks/loadedbakedpotato
 
-/datum/recipe/popcorn
-	reagents = list(/datum/reagent/sodiumchloride = 5)
-	fruit = list("corn" = 1)
-	result = /obj/item/weapon/reagent_containers/food/snacks/popcorn
 
-/datum/recipe/cookie
-	reagents = list(/datum/reagent/nutriment/batter/cakebatter = 5, /datum/reagent/nutriment/coco = 5)
-
-	result = /obj/item/weapon/reagent_containers/food/snacks/cookie
-
-/datum/recipe/fortunecookie
-	reagents = list(/datum/reagent/sugar = 5)
-	items = list(
-		/obj/item/weapon/reagent_containers/food/snacks/doughslice,
-		/obj/item/weapon/paper,
+/datum/microwave_recipe/cheesyfries
+	required_items = list(
+		/obj/item/reagent_containers/food/snacks/fries,
+		/obj/item/reagent_containers/food/snacks/cheesewedge
 	)
-	result = /obj/item/weapon/reagent_containers/food/snacks/fortunecookie
+	result_path = /obj/item/reagent_containers/food/snacks/cheesyfries
 
-/datum/recipe/fortunecookie/make_food(obj/container)
-	var/obj/item/weapon/paper/paper = locate() in container
+
+/datum/microwave_recipe/cubancarp
+	required_reagents = list(
+		/datum/reagent/nutriment/batter = 10
+	)
+	required_items = list(
+		/obj/item/reagent_containers/food/snacks/fish
+	)
+	required_produce = list(
+		"chili" = 1
+	)
+	result_path = /obj/item/reagent_containers/food/snacks/cubancarp
+
+
+/datum/microwave_recipe/popcorn
+	required_reagents = list(
+		/datum/reagent/sodiumchloride = 5
+	)
+	required_produce = list(
+		"corn" = 1
+	)
+	result_path = /obj/item/reagent_containers/food/snacks/popcorn
+
+
+/datum/microwave_recipe/cookie
+	required_reagents = list(
+		/datum/reagent/nutriment/batter/cakebatter = 5,
+		/datum/reagent/nutriment/coco = 5
+	)
+	result_path = /obj/item/reagent_containers/food/snacks/cookie
+
+
+/datum/microwave_recipe/fortunecookie
+	required_reagents = list(
+		/datum/reagent/sugar = 5
+	)
+	required_items = list(
+		/obj/item/reagent_containers/food/snacks/doughslice,
+		/obj/item/paper
+	)
+	result_path = /obj/item/reagent_containers/food/snacks/fortunecookie
+
+
+/datum/microwave_recipe/fortunecookie/CreateResult(obj/machinery/microwave/microwave)
+	var/obj/item/reagent_containers/food/snacks/fortunecookie/cookie = ..()
+	var/obj/item/paper/paper = locate() in microwave
 	if (paper)
+		paper.forceMove(cookie)
+		cookie.trash = paper
 		paper.loc = null
-	var/obj/item/weapon/reagent_containers/food/snacks/fortunecookie/being_cooked = ..(container)
-	if (paper)
-		paper.loc = being_cooked
-		being_cooked.trash = paper
-	return being_cooked
+	return cookie
 
-/datum/recipe/fortunecookie/check_items(obj/container)
+
+/datum/microwave_recipe/fortunecookie/CheckItems(obj/machinery/microwave/microwave)
 	. = ..()
 	if (.)
-		var/obj/item/weapon/paper/paper = locate() in container
+		var/obj/item/paper/paper = locate() in microwave
 		if (!paper?.info)
-			return 0
-	return .
+			return FALSE
 
-/datum/recipe/plainsteak
-	items = list(/obj/item/weapon/reagent_containers/food/snacks/meat)
-	result = /obj/item/weapon/reagent_containers/food/snacks/plainsteak
 
-/datum/recipe/meatsteak
-	reagents = list(/datum/reagent/sodiumchloride = 1, /datum/reagent/blackpepper = 1)
-	items = list(/obj/item/weapon/reagent_containers/food/snacks/cutlet)
-	result = /obj/item/weapon/reagent_containers/food/snacks/meatsteak
-
-/datum/recipe/loadedsteak
-	reagents = list(/datum/reagent/nutriment/garlicsauce = 5)
-	fruit = list("onion" = 1, "mushroom" = 1)
-	items = list(/obj/item/weapon/reagent_containers/food/snacks/cutlet)
-	result = /obj/item/weapon/reagent_containers/food/snacks/loadedsteak
-
-/datum/recipe/syntisteak
-	reagents = list(/datum/reagent/sodiumchloride = 1, /datum/reagent/blackpepper = 1)
-	items = list(/obj/item/weapon/reagent_containers/food/snacks/meat/syntiflesh)
-	result = /obj/item/weapon/reagent_containers/food/snacks/meatsteak/synthetic
-
-/datum/recipe/pizzamargherita
-	fruit = list("tomato" = 1)
-	items = list(
-		/obj/item/weapon/reagent_containers/food/snacks/sliceable/flatdough,
-		/obj/item/weapon/reagent_containers/food/snacks/cheesewedge,
-		/obj/item/weapon/reagent_containers/food/snacks/cheesewedge,
-		/obj/item/weapon/reagent_containers/food/snacks/cheesewedge,
+/datum/microwave_recipe/plainsteak
+	required_items = list(
+		/obj/item/reagent_containers/food/snacks/meat
 	)
-	result = /obj/item/weapon/reagent_containers/food/snacks/sliceable/pizza/margherita
+	result_path = /obj/item/reagent_containers/food/snacks/plainsteak
 
-/datum/recipe/meatpizza
-	fruit = list("tomato" = 1)
-	items = list(
-		/obj/item/weapon/reagent_containers/food/snacks/sliceable/flatdough,
-		/obj/item/weapon/reagent_containers/food/snacks/cutlet,
-		/obj/item/weapon/reagent_containers/food/snacks/cutlet,
-		/obj/item/weapon/reagent_containers/food/snacks/cheesewedge
+
+/datum/microwave_recipe/meatsteak
+	required_reagents = list(
+		/datum/reagent/sodiumchloride = 1,
+		/datum/reagent/blackpepper = 1
 	)
-	result = /obj/item/weapon/reagent_containers/food/snacks/sliceable/pizza/meatpizza
-
-/datum/recipe/mushroompizza
-	fruit = list("mushroom" = 5, "tomato" = 1)
-	items = list(
-		/obj/item/weapon/reagent_containers/food/snacks/sliceable/flatdough,
-		/obj/item/weapon/reagent_containers/food/snacks/cheesewedge
+	required_items = list(
+		/obj/item/reagent_containers/food/snacks/meat
 	)
-	result = /obj/item/weapon/reagent_containers/food/snacks/sliceable/pizza/mushroompizza
+	result_path = /obj/item/reagent_containers/food/snacks/meatsteak
 
-/datum/recipe/vegetablepizza
-	fruit = list("eggplant" = 1, "carrot" = 1, "corn" = 1, "tomato" = 1)
-	items = list(
-		/obj/item/weapon/reagent_containers/food/snacks/sliceable/flatdough,
-		/obj/item/weapon/reagent_containers/food/snacks/cheesewedge
+
+/datum/microwave_recipe/loadedsteak
+	required_reagents = list(
+		/datum/reagent/nutriment/garlicsauce = 5
 	)
-	result = /obj/item/weapon/reagent_containers/food/snacks/sliceable/pizza/vegetablepizza
-
-/datum/recipe/spacylibertyduff
-	reagents = list(/datum/reagent/water = 10, /datum/reagent/ethanol/vodka = 5, /datum/reagent/psilocybin = 5)
-	result = /obj/item/weapon/reagent_containers/food/snacks/spacylibertyduff
-
-/datum/recipe/amanitajelly
-	reagents = list(/datum/reagent/water = 10, /datum/reagent/ethanol/vodka = 5, /datum/reagent/toxin/amatoxin = 5)
-	result = /obj/item/weapon/reagent_containers/food/snacks/amanitajelly
-	make_food(var/obj/container as obj)
-		var/obj/item/weapon/reagent_containers/food/snacks/amanitajelly/being_cooked = ..(container)
-		being_cooked.reagents.del_reagent(/datum/reagent/toxin/amatoxin)
-		return being_cooked
-
-/datum/recipe/meatballsoup
-	fruit = list("carrot" = 1, "potato" = 1)
-	reagents = list(/datum/reagent/water = 10)
-	items = list(/obj/item/weapon/reagent_containers/food/snacks/meatball)
-	result = /obj/item/weapon/reagent_containers/food/snacks/meatballsoup
-
-/datum/recipe/vegetablesoup
-	fruit = list("carrot" = 1, "potato" = 1, "corn" = 1, "eggplant" = 1)
-	reagents = list(/datum/reagent/water = 10)
-	result = /obj/item/weapon/reagent_containers/food/snacks/vegetablesoup
-
-/datum/recipe/nettlesoup
-	fruit = list("nettle" = 1, "potato" = 1)
-	reagents = list(/datum/reagent/water = 10)
-	items = list(
-		/obj/item/weapon/reagent_containers/food/snacks/egg
+	required_items = list(
+		/obj/item/reagent_containers/food/snacks/meat
 	)
-	result = /obj/item/weapon/reagent_containers/food/snacks/nettlesoup
-
-/datum/recipe/wishsoup
-	reagents = list(/datum/reagent/water = 20)
-	result= /obj/item/weapon/reagent_containers/food/snacks/wishsoup
-
-/datum/recipe/hotchili
-	fruit = list("chili" = 1, "tomato" = 1)
-	items = list(/obj/item/weapon/reagent_containers/food/snacks/cutlet)
-	result = /obj/item/weapon/reagent_containers/food/snacks/hotchili
-
-/datum/recipe/coldchili
-	fruit = list("icechili" = 1, "tomato" = 1)
-	items = list(/obj/item/weapon/reagent_containers/food/snacks/cutlet)
-	result = /obj/item/weapon/reagent_containers/food/snacks/coldchili
-
-/datum/recipe/amanita_pie
-	reagents = list(/datum/reagent/toxin/amatoxin = 5)
-	items = list(/obj/item/weapon/reagent_containers/food/snacks/sliceable/flatdough)
-	result = /obj/item/weapon/reagent_containers/food/snacks/amanita_pie
-
-/datum/recipe/plump_pie
-	fruit = list("plumphelmet" = 1)
-	items = list(/obj/item/weapon/reagent_containers/food/snacks/sliceable/flatdough)
-	result = /obj/item/weapon/reagent_containers/food/snacks/plump_pie
-
-/datum/recipe/spellburger
-	items = list(
-		/obj/item/weapon/reagent_containers/food/snacks/meatburger,
-		/obj/item/clothing/head/wizard,
+	required_produce = list(
+		"onion" = 1,
+		"mushroom" = 1
 	)
-	result = /obj/item/weapon/reagent_containers/food/snacks/spellburger
+	result_path = /obj/item/reagent_containers/food/snacks/loadedsteak
 
-/datum/recipe/bigbiteburger
-	items = list(
-		/obj/item/weapon/reagent_containers/food/snacks/meatburger,
-		/obj/item/weapon/reagent_containers/food/snacks/meat,
-		/obj/item/weapon/reagent_containers/food/snacks/meat,
-		/obj/item/weapon/reagent_containers/food/snacks/egg,
+
+/datum/microwave_recipe/syntisteak
+	required_reagents = list(
+		/datum/reagent/sodiumchloride = 1,
+		/datum/reagent/blackpepper = 1
 	)
-	result = /obj/item/weapon/reagent_containers/food/snacks/bigbiteburger
-
-/datum/recipe/enchiladas
-	fruit = list("chili" = 2, "corn" = 1)
-	items = list(/obj/item/weapon/reagent_containers/food/snacks/cutlet)
-	result = /obj/item/weapon/reagent_containers/food/snacks/enchiladas
-
-/datum/recipe/creamcheesebread
-	items = list(
-		/obj/item/weapon/reagent_containers/food/snacks/dough,
-		/obj/item/weapon/reagent_containers/food/snacks/dough,
-		/obj/item/weapon/reagent_containers/food/snacks/cheesewedge,
-		/obj/item/weapon/reagent_containers/food/snacks/cheesewedge,
+	required_items = list(
+		/obj/item/reagent_containers/food/snacks/meat/syntiflesh
 	)
-	result = /obj/item/weapon/reagent_containers/food/snacks/sliceable/creamcheesebread
+	result_path = /obj/item/reagent_containers/food/snacks/meatsteak/synthetic
 
-/datum/recipe/monkeysdelight
-	fruit = list("banana" = 1)
-	reagents = list(/datum/reagent/sodiumchloride = 1, /datum/reagent/blackpepper = 1, /datum/reagent/nutriment/flour = 10)
-	items = list(
-		/obj/item/weapon/reagent_containers/food/snacks/monkeycube
+
+/datum/microwave_recipe/pizzamargherita
+	required_items = list(
+		/obj/item/reagent_containers/food/snacks/sliceable/flatdough,
+		/obj/item/reagent_containers/food/snacks/cheesewedge,
+		/obj/item/reagent_containers/food/snacks/cheesewedge,
+		/obj/item/reagent_containers/food/snacks/cheesewedge
 	)
-	result = /obj/item/weapon/reagent_containers/food/snacks/monkeysdelight
-
-/datum/recipe/baguette
-	reagents = list(/datum/reagent/sodiumchloride = 1, /datum/reagent/blackpepper = 1)
-	items = list(
-		/obj/item/weapon/reagent_containers/food/snacks/dough,
-		/obj/item/weapon/reagent_containers/food/snacks/dough,
+	required_produce = list(
+		"tomato" = 1
 	)
-	result = /obj/item/weapon/reagent_containers/food/snacks/baguette
+	result_path = /obj/item/reagent_containers/food/snacks/sliceable/pizza/margherita
 
-/datum/recipe/fishandchips
-	items = list(
-		/obj/item/weapon/reagent_containers/food/snacks/fries,
-		/obj/item/weapon/reagent_containers/food/snacks/fish
+
+/datum/microwave_recipe/meatpizza
+	required_items = list(
+		/obj/item/reagent_containers/food/snacks/sliceable/flatdough,
+		/obj/item/reagent_containers/food/snacks/cutlet,
+		/obj/item/reagent_containers/food/snacks/cutlet,
+		/obj/item/reagent_containers/food/snacks/cheesewedge
 	)
-	result = /obj/item/weapon/reagent_containers/food/snacks/fishandchips
-
-/datum/recipe/bread
-	items = list(
-		/obj/item/weapon/reagent_containers/food/snacks/dough,
-		/obj/item/weapon/reagent_containers/food/snacks/dough,
-		/obj/item/weapon/reagent_containers/food/snacks/egg
+	required_produce = list(
+		"tomato" = 1
 	)
-	result = /obj/item/weapon/reagent_containers/food/snacks/sliceable/bread
+	result_path = /obj/item/reagent_containers/food/snacks/sliceable/pizza/meatpizza
 
-/datum/recipe/sandwich
-	items = list(
-		/obj/item/weapon/reagent_containers/food/snacks/meatsteak,
-		/obj/item/weapon/reagent_containers/food/snacks/slice/bread,
-		/obj/item/weapon/reagent_containers/food/snacks/slice/bread,
-		/obj/item/weapon/reagent_containers/food/snacks/cheesewedge,
+
+/datum/microwave_recipe/mushroompizza
+	required_items = list(
+		/obj/item/reagent_containers/food/snacks/sliceable/flatdough,
+		/obj/item/reagent_containers/food/snacks/cheesewedge
 	)
-	result = /obj/item/weapon/reagent_containers/food/snacks/sandwich
-
-/datum/recipe/toastedsandwich
-	items = list(
-		/obj/item/weapon/reagent_containers/food/snacks/sandwich
+	required_produce = list(
+		"mushroom" = 5,
+		"tomato" = 1
 	)
-	result = /obj/item/weapon/reagent_containers/food/snacks/toastedsandwich
+	result_path = /obj/item/reagent_containers/food/snacks/sliceable/pizza/mushroompizza
 
-/datum/recipe/grilledcheese
-	items = list(
-		/obj/item/weapon/reagent_containers/food/snacks/slice/bread,
-		/obj/item/weapon/reagent_containers/food/snacks/slice/bread,
-		/obj/item/weapon/reagent_containers/food/snacks/cheesewedge,
+
+/datum/microwave_recipe/vegetablepizza
+	required_items = list(
+		/obj/item/reagent_containers/food/snacks/sliceable/flatdough,
+		/obj/item/reagent_containers/food/snacks/cheesewedge
 	)
-	result = /obj/item/weapon/reagent_containers/food/snacks/grilledcheese
-
-/datum/recipe/tomatosoup
-	fruit = list("tomato" = 2)
-	reagents = list(/datum/reagent/water = 10)
-	result = /obj/item/weapon/reagent_containers/food/snacks/tomatosoup
-
-/datum/recipe/rofflewaffles
-	reagents = list(/datum/reagent/psilocybin = 5, /datum/reagent/nutriment/batter/cakebatter = 20)
-	result = /obj/item/weapon/reagent_containers/food/snacks/rofflewaffles
-
-/datum/recipe/stew
-	fruit = list("potato" = 1, "tomato" = 1, "carrot" = 1, "eggplant" = 1, "mushroom" = 1)
-	reagents = list(/datum/reagent/water = 10)
-	items = list(/obj/item/weapon/reagent_containers/food/snacks/meat)
-	result = /obj/item/weapon/reagent_containers/food/snacks/stew
-
-/datum/recipe/slimetoast
-	reagents = list(/datum/reagent/slimejelly = 5)
-	items = list(
-		/obj/item/weapon/reagent_containers/food/snacks/slice/bread,
+	required_produce = list(
+		"eggplant" = 1,
+		"carrot" = 1,
+		"corn" = 1,
+		"tomato" = 1
 	)
-	result = /obj/item/weapon/reagent_containers/food/snacks/jelliedtoast/slime
+	result_path = /obj/item/reagent_containers/food/snacks/sliceable/pizza/vegetablepizza
 
-/datum/recipe/jelliedtoast
-	reagents = list(/datum/reagent/nutriment/cherryjelly = 5)
-	items = list(
-		/obj/item/weapon/reagent_containers/food/snacks/slice/bread,
+
+/datum/microwave_recipe/fruitpizza
+	required_items = list(
+		/obj/item/reagent_containers/food/snacks/sliceable/flatdough
 	)
-	result = /obj/item/weapon/reagent_containers/food/snacks/jelliedtoast/cherry
-
-/datum/recipe/milosoup
-	reagents = list(/datum/reagent/water = 10)
-	items = list(
-		/obj/item/weapon/reagent_containers/food/snacks/soydope,
-		/obj/item/weapon/reagent_containers/food/snacks/soydope,
-		/obj/item/weapon/reagent_containers/food/snacks/tofu,
-		/obj/item/weapon/reagent_containers/food/snacks/tofu,
+	required_reagents = list(
+		/datum/reagent/drink/milk/cream = 20,
+		/datum/reagent/sugar = 20
 	)
-	result = /obj/item/weapon/reagent_containers/food/snacks/milosoup
-
-/datum/recipe/stewedsoymeat
-	fruit = list("carrot" = 1, "tomato" = 1)
-	items = list(
-		/obj/item/weapon/reagent_containers/food/snacks/soydope,
-		/obj/item/weapon/reagent_containers/food/snacks/soydope
+	required_produce = list(
+		"pineapple" = 1,
+		"banana" = 1,
+		"blueberries" = 1
 	)
-	result = /obj/item/weapon/reagent_containers/food/snacks/stewedsoymeat
+	result_path = /obj/item/reagent_containers/food/snacks/sliceable/pizza/fruitpizza
 
-/datum/recipe/boiledspagetti
-	reagents = list(/datum/reagent/water = 10)
-	items = list(
-		/obj/item/weapon/reagent_containers/food/snacks/spagetti,
+
+/datum/microwave_recipe/spacylibertyduff
+	required_reagents = list(
+		/datum/reagent/water = 10,
+		/datum/reagent/ethanol/vodka = 5,
+		/datum/reagent/drugs/psilocybin = 5
 	)
-	result = /obj/item/weapon/reagent_containers/food/snacks/boiledspagetti
+	result_path = /obj/item/reagent_containers/food/snacks/spacylibertyduff
 
-/datum/recipe/boiledrice
-	reagents = list(/datum/reagent/water = 10, /datum/reagent/nutriment/rice = 10)
-	result = /obj/item/weapon/reagent_containers/food/snacks/boiledrice
 
-/datum/recipe/chazuke
-	reagents = list(/datum/reagent/nutriment/rice/chazuke = 10)
-	result = /obj/item/weapon/reagent_containers/food/snacks/boiledrice/chazuke
-
-/datum/recipe/katsucurry
-	fruit = list("apple" = 1, "carrot" = 1, "potato" = 1)
-	reagents = list(/datum/reagent/water = 10, /datum/reagent/nutriment/rice = 10, /datum/reagent/nutriment/flour = 5)
-	items = list(
-		/obj/item/weapon/reagent_containers/food/snacks/meat/chicken
+/datum/microwave_recipe/amanitajelly
+	required_reagents = list(
+		/datum/reagent/water = 10,
+		/datum/reagent/ethanol/vodka = 5,
+		/datum/reagent/toxin/amatoxin = 5
 	)
-	result = /obj/item/weapon/reagent_containers/food/snacks/katsucurry
+	result_path = /obj/item/reagent_containers/food/snacks/amanitajelly
 
-/datum/recipe/ricepudding
-	reagents = list(/datum/reagent/drink/milk = 5, /datum/reagent/nutriment/rice = 10)
-	result = /obj/item/weapon/reagent_containers/food/snacks/ricepudding
 
-/datum/recipe/pastatomato
-	fruit = list("tomato" = 2)
-	reagents = list(/datum/reagent/water = 10)
-	items = list(/obj/item/weapon/reagent_containers/food/snacks/spagetti)
-	result = /obj/item/weapon/reagent_containers/food/snacks/pastatomato
+/datum/microwave_recipe/amanitajelly/CreateResult(obj/machinery/microwave/microwave)
+		var/obj/item/reagent_containers/food/snacks/amanitajelly/jelly = ..()
+		jelly.reagents.del_reagent(/datum/reagent/toxin/amatoxin)
+		return jelly
 
-/datum/recipe/poppypretzel
-	fruit = list("poppy" = 1)
-	items = list(/obj/item/weapon/reagent_containers/food/snacks/dough)
-	result = /obj/item/weapon/reagent_containers/food/snacks/poppypretzel
 
-/datum/recipe/meatballspagetti
-	reagents = list(/datum/reagent/water = 10)
-	items = list(
-		/obj/item/weapon/reagent_containers/food/snacks/spagetti,
-		/obj/item/weapon/reagent_containers/food/snacks/meatball,
-		/obj/item/weapon/reagent_containers/food/snacks/meatball,
+/datum/microwave_recipe/meatballsoup
+	required_reagents = list(
+		/datum/reagent/water = 10
 	)
-	result = /obj/item/weapon/reagent_containers/food/snacks/meatballspagetti
-
-/datum/recipe/spesslaw
-	reagents = list(/datum/reagent/water = 10)
-	items = list(
-		/obj/item/weapon/reagent_containers/food/snacks/spagetti,
-		/obj/item/weapon/reagent_containers/food/snacks/meatball,
-		/obj/item/weapon/reagent_containers/food/snacks/meatball,
-		/obj/item/weapon/reagent_containers/food/snacks/meatball,
-		/obj/item/weapon/reagent_containers/food/snacks/meatball,
+	required_items = list(
+		/obj/item/reagent_containers/food/snacks/meatball
 	)
-	result = /obj/item/weapon/reagent_containers/food/snacks/spesslaw
-
-/datum/recipe/nanopasta
-	reagents = list(/datum/reagent/water = 10)
-	items = list(/obj/item/weapon/reagent_containers/food/snacks/spagetti,
-				/obj/item/stack/nanopaste)
-	result = /obj/item/weapon/reagent_containers/food/snacks/nanopasta
-
-/datum/recipe/superbiteburger
-	fruit = list("tomato" = 1)
-	reagents = list(/datum/reagent/sodiumchloride = 5, /datum/reagent/blackpepper = 5)
-	items = list(
-		/obj/item/weapon/reagent_containers/food/snacks/bigbiteburger,
-		/obj/item/weapon/reagent_containers/food/snacks/dough,
-		/obj/item/weapon/reagent_containers/food/snacks/meat,
-		/obj/item/weapon/reagent_containers/food/snacks/cheesewedge,
-		/obj/item/weapon/reagent_containers/food/snacks/boiledegg,
+	required_produce = list(
+		"carrot" = 1,
+		"potato" = 1
 	)
-	result = /obj/item/weapon/reagent_containers/food/snacks/superbiteburger
+	result_path = /obj/item/reagent_containers/food/snacks/meatballsoup
 
-/datum/recipe/candiedapple
-	fruit = list("apple" = 1)
-	reagents = list(/datum/reagent/water = 10, /datum/reagent/sugar = 5)
-	result = /obj/item/weapon/reagent_containers/food/snacks/candiedapple
-
-/datum/recipe/applepie
-	fruit = list("apple" = 1)
-	items = list(/obj/item/weapon/reagent_containers/food/snacks/sliceable/flatdough)
-	result = /obj/item/weapon/reagent_containers/food/snacks/applepie
-
-/datum/recipe/slimeburger
-	reagents = list(/datum/reagent/slimejelly = 5)
-	items = list(
-		/obj/item/weapon/reagent_containers/food/snacks/bun
+/datum/microwave_recipe/onionsoup
+	required_reagents = list(
+		/datum/reagent/water = 10
 	)
-	result = /obj/item/weapon/reagent_containers/food/snacks/jellyburger/slime
-
-/datum/recipe/jellyburger
-	reagents = list(/datum/reagent/nutriment/cherryjelly = 5)
-	items = list(
-		/obj/item/weapon/reagent_containers/food/snacks/bun
+	required_produce = list(
+		"onion" = 2
 	)
-	result = /obj/item/weapon/reagent_containers/food/snacks/jellyburger/cherry
+	result_path = /obj/item/reagent_containers/food/snacks/onionsoup
 
-/datum/recipe/twobread
-	reagents = list(/datum/reagent/ethanol/wine = 5)
-	items = list(
-		/obj/item/weapon/reagent_containers/food/snacks/slice/bread,
-		/obj/item/weapon/reagent_containers/food/snacks/slice/bread,
+
+/datum/microwave_recipe/vegetablesoup
+	required_reagents = list(
+		/datum/reagent/water = 10
 	)
-	result = /obj/item/weapon/reagent_containers/food/snacks/twobread
-
-/datum/recipe/threebread
-	items = list(
-		/obj/item/weapon/reagent_containers/food/snacks/twobread,
-		/obj/item/weapon/reagent_containers/food/snacks/slice/bread,
+	required_produce = list(
+		"carrot" = 1,
+		"potato" = 1,
+		"corn" = 1,
+		"eggplant" = 1
 	)
-	result = /obj/item/weapon/reagent_containers/food/snacks/threebread
+	result_path = /obj/item/reagent_containers/food/snacks/vegetablesoup
 
-/datum/recipe/slimesandwich
-	reagents = list(/datum/reagent/slimejelly = 5)
-	items = list(
-		/obj/item/weapon/reagent_containers/food/snacks/slice/bread,
-		/obj/item/weapon/reagent_containers/food/snacks/slice/bread,
+
+/datum/microwave_recipe/nettlesoup
+	required_reagents = list(
+		/datum/reagent/water = 10
 	)
-	result = /obj/item/weapon/reagent_containers/food/snacks/jellysandwich/slime
-
-/datum/recipe/cherrysandwich
-	reagents = list(/datum/reagent/nutriment/cherryjelly = 5)
-	items = list(
-		/obj/item/weapon/reagent_containers/food/snacks/slice/bread,
-		/obj/item/weapon/reagent_containers/food/snacks/slice/bread,
+	required_items = list(
+		/obj/item/reagent_containers/food/snacks/egg
 	)
-	result = /obj/item/weapon/reagent_containers/food/snacks/jellysandwich/cherry
-
-/datum/recipe/bloodsoup
-	reagents = list(/datum/reagent/blood = 30)
-	result = /obj/item/weapon/reagent_containers/food/snacks/bloodsoup
-
-/datum/recipe/slimesoup
-	reagents = list(/datum/reagent/water = 10, /datum/reagent/slimejelly = 5)
-	items = list()
-	result = /obj/item/weapon/reagent_containers/food/snacks/slimesoup
-
-/datum/recipe/boiledslimeextract
-	reagents = list(/datum/reagent/water = 10)
-	items = list(
-		/obj/item/slime_extract,
+	required_produce = list(
+		"nettle" = 1,
+		"potato" = 1
 	)
-	result = /obj/item/weapon/reagent_containers/food/snacks/boiledslimecore
+	result_path = /obj/item/reagent_containers/food/snacks/nettlesoup
 
-/datum/recipe/chocolateegg
-	items = list(
-		/obj/item/weapon/reagent_containers/food/snacks/egg,
-		/obj/item/weapon/reagent_containers/food/snacks/chocolatebar,
+
+/datum/microwave_recipe/wishsoup
+	required_reagents = list(
+		/datum/reagent/water = 20
 	)
-	result = /obj/item/weapon/reagent_containers/food/snacks/chocolateegg
+	result_path = /obj/item/reagent_containers/food/snacks/wishsoup
 
-/datum/recipe/sausage
-	items = list(
-		/obj/item/weapon/reagent_containers/food/snacks/rawmeatball,
-		/obj/item/weapon/reagent_containers/food/snacks/rawcutlet,
+
+/datum/microwave_recipe/hotchili
+	required_items = list(
+		/obj/item/reagent_containers/food/snacks/cutlet
 	)
-	result = /obj/item/weapon/reagent_containers/food/snacks/sausage
-
-/datum/recipe/fatsausage
-	reagents = list(/datum/reagent/blackpepper = 2)
-	items = list(
-		/obj/item/weapon/reagent_containers/food/snacks/rawmeatball,
-		/obj/item/weapon/reagent_containers/food/snacks/rawcutlet,
+	required_produce = list(
+		"chili" = 1,
+		"tomato" = 1
 	)
-	result = /obj/item/weapon/reagent_containers/food/snacks/fatsausage
+	result_path = /obj/item/reagent_containers/food/snacks/hotchili
 
-/datum/recipe/fishfingers
-	reagents = list(/datum/reagent/nutriment/flour = 10)
-	items = list(
-		/obj/item/weapon/reagent_containers/food/snacks/egg,
-		/obj/item/weapon/reagent_containers/food/snacks/fish
+
+/datum/microwave_recipe/coldchili
+	required_items = list(
+		/obj/item/reagent_containers/food/snacks/cutlet
 	)
-	result = /obj/item/weapon/reagent_containers/food/snacks/fishfingers
-
-/datum/recipe/mysterysoup
-	reagents = list(/datum/reagent/water = 10)
-	items = list(
-		/obj/item/weapon/reagent_containers/food/snacks/badrecipe,
-		/obj/item/weapon/reagent_containers/food/snacks/tofu,
-		/obj/item/weapon/reagent_containers/food/snacks/egg,
-		/obj/item/weapon/reagent_containers/food/snacks/cheesewedge,
+	required_produce = list(
+		"icechili" = 1,
+		"tomato" = 1
 	)
-	result = /obj/item/weapon/reagent_containers/food/snacks/mysterysoup
+	result_path = /obj/item/reagent_containers/food/snacks/coldchili
 
-/datum/recipe/pumpkinpie
-	fruit = list("pumpkin" = 1)
-	reagents = list(/datum/reagent/sugar = 5)
-	items = list(/obj/item/weapon/reagent_containers/food/snacks/sliceable/flatdough)
-	result = /obj/item/weapon/reagent_containers/food/snacks/sliceable/pumpkinpie
 
-/datum/recipe/plumphelmetbiscuit
-	fruit = list("plumphelmet" = 1)
-	reagents = list(/datum/reagent/nutriment/batter = 10)
-	result = /obj/item/weapon/reagent_containers/food/snacks/plumphelmetbiscuit
-
-/datum/recipe/plumphelmetbiscuitvegan
-	fruit = list("plumphelmet" = 1)
-	reagents = list(/datum/reagent/nutriment/flour = 10, /datum/reagent/water = 10)
-	result = /obj/item/weapon/reagent_containers/food/snacks/plumphelmetbiscuit
-
-/datum/recipe/mushroomsoup
-	fruit = list("mushroom" = 1)
-	reagents = list(/datum/reagent/drink/milk = 10)
-	result = /obj/item/weapon/reagent_containers/food/snacks/mushroomsoup
-
-/datum/recipe/chawanmushi
-	fruit = list("mushroom" = 1)
-	reagents = list(/datum/reagent/water = 10, /datum/reagent/nutriment/soysauce = 5)
-	items = list(
-		/obj/item/weapon/reagent_containers/food/snacks/egg,
-		/obj/item/weapon/reagent_containers/food/snacks/egg
+/datum/microwave_recipe/amanita_pie
+	required_reagents = list(
+		/datum/reagent/toxin/amatoxin = 5
 	)
-	result = /obj/item/weapon/reagent_containers/food/snacks/chawanmushi
-
-/datum/recipe/beetsoup
-	fruit = list("whitebeet" = 1, "cabbage" = 1)
-	reagents = list(/datum/reagent/water = 10)
-	result = /obj/item/weapon/reagent_containers/food/snacks/beetsoup
-
-/datum/recipe/appletart
-	fruit = list("goldapple" = 1)
-	items = list(/obj/item/weapon/reagent_containers/food/snacks/sliceable/flatdough)
-	result = /obj/item/weapon/reagent_containers/food/snacks/appletart
-
-/datum/recipe/tossedsalad
-	fruit = list("cabbage" = 2, "tomato" = 1, "carrot" = 1, "apple" = 1)
-	result = /obj/item/weapon/reagent_containers/food/snacks/tossedsalad
-
-/datum/recipe/aesirsalad
-	fruit = list("goldapple" = 1, "ambrosiadeus" = 1)
-	result = /obj/item/weapon/reagent_containers/food/snacks/aesirsalad
-
-/datum/recipe/validsalad
-	fruit = list("potato" = 1, "ambrosia" = 3)
-	items = list(/obj/item/weapon/reagent_containers/food/snacks/meatball)
-	result = /obj/item/weapon/reagent_containers/food/snacks/validsalad
-	make_food(var/obj/container as obj)
-		var/obj/item/weapon/reagent_containers/food/snacks/validsalad/being_cooked = ..(container)
-		being_cooked.reagents.del_reagent(/datum/reagent/toxin)
-		return being_cooked
-
-/datum/recipe/cracker
-	reagents = list(/datum/reagent/sodiumchloride = 1)
-	items = list(
-		/obj/item/weapon/reagent_containers/food/snacks/doughslice
+	required_items = list(
+		/obj/item/reagent_containers/food/snacks/sliceable/flatdough
 	)
-	result = /obj/item/weapon/reagent_containers/food/snacks/cracker
+	result_path = /obj/item/reagent_containers/food/snacks/amanita_pie
 
-/datum/recipe/stuffing
-	reagents = list(/datum/reagent/water = 10, /datum/reagent/sodiumchloride = 1, /datum/reagent/blackpepper = 1)
-	items = list(
-		/obj/item/weapon/reagent_containers/food/snacks/sliceable/bread,
+
+/datum/microwave_recipe/plump_pie
+	required_items = list(
+		/obj/item/reagent_containers/food/snacks/sliceable/flatdough
 	)
-	result = /obj/item/weapon/reagent_containers/food/snacks/stuffing
-
-/datum/recipe/tofurkey
-	items = list(
-		/obj/item/weapon/reagent_containers/food/snacks/tofu,
-		/obj/item/weapon/reagent_containers/food/snacks/tofu,
-		/obj/item/weapon/reagent_containers/food/snacks/stuffing,
+	required_produce = list(
+		"plumphelmet" = 1
 	)
-	result = /obj/item/weapon/reagent_containers/food/snacks/tofurkey
+	result_path = /obj/item/reagent_containers/food/snacks/plump_pie
 
-//////////////////////////////////////////
-// bs12 food port stuff
-//////////////////////////////////////////
 
-/datum/recipe/taco
-	items = list(
-		/obj/item/weapon/reagent_containers/food/snacks/doughslice,
-		/obj/item/weapon/reagent_containers/food/snacks/cutlet,
-		/obj/item/weapon/reagent_containers/food/snacks/cheesewedge
+/datum/microwave_recipe/spellburger
+	required_items = list(
+		/obj/item/reagent_containers/food/snacks/meatburger,
+		/obj/item/clothing/head/wizard
 	)
-	result = /obj/item/weapon/reagent_containers/food/snacks/taco
+	result_path = /obj/item/reagent_containers/food/snacks/spellburger
 
-/datum/recipe/bun
-	items = list(
-		/obj/item/weapon/reagent_containers/food/snacks/dough
+
+/datum/microwave_recipe/bigbiteburger
+	required_items = list(
+		/obj/item/reagent_containers/food/snacks/meatburger,
+		/obj/item/reagent_containers/food/snacks/meat,
+		/obj/item/reagent_containers/food/snacks/meat,
+		/obj/item/reagent_containers/food/snacks/egg
 	)
-	result = /obj/item/weapon/reagent_containers/food/snacks/bun
+	result_path = /obj/item/reagent_containers/food/snacks/bigbiteburger
 
-/datum/recipe/flatbread
-	items = list(
-		/obj/item/weapon/reagent_containers/food/snacks/sliceable/flatdough
+
+/datum/microwave_recipe/enchiladas
+	required_items = list(
+		/obj/item/reagent_containers/food/snacks/cutlet
 	)
-	result = /obj/item/weapon/reagent_containers/food/snacks/flatbread
-
-/datum/recipe/meatball
-	items = list(
-		/obj/item/weapon/reagent_containers/food/snacks/rawmeatball
+	required_produce = list(
+		"chili" = 2,
+		"corn" = 1
 	)
-	result = /obj/item/weapon/reagent_containers/food/snacks/meatball
+	result_path = /obj/item/reagent_containers/food/snacks/enchiladas
 
-/datum/recipe/cutlet
-	items = list(
-		/obj/item/weapon/reagent_containers/food/snacks/rawcutlet
+
+/datum/microwave_recipe/creamcheesebread
+	required_items = list(
+		/obj/item/reagent_containers/food/snacks/dough,
+		/obj/item/reagent_containers/food/snacks/dough,
+		/obj/item/reagent_containers/food/snacks/cheesewedge,
+		/obj/item/reagent_containers/food/snacks/cheesewedge
 	)
-	result = /obj/item/weapon/reagent_containers/food/snacks/cutlet
+	result_path = /obj/item/reagent_containers/food/snacks/sliceable/creamcheesebread
 
-/datum/recipe/fries
-	items = list(
-		/obj/item/weapon/reagent_containers/food/snacks/rawsticks
+
+/datum/microwave_recipe/monkeysdelight
+	required_reagents = list(
+		/datum/reagent/sodiumchloride = 1,
+		/datum/reagent/blackpepper = 1,
+		/datum/reagent/nutriment/flour = 10
 	)
-	result = /obj/item/weapon/reagent_containers/food/snacks/fries
-
-/datum/recipe/onionrings
-	fruit = list("onion" = 1)
-	reagents = list(/datum/reagent/nutriment/batter = 10)
-	result = /obj/item/weapon/reagent_containers/food/snacks/onionrings
-
-/datum/recipe/mint
-	reagents = list(/datum/reagent/sugar = 5, /datum/reagent/frostoil = 5)
-	result = /obj/item/weapon/reagent_containers/food/snacks/mint
-
-// Cakes.
-/datum/recipe/cake
-	reagents = list(/datum/reagent/nutriment/batter/cakebatter = 60)
-	result = /obj/item/weapon/reagent_containers/food/snacks/sliceable/plaincake
-
-/datum/recipe/cake/carrot
-	fruit = list("carrot" = 3)
-	result = /obj/item/weapon/reagent_containers/food/snacks/sliceable/carrotcake
-
-/datum/recipe/cake/cheese
-	items = list(
-		/obj/item/weapon/reagent_containers/food/snacks/cheesewedge,
-		/obj/item/weapon/reagent_containers/food/snacks/cheesewedge
+	required_items = list(
+		/obj/item/reagent_containers/food/snacks/monkeycube
 	)
-	result = /obj/item/weapon/reagent_containers/food/snacks/sliceable/cheesecake
-
-/datum/recipe/cake/orange
-	fruit = list("orange" = 1)
-	result = /obj/item/weapon/reagent_containers/food/snacks/sliceable/orangecake
-
-/datum/recipe/cake/lime
-	fruit = list("lime" = 1)
-	result = /obj/item/weapon/reagent_containers/food/snacks/sliceable/limecake
-
-/datum/recipe/cake/lemon
-	fruit = list("lemon" = 1)
-	result = /obj/item/weapon/reagent_containers/food/snacks/sliceable/lemoncake
-
-/datum/recipe/cake/chocolate
-	items = list(/obj/item/weapon/reagent_containers/food/snacks/chocolatebar)
-	result = /obj/item/weapon/reagent_containers/food/snacks/sliceable/chocolatecake
-
-/datum/recipe/cake/birthday
-	reagents = list(/datum/reagent/nutriment/batter/cakebatter = 60, /datum/reagent/nutriment/sprinkles = 10)
-	result = /obj/item/weapon/reagent_containers/food/snacks/sliceable/birthdaycake
-
-/datum/recipe/cake/apple
-	fruit = list("apple" = 2)
-	result = /obj/item/weapon/reagent_containers/food/snacks/sliceable/applecake
-
-/datum/recipe/cake/brain
-	items = list(/obj/item/organ/internal/brain)
-	result = /obj/item/weapon/reagent_containers/food/snacks/sliceable/braincake
-
-/datum/recipe/cake/chocolatebar
-	reagents = list(/datum/reagent/drink/milk/chocolate = 10, /datum/reagent/nutriment/coco = 5, /datum/reagent/sugar = 5)
-	result = /obj/item/weapon/reagent_containers/food/snacks/chocolatebar
-
-/datum/recipe/boiledspiderleg
-	reagents = list(/datum/reagent/water = 10)
-	items = list(
-		/obj/item/weapon/reagent_containers/food/snacks/spider
+	required_produce = list(
+		"banana" = 1
 	)
-	result = /obj/item/weapon/reagent_containers/food/snacks/spider/cooked
+	result_path = /obj/item/reagent_containers/food/snacks/monkeysdelight
+
+
+/datum/microwave_recipe/baguette
+	required_reagents = list(
+		/datum/reagent/sodiumchloride = 1,
+		/datum/reagent/blackpepper = 1
+	)
+	required_items = list(
+		/obj/item/reagent_containers/food/snacks/dough,
+		/obj/item/reagent_containers/food/snacks/dough
+	)
+	result_path = /obj/item/reagent_containers/food/snacks/baguette
+
+
+/datum/microwave_recipe/fishandchips
+	required_items = list(
+		/obj/item/reagent_containers/food/snacks/fries,
+		/obj/item/reagent_containers/food/snacks/fish
+	)
+	result_path = /obj/item/reagent_containers/food/snacks/fishandchips
+
+
+/datum/microwave_recipe/bread
+	required_items = list(
+		/obj/item/reagent_containers/food/snacks/dough,
+		/obj/item/reagent_containers/food/snacks/dough,
+		/obj/item/reagent_containers/food/snacks/egg
+	)
+	result_path = /obj/item/reagent_containers/food/snacks/sliceable/bread
+
+
+/datum/microwave_recipe/sandwich
+	required_items = list(
+		/obj/item/reagent_containers/food/snacks/meatsteak,
+		/obj/item/reagent_containers/food/snacks/slice/bread,
+		/obj/item/reagent_containers/food/snacks/slice/bread,
+		/obj/item/reagent_containers/food/snacks/cheesewedge
+	)
+	result_path = /obj/item/reagent_containers/food/snacks/sandwich
+
+
+/datum/microwave_recipe/toastedsandwich
+	required_items = list(
+		/obj/item/reagent_containers/food/snacks/sandwich
+	)
+	result_path = /obj/item/reagent_containers/food/snacks/toastedsandwich
+
+
+/datum/microwave_recipe/grilledcheese
+	required_items = list(
+		/obj/item/reagent_containers/food/snacks/slice/bread,
+		/obj/item/reagent_containers/food/snacks/slice/bread,
+		/obj/item/reagent_containers/food/snacks/cheesewedge
+	)
+	result_path = /obj/item/reagent_containers/food/snacks/grilledcheese
+
+
+/datum/microwave_recipe/tomatosoup
+	required_reagents = list(
+		/datum/reagent/water = 10
+	)
+	required_produce = list(
+		"tomato" = 2
+	)
+	result_path = /obj/item/reagent_containers/food/snacks/tomatosoup
+
+
+/datum/microwave_recipe/rofflewaffles
+	required_reagents = list(
+		/datum/reagent/drugs/psilocybin = 5,
+		/datum/reagent/nutriment/batter/cakebatter = 20
+	)
+	result_path = /obj/item/reagent_containers/food/snacks/rofflewaffles
+
+
+/datum/microwave_recipe/stew
+	required_reagents = list(
+		/datum/reagent/water = 10
+	)
+	required_items = list(
+		/obj/item/reagent_containers/food/snacks/meat
+	)
+	required_produce = list(
+		"potato" = 1,
+		"tomato" = 1,
+		"carrot" = 1,
+		"eggplant" = 1,
+		"mushroom" = 1
+	)
+	result_path = /obj/item/reagent_containers/food/snacks/stew
+
+
+/datum/microwave_recipe/slimetoast
+	required_reagents = list(
+		/datum/reagent/slimejelly = 5
+	)
+	required_items = list(
+		/obj/item/reagent_containers/food/snacks/slice/bread
+	)
+	result_path = /obj/item/reagent_containers/food/snacks/jelliedtoast/slime
+
+
+/datum/microwave_recipe/jelliedtoast
+	required_reagents = list(
+		/datum/reagent/nutriment/cherryjelly = 5
+	)
+	required_items = list(
+		/obj/item/reagent_containers/food/snacks/slice/bread
+	)
+	result_path = /obj/item/reagent_containers/food/snacks/jelliedtoast/cherry
+
+
+/datum/microwave_recipe/pbtoast
+	required_reagents = list(
+		/datum/reagent/nutriment/peanutbutter = 5
+	)
+	required_items = list(
+		/obj/item/reagent_containers/food/snacks/slice/bread
+	)
+	result_path = /obj/item/reagent_containers/food/snacks/pbtoast
+
+
+/datum/microwave_recipe/ntella_bread
+	required_reagents = list(
+		/datum/reagent/nutriment/choconutspread = 5
+	)
+	required_items = list(
+		/obj/item/reagent_containers/food/snacks/slice/bread
+	)
+	result_path = /obj/item/reagent_containers/food/snacks/ntella_bread
+
+
+/datum/microwave_recipe/milosoup
+	required_reagents = list(
+		/datum/reagent/water = 10
+	)
+	required_items = list(
+		/obj/item/reagent_containers/food/snacks/soydope,
+		/obj/item/reagent_containers/food/snacks/soydope,
+		/obj/item/reagent_containers/food/snacks/tofu,
+		/obj/item/reagent_containers/food/snacks/tofu
+	)
+	result_path = /obj/item/reagent_containers/food/snacks/milosoup
+
+
+/datum/microwave_recipe/stewedsoymeat
+	required_items = list(
+		/obj/item/reagent_containers/food/snacks/soydope,
+		/obj/item/reagent_containers/food/snacks/soydope
+	)
+	required_produce = list(
+		"carrot" = 1,
+		"tomato" = 1
+	)
+	result_path = /obj/item/reagent_containers/food/snacks/stewedsoymeat
+
+
+/datum/microwave_recipe/boiledspagetti
+	required_reagents = list(
+		/datum/reagent/water = 10
+	)
+	required_items = list(
+		/obj/item/reagent_containers/food/snacks/spagetti
+	)
+	result_path = /obj/item/reagent_containers/food/snacks/boiledspagetti
+
+
+/datum/microwave_recipe/boiledrice
+	required_reagents = list(
+		/datum/reagent/water = 10,
+		/datum/reagent/nutriment/rice = 10
+	)
+	result_path = /obj/item/reagent_containers/food/snacks/boiledrice
+
+
+/datum/microwave_recipe/chazuke
+	required_reagents = list(
+		/datum/reagent/nutriment/rice/chazuke = 10
+	)
+	result_path = /obj/item/reagent_containers/food/snacks/boiledrice/chazuke
+
+
+/datum/microwave_recipe/katsucurry
+	required_reagents = list(
+		/datum/reagent/water = 10,
+		/datum/reagent/nutriment/rice = 10,
+		/datum/reagent/nutriment/flour = 5
+	)
+	required_items = list(
+		/obj/item/reagent_containers/food/snacks/meat/chicken
+	)
+	required_produce = list(
+		"apple" = 1,
+		"carrot" = 1,
+		"potato" = 1
+	)
+	result_path = /obj/item/reagent_containers/food/snacks/katsucurry
+
+
+/datum/microwave_recipe/ricepudding
+	required_reagents = list(
+		/datum/reagent/drink/milk = 5,
+		/datum/reagent/nutriment/rice = 10
+	)
+	result_path = /obj/item/reagent_containers/food/snacks/ricepudding
+
+
+/datum/microwave_recipe/pastatomato
+	required_reagents = list(
+		/datum/reagent/water = 10
+	)
+	required_items = list(
+		/obj/item/reagent_containers/food/snacks/spagetti
+	)
+	required_produce = list(
+		"tomato" = 2
+	)
+	result_path = /obj/item/reagent_containers/food/snacks/pastatomato
+
+
+/datum/microwave_recipe/poppypretzel
+	required_items = list(
+		/obj/item/reagent_containers/food/snacks/dough
+	)
+	required_produce = list(
+		"poppy" = 1
+	)
+	result_path = /obj/item/reagent_containers/food/snacks/poppypretzel
+
+
+/datum/microwave_recipe/meatballspagetti
+	required_reagents = list(
+		/datum/reagent/water = 10
+	)
+	required_items = list(
+		/obj/item/reagent_containers/food/snacks/spagetti,
+		/obj/item/reagent_containers/food/snacks/meatball,
+		/obj/item/reagent_containers/food/snacks/meatball
+	)
+	result_path = /obj/item/reagent_containers/food/snacks/meatballspagetti
+
+
+/datum/microwave_recipe/spesslaw
+	required_reagents = list(
+		/datum/reagent/water = 10
+	)
+	required_items = list(
+		/obj/item/reagent_containers/food/snacks/spagetti,
+		/obj/item/reagent_containers/food/snacks/meatball,
+		/obj/item/reagent_containers/food/snacks/meatball,
+		/obj/item/reagent_containers/food/snacks/meatball,
+		/obj/item/reagent_containers/food/snacks/meatball
+	)
+	result_path = /obj/item/reagent_containers/food/snacks/spesslaw
+
+
+/datum/microwave_recipe/nanopasta
+	required_reagents = list(
+		/datum/reagent/water = 10
+	)
+	required_items = list(
+		/obj/item/reagent_containers/food/snacks/spagetti,
+		/obj/item/stack/nanopaste
+	)
+	result_path = /obj/item/reagent_containers/food/snacks/nanopasta
+
+
+/datum/microwave_recipe/superbiteburger
+	required_reagents = list(
+		/datum/reagent/sodiumchloride = 5,
+		/datum/reagent/blackpepper = 5
+	)
+	required_items = list(
+		/obj/item/reagent_containers/food/snacks/bigbiteburger,
+		/obj/item/reagent_containers/food/snacks/dough,
+		/obj/item/reagent_containers/food/snacks/meat,
+		/obj/item/reagent_containers/food/snacks/cheesewedge,
+		/obj/item/reagent_containers/food/snacks/boiledegg
+	)
+	required_produce = list(
+		"tomato" = 1
+	)
+	result_path = /obj/item/reagent_containers/food/snacks/superbiteburger
+
+
+/datum/microwave_recipe/candiedapple
+	required_reagents = list(
+		/datum/reagent/water = 10,
+		/datum/reagent/sugar = 5
+	)
+	required_produce = list(
+		"apple" = 1
+	)
+	result_path = /obj/item/reagent_containers/food/snacks/candiedapple
+
+
+/datum/microwave_recipe/applepie
+	required_items = list(
+		/obj/item/reagent_containers/food/snacks/sliceable/flatdough
+	)
+	required_produce = list(
+		"apple" = 1
+	)
+	result_path = /obj/item/reagent_containers/food/snacks/applepie
+
+
+/datum/microwave_recipe/slimeburger
+	required_reagents = list(
+		/datum/reagent/slimejelly = 5
+	)
+	required_items = list(
+		/obj/item/reagent_containers/food/snacks/bun
+	)
+	result_path = /obj/item/reagent_containers/food/snacks/jellyburger/slime
+
+
+/datum/microwave_recipe/jellyburger
+	required_reagents = list(
+		/datum/reagent/nutriment/cherryjelly = 5
+	)
+	required_items = list(
+		/obj/item/reagent_containers/food/snacks/bun
+	)
+	result_path = /obj/item/reagent_containers/food/snacks/jellyburger/cherry
+
+
+/datum/microwave_recipe/twobread
+	required_reagents = list(
+		/datum/reagent/ethanol/wine = 5
+	)
+	required_items = list(
+		/obj/item/reagent_containers/food/snacks/slice/bread,
+		/obj/item/reagent_containers/food/snacks/slice/bread
+	)
+	result_path = /obj/item/reagent_containers/food/snacks/twobread
+
+
+/datum/microwave_recipe/threebread
+	required_items = list(
+		/obj/item/reagent_containers/food/snacks/twobread,
+		/obj/item/reagent_containers/food/snacks/slice/bread
+	)
+	result_path = /obj/item/reagent_containers/food/snacks/threebread
+
+
+/datum/microwave_recipe/slimesandwich
+	required_reagents = list(
+		/datum/reagent/slimejelly = 5
+	)
+	required_items = list(
+		/obj/item/reagent_containers/food/snacks/slice/bread,
+		/obj/item/reagent_containers/food/snacks/slice/bread
+	)
+	result_path = /obj/item/reagent_containers/food/snacks/jellysandwich/slime
+
+
+/datum/microwave_recipe/cherrysandwich
+	required_reagents = list(
+		/datum/reagent/nutriment/cherryjelly = 5
+	)
+	required_items = list(
+		/obj/item/reagent_containers/food/snacks/slice/bread,
+		/obj/item/reagent_containers/food/snacks/slice/bread
+	)
+	result_path = /obj/item/reagent_containers/food/snacks/jellysandwich/cherry
+
+
+/datum/microwave_recipe/pbjsandwich_cherry
+	required_reagents = list(
+		/datum/reagent/nutriment/cherryjelly = 5,
+		/datum/reagent/nutriment/peanutbutter = 5
+	)
+	required_items = list(
+		/obj/item/reagent_containers/food/snacks/slice/bread,
+		/obj/item/reagent_containers/food/snacks/slice/bread
+	)
+	result_path = /obj/item/reagent_containers/food/snacks/pbjsandwich/cherry
+
+
+/datum/microwave_recipe/pbjsandwich_slime
+	required_reagents = list(
+		/datum/reagent/slimejelly = 5,
+		/datum/reagent/nutriment/peanutbutter = 5
+	)
+	required_items = list(
+		/obj/item/reagent_containers/food/snacks/slice/bread,
+		/obj/item/reagent_containers/food/snacks/slice/bread
+	)
+	result_path = /obj/item/reagent_containers/food/snacks/pbjsandwich/slime
+
+
+/datum/microwave_recipe/bloodsoup
+	required_reagents = list(
+		/datum/reagent/blood = 30
+	)
+	result_path = /obj/item/reagent_containers/food/snacks/bloodsoup
+
+
+/datum/microwave_recipe/slimesoup
+	required_reagents = list(
+		/datum/reagent/water = 10,
+		/datum/reagent/slimejelly = 5
+	)
+	result_path = /obj/item/reagent_containers/food/snacks/slimesoup
+
+
+/datum/microwave_recipe/boiledslimeextract
+	required_reagents = list(
+		/datum/reagent/water = 10
+	)
+	required_items = list(
+		/obj/item/slime_extract
+	)
+	result_path = /obj/item/reagent_containers/food/snacks/boiledslimecore
+
+
+/datum/microwave_recipe/chocolateegg
+	required_items = list(
+		/obj/item/reagent_containers/food/snacks/egg,
+		/obj/item/reagent_containers/food/snacks/chocolatebar
+	)
+	result_path = /obj/item/reagent_containers/food/snacks/chocolateegg
+
+
+/datum/microwave_recipe/sausage
+	required_items = list(
+		/obj/item/reagent_containers/food/snacks/rawmeatball,
+		/obj/item/reagent_containers/food/snacks/rawcutlet
+	)
+	result_path = /obj/item/reagent_containers/food/snacks/sausage
+
+
+/datum/microwave_recipe/fatsausage
+	required_reagents = list(
+		/datum/reagent/blackpepper = 2
+	)
+	required_items = list(
+		/obj/item/reagent_containers/food/snacks/rawmeatball,
+		/obj/item/reagent_containers/food/snacks/rawcutlet
+	)
+	result_path = /obj/item/reagent_containers/food/snacks/fatsausage
+
+
+/datum/microwave_recipe/fishfingers
+	required_reagents = list(
+		/datum/reagent/nutriment/flour = 10
+	)
+	required_items = list(
+		/obj/item/reagent_containers/food/snacks/egg,
+		/obj/item/reagent_containers/food/snacks/fish
+	)
+	result_path = /obj/item/reagent_containers/food/snacks/fishfingers
+
+
+/datum/microwave_recipe/mysterysoup
+	required_reagents = list(
+		/datum/reagent/water = 10
+	)
+	required_items = list(
+		/obj/item/reagent_containers/food/snacks/badrecipe,
+		/obj/item/reagent_containers/food/snacks/tofu,
+		/obj/item/reagent_containers/food/snacks/egg,
+		/obj/item/reagent_containers/food/snacks/cheesewedge
+	)
+	result_path = /obj/item/reagent_containers/food/snacks/mysterysoup
+
+
+/datum/microwave_recipe/pumpkinpie
+	required_reagents = list(
+		/datum/reagent/sugar = 5
+	)
+	required_items = list(
+		/obj/item/reagent_containers/food/snacks/sliceable/flatdough
+	)
+	required_produce = list(
+		"pumpkin" = 1
+	)
+	result_path = /obj/item/reagent_containers/food/snacks/sliceable/pumpkinpie
+
+
+/datum/microwave_recipe/plumphelmetbiscuit
+	required_reagents = list(
+		/datum/reagent/nutriment/batter = 10
+	)
+	required_produce = list(
+		"plumphelmet" = 1
+	)
+	result_path = /obj/item/reagent_containers/food/snacks/plumphelmetbiscuit
+
+
+/datum/microwave_recipe/plumphelmetbiscuitvegan
+	required_reagents = list(
+		/datum/reagent/nutriment/flour = 10,
+		/datum/reagent/water = 10
+	)
+	required_produce = list(
+		"plumphelmet" = 1
+	)
+	result_path = /obj/item/reagent_containers/food/snacks/plumphelmetbiscuit
+
+
+/datum/microwave_recipe/mushroomsoup
+	required_reagents = list(
+		/datum/reagent/drink/milk = 10
+	)
+	required_produce = list(
+		"mushroom" = 1
+	)
+	result_path = /obj/item/reagent_containers/food/snacks/mushroomsoup
+
+
+/datum/microwave_recipe/chawanmushi
+	required_reagents = list(
+		/datum/reagent/water = 10,
+		/datum/reagent/nutriment/soysauce = 5
+	)
+	required_items = list(
+		/obj/item/reagent_containers/food/snacks/egg,
+		/obj/item/reagent_containers/food/snacks/egg
+	)
+	required_produce = list(
+		"mushroom" = 1
+	)
+	result_path = /obj/item/reagent_containers/food/snacks/chawanmushi
+
+
+/datum/microwave_recipe/beetsoup
+	required_reagents = list(
+		/datum/reagent/water = 10
+	)
+	required_produce = list(
+		"whitebeet" = 1,
+		"cabbage" = 1
+	)
+	result_path = /obj/item/reagent_containers/food/snacks/beetsoup
+
+
+/datum/microwave_recipe/appletart
+	required_items = list(
+		/obj/item/reagent_containers/food/snacks/sliceable/flatdough
+	)
+	required_produce = list(
+		"goldapple" = 1
+	)
+	result_path = /obj/item/reagent_containers/food/snacks/appletart
+
+
+/datum/microwave_recipe/tossedsalad
+	required_produce = list(
+		"lettuce" = 2,
+		"tomato" = 1,
+		"carrot" = 1,
+		"apple" = 1
+	)
+	result_path = /obj/item/reagent_containers/food/snacks/tossedsalad
+
+
+/datum/microwave_recipe/aesirsalad
+	required_produce = list(
+		"goldapple" = 1,
+		"ambrosiadeus" = 1
+	)
+	result_path = /obj/item/reagent_containers/food/snacks/aesirsalad
+
+
+/datum/microwave_recipe/validsalad
+	required_items = list(
+		/obj/item/reagent_containers/food/snacks/meatball
+	)
+	required_produce = list(
+		"potato" = 1,
+		"ambrosia" = 3
+	)
+	result_path = /obj/item/reagent_containers/food/snacks/validsalad
+
+
+/datum/microwave_recipe/validsalad/CreateResult(obj/machinery/microwave/microwave)
+	var/obj/item/reagent_containers/food/snacks/validsalad/salad = ..()
+	salad.reagents.del_reagent(/datum/reagent/toxin)
+	return salad
+
+
+/datum/microwave_recipe/cracker
+	required_reagents = list(
+		/datum/reagent/sodiumchloride = 1
+	)
+	required_items = list(
+		/obj/item/reagent_containers/food/snacks/doughslice
+	)
+	result_path = /obj/item/reagent_containers/food/snacks/cracker
+
+
+/datum/microwave_recipe/stuffing
+	required_reagents = list(
+		/datum/reagent/water = 10,
+		/datum/reagent/sodiumchloride = 1,
+		/datum/reagent/blackpepper = 1
+	)
+	required_items = list(
+		/obj/item/reagent_containers/food/snacks/sliceable/bread
+	)
+	result_path = /obj/item/reagent_containers/food/snacks/stuffing
+
+
+/datum/microwave_recipe/tofurkey
+	required_items = list(
+		/obj/item/reagent_containers/food/snacks/tofu,
+		/obj/item/reagent_containers/food/snacks/tofu,
+		/obj/item/reagent_containers/food/snacks/stuffing
+	)
+	result_path = /obj/item/reagent_containers/food/snacks/tofurkey
+
+
+/datum/microwave_recipe/taco
+	required_items = list(
+		/obj/item/reagent_containers/food/snacks/doughslice,
+		/obj/item/reagent_containers/food/snacks/cutlet,
+		/obj/item/reagent_containers/food/snacks/cheesewedge
+	)
+	result_path = /obj/item/reagent_containers/food/snacks/taco
+
+
+/datum/microwave_recipe/bun
+	required_items = list(
+		/obj/item/reagent_containers/food/snacks/dough
+	)
+	result_path = /obj/item/reagent_containers/food/snacks/bun
+
+
+/datum/microwave_recipe/flatbread
+	required_items = list(
+		/obj/item/reagent_containers/food/snacks/sliceable/flatdough
+	)
+	result_path = /obj/item/reagent_containers/food/snacks/flatbread
+
+
+/datum/microwave_recipe/meatball
+	required_items = list(
+		/obj/item/reagent_containers/food/snacks/rawmeatball
+	)
+	result_path = /obj/item/reagent_containers/food/snacks/meatball
+
+
+/datum/microwave_recipe/cutlet
+	required_items = list(
+		/obj/item/reagent_containers/food/snacks/rawcutlet
+	)
+	result_path = /obj/item/reagent_containers/food/snacks/cutlet
+
+/datum/microwave_recipe/bacon
+	required_items = list(
+		/obj/item/reagent_containers/food/snacks/rawbacon
+	)
+	result_path = /obj/item/reagent_containers/food/snacks/bacon
+
+/datum/microwave_recipe/fries
+	required_items = list(
+		/obj/item/reagent_containers/food/snacks/rawsticks
+	)
+	result_path = /obj/item/reagent_containers/food/snacks/fries
+
+
+/datum/microwave_recipe/onionrings
+	required_reagents = list(
+		/datum/reagent/nutriment/batter = 10
+	)
+	required_produce = list(
+		"onion" = 1
+	)
+	result_path = /obj/item/reagent_containers/food/snacks/onionrings
+
+
+/datum/microwave_recipe/mint
+	required_reagents = list(
+		/datum/reagent/sugar = 5,
+		/datum/reagent/frostoil = 5
+	)
+	result_path = /obj/item/reagent_containers/food/snacks/mint
+
+
+/datum/microwave_recipe/cake
+	required_reagents = list(
+		/datum/reagent/nutriment/batter/cakebatter = 60
+	)
+	result_path = /obj/item/reagent_containers/food/snacks/sliceable/plaincake
+
+
+/datum/microwave_recipe/cake/carrot
+	required_produce = list(
+		"carrot" = 3
+	)
+	result_path = /obj/item/reagent_containers/food/snacks/sliceable/carrotcake
+
+
+/datum/microwave_recipe/cake/cheese
+	required_items = list(
+		/obj/item/reagent_containers/food/snacks/cheesewedge,
+		/obj/item/reagent_containers/food/snacks/cheesewedge
+	)
+	result_path = /obj/item/reagent_containers/food/snacks/sliceable/cheesecake
+
+
+/datum/microwave_recipe/cake/ntella_cheesecake
+	required_reagents = list(/datum/reagent/drink/milk = 5, /datum/reagent/nutriment/choconutspread = 15, /datum/reagent/sugar = 10)
+	required_items = list(
+		/obj/item/reagent_containers/food/snacks/cheesewedge,
+		/obj/item/reagent_containers/food/snacks/cookie,
+		/obj/item/reagent_containers/food/snacks/cookie,
+		/obj/item/reagent_containers/food/snacks/cookie
+	)
+	result_path = /obj/item/reagent_containers/food/snacks/sliceable/ntella_cheesecake
+
+
+/datum/microwave_recipe/cake/orange
+	required_produce = list(
+		"orange" = 1
+	)
+	result_path = /obj/item/reagent_containers/food/snacks/sliceable/orangecake
+
+
+/datum/microwave_recipe/cake/lime
+	required_produce = list(
+		"lime" = 1
+	)
+	result_path = /obj/item/reagent_containers/food/snacks/sliceable/limecake
+
+
+/datum/microwave_recipe/cake/lemon
+	required_produce = list(
+		"lemon" = 1
+	)
+	result_path = /obj/item/reagent_containers/food/snacks/sliceable/lemoncake
+
+
+/datum/microwave_recipe/cake/chocolate
+	required_items = list(
+		/obj/item/reagent_containers/food/snacks/chocolatebar
+	)
+	result_path = /obj/item/reagent_containers/food/snacks/sliceable/chocolatecake
+
+
+/datum/microwave_recipe/cake/birthday
+	required_reagents = list(
+		/datum/reagent/nutriment/batter/cakebatter = 60,
+		/datum/reagent/nutriment/sprinkles = 10
+	)
+	result_path = /obj/item/reagent_containers/food/snacks/sliceable/birthdaycake
+
+
+/datum/microwave_recipe/cake/apple
+	required_produce = list(
+		"apple" = 2
+	)
+	result_path = /obj/item/reagent_containers/food/snacks/sliceable/applecake
+
+
+/datum/microwave_recipe/cake/brain
+	required_items = list(
+		/obj/item/organ/internal/brain
+	)
+	result_path = /obj/item/reagent_containers/food/snacks/sliceable/braincake
+
+
+/datum/microwave_recipe/cake/chocolatebar
+	required_reagents = list(
+		/datum/reagent/drink/milk/chocolate = 10,
+		/datum/reagent/nutriment/coco = 5,
+		/datum/reagent/sugar = 5
+	)
+	result_path = /obj/item/reagent_containers/food/snacks/chocolatebar
+
+
+/datum/microwave_recipe/boiledspiderleg
+	required_reagents = list(
+		/datum/reagent/water = 10
+	)
+	required_items = list(
+		/obj/item/reagent_containers/food/snacks/spider
+	)
+	result_path = /obj/item/reagent_containers/food/snacks/spider/cooked
+
+
+/datum/microwave_recipe/chilied_eggs
+	required_items = list(
+		/obj/item/reagent_containers/food/snacks/boiledegg,
+		/obj/item/reagent_containers/food/snacks/boiledegg,
+		/obj/item/reagent_containers/food/snacks/boiledegg,
+		/obj/item/reagent_containers/food/snacks/hotchili
+	)
+	result_path = /obj/item/reagent_containers/food/snacks/chilied_eggs
+
+
+/datum/microwave_recipe/hatchling_surprise
+	required_items = list(
+		/obj/item/reagent_containers/food/snacks/bacon,
+		/obj/item/reagent_containers/food/snacks/bacon,
+		/obj/item/reagent_containers/food/snacks/bacon,
+		/obj/item/reagent_containers/food/snacks/friedegg
+	)
+	result_path = /obj/item/reagent_containers/food/snacks/hatchling_surprise
+
+
+/datum/microwave_recipe/red_sun_special
+	required_items = list(
+		/obj/item/reagent_containers/food/snacks/sausage,
+		/obj/item/reagent_containers/food/snacks/cheesewedge
+	)
+	result_path = /obj/item/reagent_containers/food/snacks/red_sun_special
+
+
+/datum/microwave_recipe/sea_delight
+	required_reagents = list(
+		/datum/reagent/water = 10
+	)
+	required_items = list(
+		/obj/item/reagent_containers/food/snacks/egg,
+		/obj/item/reagent_containers/food/snacks/egg,
+		/obj/item/reagent_containers/food/snacks/egg
+	)
+	required_produce = list(
+		"gukhe" = 2
+	)
+	result_path = /obj/item/reagent_containers/food/snacks/sea_delight
+
+/datum/microwave_recipe/stok_skewers
+	required_reagents = list(
+		/datum/reagent/nutriment/vinegar = 5
+	)
+	required_items = list(
+		/obj/item/reagent_containers/food/snacks/cutlet,
+		/obj/item/reagent_containers/food/snacks/cutlet
+	)
+	required_produce = list(
+		"gukhe" = 1
+	)
+	result_path = /obj/item/reagent_containers/food/snacks/stok_skewers
+
+
+/datum/microwave_recipe/gukhe_fish
+	required_reagents = list(
+		/datum/reagent/sodiumchloride = 3,
+		/datum/reagent/nutriment/vinegar = 3
+	)
+	required_items = list(
+		/obj/item/reagent_containers/food/snacks/fish
+	)
+	required_produce = list(
+		"gukhe" = 1
+	)
+	result_path = /obj/item/reagent_containers/food/snacks/gukhe_fish
+
+
+/datum/microwave_recipe/aghrassh_cake
+	required_reagents = list(
+		/datum/reagent/nutriment/protein = 8,
+		/datum/reagent/nutriment/coco = 3,
+		/datum/reagent/blackpepper = 3
+	)
+	required_items = list(
+		/obj/item/reagent_containers/food/snacks/egg
+	)
+	required_produce = list(
+		"aghrassh" = 1
+	)
+	result_path = /obj/item/reagent_containers/food/snacks/aghrassh_cake
+
+
+/datum/microwave_recipe/clam_chowder
+	required_reagents = list(
+		/datum/reagent/drink/milk/cream = 10
+	)
+	required_items = list(
+		/obj/item/reagent_containers/food/snacks/shellfish/clam
+	)
+	required_produce = list(
+		"potato" = 1
+	)
+	result_path = /obj/item/reagent_containers/food/snacks/clam_chowder
+
+
+/datum/microwave_recipe/bisque
+	required_reagents = list(
+		/datum/reagent/drink/milk/cream = 10
+	)
+	required_items = list(
+		/obj/item/reagent_containers/food/snacks/shellfish/crab,
+		/obj/item/reagent_containers/food/snacks/shellfish/crab
+	)
+	result_path = /obj/item/reagent_containers/food/snacks/bisque
+
+
+/datum/microwave_recipe/stuffed_clam
+	required_reagents = list(
+		/datum/reagent/sodiumchloride = 1,
+		/datum/reagent/blackpepper = 1
+	)
+	required_items = list(
+		/obj/item/reagent_containers/food/snacks/shellfish/clam,
+		/obj/item/reagent_containers/food/snacks/slice/bread
+	)
+	result_path = /obj/item/reagent_containers/food/snacks/stuffed_clam
+
+
+/datum/microwave_recipe/steamed_mussels
+	required_reagents = list(
+		/datum/reagent/ethanol/wine/premium = 10,
+		/datum/reagent/sodiumchloride = 1,
+		/datum/reagent/blackpepper = 1
+	)
+	required_items = list(
+		/obj/item/reagent_containers/food/snacks/shellfish/mussel,
+		/obj/item/reagent_containers/food/snacks/shellfish/mussel,
+		/obj/item/reagent_containers/food/snacks/shellfish/mussel
+	)
+	result_path = /obj/item/reagent_containers/food/snacks/steamed_mussels
+
+
+/datum/microwave_recipe/oysters_rockefeller
+	required_items = list(
+		/obj/item/reagent_containers/food/snacks/shellfish/oyster,
+		/obj/item/reagent_containers/food/snacks/shellfish/oyster,
+		/obj/item/reagent_containers/food/snacks/bacon,
+		/obj/item/reagent_containers/food/snacks/slice/bread
+	)
+	result_path = /obj/item/reagent_containers/food/snacks/oysters_rockefeller
+
+
+/datum/microwave_recipe/crab_cakes
+	required_items = list(
+		/obj/item/reagent_containers/food/snacks/shellfish/crab,
+		/obj/item/reagent_containers/food/snacks/slice/bread,
+		/obj/item/reagent_containers/food/snacks/egg
+	)
+	result_path = /obj/item/reagent_containers/food/snacks/crab_cakes
+
+
+/datum/microwave_recipe/crab_rangoon
+	required_reagents = list(
+		/datum/reagent/drink/milk/cream = 5
+	)
+	required_items = list(
+		/obj/item/reagent_containers/food/snacks/doughslice,
+		/obj/item/reagent_containers/food/snacks/shellfish/crab,
+		/obj/item/reagent_containers/food/snacks/cheesewedge,
+	)
+	result_path = /obj/item/reagent_containers/food/snacks/crab_rangoon
+
+
+/datum/microwave_recipe/crab_dinner
+	required_reagents = list(
+		/datum/reagent/water = 10
+	)
+	required_items = list(
+		/obj/item/reagent_containers/food/snacks/shellfish/crab,
+		/obj/item/reagent_containers/food/snacks/shellfish/crab,
+		/obj/item/reagent_containers/food/snacks/shellfish/crab,
+		/obj/item/reagent_containers/food/snacks/fruit_slice
+	)
+	result_path = /obj/item/reagent_containers/food/snacks/crab_dinner
+
+
+/datum/microwave_recipe/shrimp_cocktail
+	required_reagents = list(
+		/datum/reagent/nutriment/ketchup = 5
+	)
+	required_items = list(
+		/obj/item/reagent_containers/food/snacks/shellfish/shrimp,
+		/obj/item/reagent_containers/food/snacks/shellfish/shrimp,
+		/obj/item/reagent_containers/food/snacks/shellfish/shrimp,
+		/obj/item/reagent_containers/food/drinks/glass2/cocktail
+	)
+	result_path = /obj/item/reagent_containers/food/snacks/shrimp_cocktail
+
+
+/datum/microwave_recipe/shrimp_tempura
+	required_reagents = list(
+		/datum/reagent/nutriment/batter = 5
+	)
+	required_items = list(
+		/obj/item/reagent_containers/food/snacks/shellfish/shrimp
+	)
+	result_path = /obj/item/reagent_containers/food/snacks/shrimp_tempura
+
+
+/datum/microwave_recipe/seafood_paella
+	required_reagents = list(
+		/datum/reagent/ethanol/wine/premium = 5
+	)
+	required_items = list(
+		/obj/item/reagent_containers/food/snacks/shellfish/shrimp,
+		/obj/item/reagent_containers/food/snacks/shellfish/shrimp,
+		/obj/item/reagent_containers/food/snacks/shellfish/mussel,
+		/obj/item/reagent_containers/food/snacks/shellfish/mussel,
+		/obj/item/reagent_containers/food/snacks/boiledrice
+	)
+	required_produce = list(
+		"tomato" = 1
+	)
+	result_path = /obj/item/reagent_containers/food/snacks/seafood_paella
+
+/datum/microwave_recipe/unscotti
+	required_reagents = list(
+		/datum/reagent/sugar = 10,
+		/datum/reagent/drink/syrup_vanilla = 5
+	)
+	required_items = list(
+		/obj/item/reagent_containers/food/snacks/dough
+	)
+	required_produce = list(
+		"almond" = 3
+	)
+	result_path = /obj/item/reagent_containers/food/snacks/sliceable/unscottiloaf
+
+/datum/microwave_recipe/biscotti
+	required_items = list(
+		/obj/item/reagent_containers/food/snacks/slice/unscotti
+	)
+	result_path = /obj/item/reagent_containers/food/snacks/biscotti

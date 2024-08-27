@@ -270,7 +270,7 @@ em						{font-style: normal;	font-weight: bold;}
 .ooc img.text_tag		{width: 32px; height: 10px;}
 
 .ooc .everyone			{color: #5353ff;}
-.ooc .looc				{color: #3a9696;}
+.ooc .looc				{color: #3a7496;}
 .ooc .elevated			{color: #2e78d9;}
 .ooc .moderator			{color: #184880;}
 .ooc .developer			{color: #1b521f;}
@@ -309,6 +309,13 @@ em						{font-style: normal;	font-weight: bold;}
 .srvradio				{color: #6eaa2c;}
 .expradio				{color: #a3a332;}
 
+.hailradio				{color: #cc00aa;}
+.exampleradio			{color: #ff00ff;}
+.voxradio				{color: #f32b06;}
+.bearcatradio			{color: #590e2d;}
+.colonyradio			{color: #ceaf3e;}
+.verneradio				{color: #738465;}
+
 /* Miscellaneous */
 .name					{font-weight: bold;}
 .alert					{color: #d82020;}
@@ -324,12 +331,15 @@ h1.alert, h2.alert		{color: #a4bad6;}
 
 .danger					{color: #c51e1e;}
 .warning				{color: #c51e1e;	font-style: italic;}
+.subtle					{color: #4343ca; font-size: 75%; font-style: italic;}
 .boldannounce			{color: #c51e1e;	font-weight: bold;}
 .rose					{color: #ff5050;}
 .info					{color: #6685f5;}
+.debug					{color: #ff66ff;}
 .notice					{color: #6685f5;}
 .alium					{color: #00ff00;}
 .cult					{color: #aa1c1c;}
+.legion					{color: #e09000; font-weight: bold; font-family: 'Courier New', Courier, monospace}
 
 /* Languages */
 .alien					{color: #855d85;}
@@ -338,19 +348,36 @@ h1.alert, h2.alert		{color: #a4bad6;}
 .tajaran_signlang		{color: #941c1c;}
 .skrell					{color: #00ced1;}
 .soghun					{color: #228b22;}
+.yeosa 					{color: #218b89;}
 .nabber_lang			{color: #525252;}
 .solcom					{color: #22228b;}
 .vox					{color: #aa00aa;}
-.rough					{font-family: "Trebuchet MS", cursive, sans-serif;}
+.rough					{font-family: "Trebuchet MS", cursive, sans-serif; color: #7c6256}
 .say_quote				{font-family: Georgia, Verdana, sans-serif;}
-.terran					{color: #9c250b;}
+.russian				{color: #9c250b;}
 .moon					{color: #422863;}
 .spacer					{color: #ff6600;}
+.selenian				{color: #324bbd;}
+.arabic					{color: #5a853e;}
+.chinese				{color: #d4a52a;}
+.indian					{color: #634c81;}
+.iberian				{color: #be4ac9;}
 
 .interface				{color: #750e75;}
 
 .good                   {color: #4f7529; font-weight: bold;}
 .bad                    {color: #ee0000; font-weight: bold;}
+
+/* Admin: Who */
+.who_dead		{color: #5f5f5f;}
+.who_observing		{color: #9e9e9e;}
+.who_new_account	{color: #ff0000;}
+.who_newish_account	{color: #ff8c00;}
+.who_antagonist		{color: #ff0000;}
+
+/* Admin: PM */
+.pm			{color: #ff0000;}
+.staff_pm		{color: #0059ff;}
 
 @keyframes hypnocolor {
 	0%		{color: #202020;}

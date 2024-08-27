@@ -1,15 +1,12 @@
 /obj/structure/closet/wizard
 	name = "artifact closet"
 	desc = "a special lead lined closet used to hold artifacts of immense power."
-	closet_appearance = /decl/closet_appearance/alien
+	closet_appearance = /singleton/closet_appearance/alien
 
 /obj/structure/closet/wizard/New()
 	..()
-	var/obj/structure/bigDelivery/package = new /obj/structure/bigDelivery(get_turf(src))
-	package.wrapped = src
+	var/obj/structure/bigDelivery/package/package = new (get_turf(src), src, "parcel")
 	package.examtext = "Imported straight from the Wizard Acadamy. Do not lose the contents or suffer a demerit."
-	src.forceMove(package)
-	package.update_icon()
 
 /obj/structure/closet/wizard/armor
 	name = "Mastercrafted Armor Set"
@@ -28,8 +25,8 @@
 
 /obj/structure/closet/wizard/scrying/New()
 	..()
-	new /obj/item/weapon/scrying(src)
-	new /obj/item/weapon/contract/wizard/xray(src)
+	new /obj/item/scrying(src)
+	new /obj/item/contract/wizard/xray(src)
 
 /obj/structure/closet/wizard/souls
 	name = "Soul Shard Belt"
@@ -37,5 +34,5 @@
 
 /obj/structure/closet/wizard/souls/New()
 	..()
-	new /obj/item/weapon/contract/boon/wizard/artificer(src)
-	new /obj/item/weapon/storage/belt/soulstone/full(src)
+	new /obj/item/contract/boon/wizard/artificer(src)
+	new /obj/item/storage/belt/soulstone/full(src)

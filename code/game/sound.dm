@@ -56,8 +56,9 @@ GLOBAL_LIST_INIT(glasscrack_sound,list('sound/effects/glass_crack1.ogg','sound/e
 GLOBAL_LIST_INIT(tray_hit_sound,list('sound/items/trayhit1.ogg', 'sound/items/trayhit2.ogg'))
 GLOBAL_LIST_INIT(rummage_sound,list('sound/effects/interaction/rummage1.ogg','sound/effects/interaction/rummage2.ogg', 'sound/effects/interaction/rummage3.ogg', 'sound/effects/interaction/rummage4.ogg','sound/effects/interaction/rummage5.ogg','sound/effects/interaction/rummage6.ogg'))
 
-/proc/playsound(var/atom/source, soundin, vol as num, vary, extrarange as num, falloff, var/is_global, var/frequency, var/is_ambiance = 0)
-
+/proc/playsound(atom/source, soundin, vol as num, vary, extrarange as num, falloff, is_global, frequency, is_ambiance = 0)
+	if (isnull(soundin))
+		return
 	soundin = get_sfx(soundin) // same sound for everyone
 
 	if(isarea(source))
@@ -67,8 +68,7 @@ GLOBAL_LIST_INIT(rummage_sound,list('sound/effects/interaction/rummage1.ogg','so
 	var/turf/turf_source = get_turf(source)
 
  	// Looping through the player list has the added bonus of working for mobs inside containers
-	for (var/P in GLOB.player_list)
-		var/mob/M = P
+	for (var/mob/M in GLOB.player_list)
 		if(!M || !M.client)
 			continue
 		if(get_dist(M, turf_source) <= (world.view + extrarange) * 2)
@@ -76,9 +76,11 @@ GLOBAL_LIST_INIT(rummage_sound,list('sound/effects/interaction/rummage1.ogg','so
 			if(T && T.z == turf_source.z && (!is_ambiance || M.get_preference_value(/datum/client_preference/play_ambiance) == GLOB.PREF_YES))
 				M.playsound_local(turf_source, soundin, vol, vary, frequency, falloff, is_global, extrarange)
 
-var/const/FALLOFF_SOUNDS = 0.5
+var/global/const/FALLOFF_SOUNDS = 0.5
 
-/mob/proc/playsound_local(var/turf/turf_source, soundin, vol as num, vary, frequency, falloff, is_global, extrarange)
+/mob/proc/playsound_local(turf/turf_source, soundin, vol as num, vary, frequency, falloff, is_global, extrarange)
+	if (isnull(soundin))
+		return
 	if(!src.client || ear_deaf > 0)	return
 	var/sound/S = soundin
 	if(!istype(S))
@@ -135,7 +137,7 @@ var/const/FALLOFF_SOUNDS = 0.5
 
 	if(!is_global)
 
-		if(istype(src,/mob/living/))
+		if(istype(src,/mob/living))
 			var/mob/living/carbon/M = src
 			if (istype(M) && M.hallucination_power > 50 && M.chem_effects[CE_MIND] < 1)
 				S.environment = PSYCHOTIC
@@ -143,7 +145,7 @@ var/const/FALLOFF_SOUNDS = 0.5
 				S.environment = DRUGGED
 			else if (M.drowsyness)
 				S.environment = DIZZY
-			else if (M.confused)
+			else if (M.is_confused())
 				S.environment = DIZZY
 			else if (M.stat == UNCONSCIOUS)
 				S.environment = UNDERWATER
@@ -164,8 +166,9 @@ var/const/FALLOFF_SOUNDS = 0.5
 	sound_to(src, S)
 
 /client/proc/playtitlemusic()
-	if(get_preference_value(/datum/client_preference/play_lobby_music) == GLOB.PREF_YES)
-		GLOB.using_map.lobby_track.play_to(src)
+	if (get_preference_value(/datum/client_preference/play_lobby_music) == GLOB.PREF_YES)
+		sound_to(src, GLOB.using_map.lobby_track.get_sound())
+		to_chat(src, GLOB.using_map.lobby_track.get_info())
 
 /proc/get_rand_frequency()
 	return rand(32000, 55000) //Frequency stuff only works with 45kbps oggs.
@@ -193,3 +196,10 @@ var/const/FALLOFF_SOUNDS = 0.5
 			if ("tray_hit") soundin = pick(GLOB.tray_hit_sound)
 			if ("rummage") soundin = pick(GLOB.rummage_sound)
 	return soundin
+
+/client/verb/stop_sounds()
+	set name = "Stop All Sounds"
+	set desc = "Stop all sounds that are currently playing on your client."
+	set category = "OOC"
+
+	sound_to(usr, sound(null))

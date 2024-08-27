@@ -1,17 +1,18 @@
 /obj/item/organ/internal/diona
 	name = "diona nymph"
-	icon = 'icons/obj/objects.dmi'
+	icon = 'icons/mob/gestalt.dmi'
 	icon_state = "nymph"
 	organ_tag = "special" // Turns into a nymph instantly, no transplanting possible.
 
-/obj/item/organ/internal/diona/removed(var/mob/living/user, var/skip_nymph)
+/obj/item/organ/internal/diona/removed(mob/living/user, skip_nymph)
 	if(BP_IS_ROBOTIC(src))
 		return ..()
 	var/mob/living/carbon/human/H = owner
 	..()
 	if(istype(H) && !LAZYLEN(H.organs))
 		H.death()
-	if(prob(50) && !skip_nymph && spawn_diona_nymph(get_turf(src)))
+	if(prob(25) && !skip_nymph)
+		spawn_diona_nymph(get_turf(src))
 		qdel(src)
 
 /obj/item/organ/internal/diona/Process()
@@ -55,7 +56,7 @@
 	icon = 'icons/obj/alien.dmi'
 	icon_state = "claw"
 
-/obj/item/organ/internal/diona/nutrients/removed(var/mob/user)
+/obj/item/organ/internal/diona/nutrients/removed(mob/user)
 	return ..(user, 1)
 
 /obj/item/organ/internal/diona/node
@@ -73,8 +74,8 @@
 	if(isturf(owner.loc)) //else, there's considered to be no light
 		var/turf/T = owner.loc
 		light_amount = T.get_lumcount() * 10
-	owner.set_nutrition(Clamp(owner.nutrition + light_amount, 0, 550))
+	owner.set_nutrition(clamp(owner.nutrition + light_amount, 0, 550))
 	owner.shock_stage -= light_amount
 
-/obj/item/organ/internal/diona/node/removed(var/mob/user)
+/obj/item/organ/internal/diona/node/removed(mob/user)
 	return ..(user, 1)

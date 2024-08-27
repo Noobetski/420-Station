@@ -1,24 +1,14 @@
 /var/server_name = "420-Station"
+=======
+#define RECOMMENDED_VERSION 515
+#define FAILED_DB_CONNECTION_CUTOFF 5
+#define THROTTLE_MAX_BURST 15 SECONDS
+#define SET_THROTTLE(TIME, REASON) throttle[1] = base_throttle + (TIME); throttle[2] = (REASON);
 
-/var/game_id = null
-/hook/global_init/proc/generate_gameid()
-	if(game_id != null)
-		return
-	game_id = ""
+var/global/game_id = randhex(8)
 
-	var/list/c = list("a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z", "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", "1", "2", "3", "4", "5", "6", "7", "8", "9", "0")
-	var/l = c.len
+GLOBAL_VAR(href_logfile)
 
-	var/t = world.timeofday
-	for(var/_ = 1 to 4)
-		game_id = "[c[(t % l) + 1]][game_id]"
-		t = round(t / l)
-	game_id = "-[game_id]"
-	t = round(world.realtime / (10 * 60 * 60 * 24))
-	for(var/_ = 1 to 3)
-		game_id = "[c[(t % l) + 1]][game_id]"
-		t = round(t / l)
-	return 1
 
 // Find mobs matching a given string
 //
@@ -64,39 +54,50 @@
 
 	return match
 
-#define RECOMMENDED_VERSION 512
+
+/proc/stack_trace(msg)
+	CRASH(msg)
+
+
+/proc/enable_debugging(mode, port)
+	CRASH("auxtools not loaded")
+
+
+/proc/auxtools_expr_stub()
+	return
+
+
+#ifndef UNIT_TEST
+/hook/startup/proc/set_visibility()
+	world.update_hub_visibility(config.hub_visible)
+	return TRUE
+#endif
+
 /world/New()
+	var/debug_server = world.GetConfig("env", "AUXTOOLS_DEBUG_DLL")
+	if (debug_server)
+		call_ext(debug_server, "auxtools_init")()
+		enable_debugging()
 
-	enable_debugger()
-	//set window title
-	name = "[server_name] - [GLOB.using_map.full_name]"
-
-	//logs
 	SetupLogs()
 	var/date_string = time2text(world.realtime, "YYYY/MM/DD")
-	href_logfile = file("data/logs/[date_string] hrefs.htm")
-	diary = file("data/logs/[date_string].log")
-	to_file(diary, "[log_end]\n[log_end]\nStarting up. (ID: [game_id]) [time2text(world.timeofday, "hh:mm.ss")][log_end]\n---------------------[log_end]")
-	changelog_hash = md5('html/changelog.html')					//used for telling if the changelog has changed recently
+	to_file(global.diary, "[log_end]\n[log_end]\nStarting up. (ID: [game_id]) [time2text(world.timeofday, "hh:mm.ss")][log_end]\n---------------------[log_end]")
 
-	if(config && config.server_name != null && config.server_suffix && world.port > 0)
-		// dumb and hardcoded but I don't care~
-		config.server_name += " #[(world.port % 1000) / 100]"
+	if (config)
+		if (config.server_name)
+			name = "[config.server_name]"
+		if (config.log_runtime)
+			var/runtime_log = file("data/logs/runtime/[date_string]_[time2text(world.timeofday, "hh:mm")]_[game_id].log")
+			to_file(runtime_log, "Game [game_id] starting up at [time2text(world.timeofday, "hh:mm.ss")]")
+			log = runtime_log
+		if (config.log_hrefs)
+			GLOB.href_logfile = file("data/logs/[date_string] hrefs.htm")
 
-	if(config && config.log_runtime)
-		var/runtime_log = file("data/logs/runtime/[date_string]_[time2text(world.timeofday, "hh:mm")]_[game_id].log")
-		to_file(runtime_log, "Game [game_id] starting up at [time2text(world.timeofday, "hh:mm.ss")]")
-		log = runtime_log // Note that, as you can see, this is misnamed: this simply moves world.log into the runtime log file.
-
-	if(byond_version < RECOMMENDED_VERSION)
+	if (byond_version < RECOMMENDED_VERSION)
 		to_world_log("Your server's byond version does not meet the recommended requirements for this server. Please update BYOND")
-
 	callHook("startup")
-	//Emergency Fix
-	load_mods()
-	//end-emergency fix
-
-	. = ..()
+	QDEL_NULL(__global_init)
+	..()
 
 #ifdef UNIT_TEST
 	log_unit_test("Unit Tests Enabled. This will destroy the world when testing is complete.")
@@ -104,13 +105,34 @@
 #endif
 	Master.Initialize(10, FALSE)
 
-#undef RECOMMENDED_VERSION
 
-var/world_topic_spam_protect_ip = "0.0.0.0"
-var/world_topic_spam_protect_time = world.timeofday
+/world/Del()
+	var/debug_server = world.GetConfig("env", "AUXTOOLS_DEBUG_DLL")
+	if (debug_server)
+		call_ext(debug_server, "auxtools_shutdown")()
+	callHook("shutdown")
+	return ..()
+
+
+GLOBAL_LIST_EMPTY(world_topic_throttle)
+GLOBAL_VAR_INIT(world_topic_last, world.timeofday)
+
 
 /world/Topic(T, addr, master, key)
-	to_file(diary, "TOPIC: \"[T]\", from:[addr], master:[master], key:[key][log_end]")
+	to_file(global.diary, "TOPIC: \"[T]\", from:[addr], master:[master], key:[key][log_end]")
+
+	if (GLOB.world_topic_last > world.timeofday)
+		GLOB.world_topic_throttle = list() //probably passed midnight
+	GLOB.world_topic_last = world.timeofday
+
+	var/list/throttle = GLOB.world_topic_throttle[addr]
+	if (!throttle)
+		GLOB.world_topic_throttle[addr] = throttle = list(0, null)
+	else if (throttle[1] && throttle[1] > world.timeofday + THROTTLE_MAX_BURST)
+		return throttle[2] ? "Throttled ([throttle[2]])" : "Throttled"
+
+	var/base_throttle = max(throttle[1], world.timeofday)
+	SET_THROTTLE(3 SECONDS, null)
 
 	/* * * * * * * *
 	* Public Topic Calls
@@ -133,7 +155,7 @@ var/world_topic_spam_protect_time = world.timeofday
 	else if (copytext(T,1,7) == "status")
 		var/input[] = params2list(T)
 		var/list/s = list()
-		s["version"] = game_version
+		s["version"] = config.game_version
 		s["mode"] = PUBLIC_GAME_MODE
 		s["respawn"] = config.abandon_allowed
 		s["enter"] = config.enter_allowed
@@ -145,7 +167,7 @@ var/world_topic_spam_protect_time = world.timeofday
 		s["players"] = 0
 		s["stationtime"] = stationtime2text()
 		s["roundduration"] = roundduration2text()
-		s["map"] = replacetext(GLOB.using_map.full_name, "\improper", "") //Done to remove the non-UTF-8 text macros 
+		s["map"] = replacetext(GLOB.using_map.full_name, "\improper", "") //Done to remove the non-UTF-8 text macros
 
 		var/active = 0
 		var/list/players = list()
@@ -157,13 +179,13 @@ var/world_topic_spam_protect_time = world.timeofday
 					continue	//so stealthmins aren't revealed by the hub
 				admins[C.key] = C.holder.rank
 			if(legacy)
-				s["player[players.len]"] = C.key
+				s["player[length(players)]"] = C.key
 			players += C.key
 			if(istype(C.mob, /mob/living))
 				active++
 
-		s["players"] = players.len
-		s["admins"] = admins.len
+		s["players"] = length(players)
+		s["admins"] = length(admins)
 		if(!legacy)
 			s["playerlist"] = list2params(players)
 			s["adminlist"] = list2params(admins)
@@ -177,9 +199,11 @@ var/world_topic_spam_protect_time = world.timeofday
 		// We rebuild the list in the format external tools expect
 		for(var/dept in nano_crew_manifest)
 			var/list/dept_list = nano_crew_manifest[dept]
-			if(dept_list.len > 0)
+			if(length(dept_list) > 0)
 				positions[dept] = list()
 				for(var/list/person in dept_list)
+					if (person["status"] == "Stored")
+						continue
 					positions[dept][person["name"]] = person["rank"]
 
 		for(var/k in positions)
@@ -212,15 +236,10 @@ var/world_topic_spam_protect_time = world.timeofday
 	if(copytext(T,1,14) == "placepermaban")
 		var/input[] = params2list(T)
 		if(!config.ban_comms_password)
-			return "Not enabled"
+			SET_THROTTLE(10 SECONDS, "Bans Not Enabled")
+			return "Not Enabled"
 		if(input["bankey"] != config.ban_comms_password)
-			if(world_topic_spam_protect_ip == addr && abs(world_topic_spam_protect_time - world.time) < 50)
-				spawn(50)
-					world_topic_spam_protect_time = world.time
-					return "Bad Key (Throttled)"
-
-			world_topic_spam_protect_time = world.time
-			world_topic_spam_protect_ip = addr
+			SET_THROTTLE(30 SECONDS, "Bad Bans Key")
 			return "Bad Key"
 
 		var/target = ckey(input["target"])
@@ -247,27 +266,20 @@ var/world_topic_spam_protect_time = world.timeofday
 	* * * * * * * */
 
 	if (!config.comms_password)
+		SET_THROTTLE(10 SECONDS, "Comms Not Enabled")
 		return "Not enabled"
 
 	else if(copytext(T,1,5) == "laws")
 		var/input[] = params2list(T)
 		if(input["key"] != config.comms_password)
-			if(world_topic_spam_protect_ip == addr && abs(world_topic_spam_protect_time - world.time) < 50)
-
-				spawn(50)
-					world_topic_spam_protect_time = world.time
-					return "Bad Key (Throttled)"
-
-			world_topic_spam_protect_time = world.time
-			world_topic_spam_protect_ip = addr
-
+			SET_THROTTLE(30 SECONDS, "Bad Comms Key")
 			return "Bad Key"
 
 		var/list/match = text_find_mobs(input["laws"], /mob/living/silicon)
 
-		if(!match.len)
+		if(!length(match))
 			return "No matches"
-		else if(match.len == 1)
+		else if(length(match) == 1)
 			var/mob/living/silicon/S = match[1]
 			var/info = list()
 			info["name"] = S.name
@@ -307,22 +319,14 @@ var/world_topic_spam_protect_time = world.timeofday
 	else if(copytext(T,1,5) == "info")
 		var/input[] = params2list(T)
 		if(input["key"] != config.comms_password)
-			if(world_topic_spam_protect_ip == addr && abs(world_topic_spam_protect_time - world.time) < 50)
-
-				spawn(50)
-					world_topic_spam_protect_time = world.time
-					return "Bad Key (Throttled)"
-
-			world_topic_spam_protect_time = world.time
-			world_topic_spam_protect_ip = addr
-
+			SET_THROTTLE(30 SECONDS, "Bad Comms Key")
 			return "Bad Key"
 
 		var/list/match = text_find_mobs(input["info"])
 
-		if(!match.len)
+		if(!length(match))
 			return "No matches"
-		else if(match.len == 1)
+		else if(length(match) == 1)
 			var/mob/M = match[1]
 			var/info = list()
 			info["key"] = M.key
@@ -375,15 +379,7 @@ var/world_topic_spam_protect_time = world.timeofday
 
 		var/input[] = params2list(T)
 		if(input["key"] != config.comms_password)
-			if(world_topic_spam_protect_ip == addr && abs(world_topic_spam_protect_time - world.time) < 50)
-
-				spawn(50)
-					world_topic_spam_protect_time = world.time
-					return "Bad Key (Throttled)"
-
-			world_topic_spam_protect_time = world.time
-			world_topic_spam_protect_ip = addr
-
+			SET_THROTTLE(30 SECONDS, "Bad Comms Key")
 			return "Bad Key"
 
 		var/client/C
@@ -402,16 +398,15 @@ var/world_topic_spam_protect_time = world.timeofday
 		if(rank == "Unknown")
 			rank = "Staff"
 
-		var/message =	"<font color='red'>[rank] PM from <b><a href='?irc_msg=[input["sender"]]'>[input["sender"]]</a></b>: [input["msg"]]</font>"
-		var/amessage =  "<font color='blue'>[rank] PM from <a href='?irc_msg=[input["sender"]]'>[input["sender"]]</a> to <b>[key_name(C)]</b> : [input["msg"]]</font>"
+		var/message =	SPAN_CLASS("pm", "[rank] PM from <b><a href='?irc_msg=[input["sender"]]'>[input["sender"]]</a></b>: [input["msg"]]")
+		var/amessage =  SPAN_CLASS("staff_pm", "[rank] PM from <a href='?irc_msg=[input["sender"]]'>[input["sender"]]</a> to <b>[key_name(C)]</b> : [input["msg"]]")
 
 		C.received_irc_pm = world.time
-		C.irc_admin = input["sender"]
 
-		sound_to(C, 'sound/effects/adminhelp.ogg')
+		sound_to(C, sound('sound/ui/pm-notify.ogg', volume = 40))
 		to_chat(C, message)
 
-		for(var/client/A in GLOB.admins)
+		for(var/client/A as anything in GLOB.admins)
 			if(A != C)
 				to_chat(A, amessage)
 		return "Message Successful"
@@ -425,30 +420,15 @@ var/world_topic_spam_protect_time = world.timeofday
 		*/
 		var/input[] = params2list(T)
 		if(input["key"] != config.comms_password)
-			if(world_topic_spam_protect_ip == addr && abs(world_topic_spam_protect_time - world.time) < 50)
-
-				spawn(50)
-					world_topic_spam_protect_time = world.time
-					return "Bad Key (Throttled)"
-
-			world_topic_spam_protect_time = world.time
-			world_topic_spam_protect_ip = addr
+			SET_THROTTLE(30 SECONDS, "Bad Comms Key")
 			return "Bad Key"
-
 		return show_player_info_irc(ckey(input["notes"]))
 
 	else if(copytext(T,1,4) == "age")
 		var/input[] = params2list(T)
 		if(input["key"] != config.comms_password)
-			if(world_topic_spam_protect_ip == addr && abs(world_topic_spam_protect_time - world.time) < 50)
-				spawn(50)
-					world_topic_spam_protect_time = world.time
-					return "Bad Key (Throttled)"
-
-			world_topic_spam_protect_time = world.time
-			world_topic_spam_protect_ip = addr
+			SET_THROTTLE(30 SECONDS, "Bad Comms Key")
 			return "Bad Key"
-
 		var/age = get_player_age(input["age"])
 		if(isnum(age))
 			if(age >= 0)
@@ -458,25 +438,8 @@ var/world_topic_spam_protect_time = world.timeofday
 		else
 			return "Database connection failed or not set up"
 
-	else if(copytext(T,1,19) == "prometheus_metrics")
-		var/input[] = params2list(T)
-		if(input["key"] != config.comms_password)
-			if(world_topic_spam_protect_ip == addr && abs(world_topic_spam_protect_time - world.time) < 50)
-				spawn(50)
-					world_topic_spam_protect_time = world.time
-					return "Bad Key (Throttled)"
 
-			world_topic_spam_protect_time = world.time
-			world_topic_spam_protect_ip = addr
-			return "Bad Key"
-
-		if(!GLOB || !GLOB.prometheus_metrics)
-			return "Metrics not ready"
-
-		return GLOB.prometheus_metrics.collect()
-
-
-/world/Reboot(var/reason)
+/world/Reboot(reason)
 	/*spawn(0)
 		sound_to(world, sound(pick('sound/AI/newroundsexy.ogg','sound/misc/apcdestroyed.ogg','sound/misc/bangindonk.ogg')))// random end sounds!! - LastyBatsy
 
@@ -495,14 +458,11 @@ var/world_topic_spam_protect_time = world.timeofday
 
 	if(config.wait_for_sigusr1_reboot && reason != 3)
 		text2file("foo", "reboot_called")
-		to_world("<span class=danger>World reboot waiting for external scripts. Please be patient.</span>")
+		to_world(SPAN_DANGER("World reboot waiting for external scripts. Please be patient."))
 		return
 
 	..(reason)
 
-/world/Del()
-	callHook("shutdown")
-	return ..()
 
 /hook/startup/proc/loadMode()
 	world.load_mode()
@@ -513,60 +473,21 @@ var/world_topic_spam_protect_time = world.timeofday
 		return
 
 	var/list/Lines = file2list("data/mode.txt")
-	if(Lines.len)
+	if(length(Lines))
 		if(Lines[1])
 			SSticker.master_mode = Lines[1]
 			log_misc("Saved mode is '[SSticker.master_mode]'")
 
-/world/proc/save_mode(var/the_mode)
+/world/proc/save_mode(the_mode)
 	var/F = file("data/mode.txt")
 	fdel(F)
 	to_file(F, the_mode)
 
-/hook/startup/proc/loadMOTD()
-	world.load_motd()
-	return 1
-
-/world/proc/load_motd()
-	join_motd = file2text("config/motd.txt")
-
-
-/proc/load_configuration()
-	config = new /datum/configuration()
-	config.load("config/config.txt")
-	config.load("config/game_options.txt","game_options")
-	if (GLOB.using_map?.config_path)
-		config.load(GLOB.using_map.config_path, "using_map")
-	config.loadsql("config/dbconfig.txt")
-	config.load_event("config/custom_event.txt")
-
-/hook/startup/proc/loadMods()
-	world.load_mods()
-	return 1
-
-/world/proc/load_mods()
-	if(config.admin_legacy_system)
-		var/text = file2text("config/moderators.txt")
-		if (!text)
-			error("Failed to load config/mods.txt")
-		else
-			var/list/lines = splittext(text, "\n")
-			for(var/line in lines)
-				if (!line)
-					continue
-
-				if (copytext(line, 1, 2) == ";")
-					continue
-
-				var/title = "Moderator"
-				var/rights = admin_ranks[title]
-
-				var/ckey = copytext(line, 1, length(line)+1)
-				var/datum/admins/D = new /datum/admins(title, rights, ckey)
-				D.associate(GLOB.ckey_directory[ckey])
 
 /world/proc/update_status()
-	var/s = ""
+	if (!config?.hub_visible || !config.hub_entry)
+		return
+	status = config.generate_hub_entry()
 
 	if (config && config.server_name)
 		s += "<b>[config.server_name]</b> &#8212; "
@@ -615,6 +536,7 @@ var/world_topic_spam_protect_time = world.timeofday
 	if (src.status != s)
 		src.status = s
 
+
 /world/proc/SetupLogs()
 	GLOB.log_directory = "data/logs/[time2text(world.realtime, "YYYY/MM/DD")]/round-"
 	if(game_id)
@@ -622,12 +544,9 @@ var/world_topic_spam_protect_time = world.timeofday
 	else
 		GLOB.log_directory += "[replacetext(time_stamp(), ":", ".")]"
 
-	GLOB.world_qdel_log = file("[GLOB.log_directory]/qdel.log")
-	to_file(GLOB.world_qdel_log, "\n\nStarting up round ID [game_id]. [time_stamp()]\n---------------------")
 
-#define FAILED_DB_CONNECTION_CUTOFF 5
-var/failed_db_connections = 0
-var/failed_old_db_connections = 0
+var/global/failed_db_connections = 0
+var/global/failed_old_db_connections = 0
 
 /hook/startup/proc/connectDB()
 	if(!setup_database_connection())
@@ -636,20 +555,18 @@ var/failed_old_db_connections = 0
 		to_world_log("Feedback database connection established.")
 	return 1
 
-proc/setup_database_connection()
-
+/proc/setup_database_connection()
+	if (!sqlenabled)
+		return 0
 	if(failed_db_connections > FAILED_DB_CONNECTION_CUTOFF)	//If it failed to establish a connection more than 5 times in a row, don't bother attempting to conenct anymore.
 		return 0
-
 	if(!dbcon)
 		dbcon = new()
-
 	var/user = sqlfdbklogin
 	var/pass = sqlfdbkpass
 	var/db = sqlfdbkdb
 	var/address = sqladdress
 	var/port = sqlport
-
 	dbcon.Connect("dbi:mysql:[db]:[address]:[port]","[user]","[pass]")
 	. = dbcon.IsConnected()
 	if ( . )
@@ -660,10 +577,11 @@ proc/setup_database_connection()
 	return .
 
 //This proc ensures that the connection to the feedback database (global variable dbcon) is established
-proc/establish_db_connection()
+/proc/establish_db_connection()
+	if (!sqlenabled)
+		return 0
 	if(failed_db_connections > FAILED_DB_CONNECTION_CUTOFF)
 		return 0
-
 	if(!dbcon || !dbcon.IsConnected())
 		return setup_database_connection()
 	else
@@ -678,14 +596,13 @@ proc/establish_db_connection()
 	return 1
 
 //These two procs are for the old database, while it's being phased out. See the tgstation.sql file in the SQL folder for more information.
-proc/setup_old_database_connection()
-
+/proc/setup_old_database_connection()
+	if (!sqlenabled)
+		return 0
 	if(failed_old_db_connections > FAILED_DB_CONNECTION_CUTOFF)	//If it failed to establish a connection more than 5 times in a row, don't bother attempting to conenct anymore.
 		return 0
-
 	if(!dbcon_old)
 		dbcon_old = new()
-
 	var/user = sqllogin
 	var/pass = sqlpass
 	var/db = sqldb
@@ -699,11 +616,12 @@ proc/setup_old_database_connection()
 	else
 		failed_old_db_connections++		//If it failed, increase the failed connections counter.
 		to_world_log(dbcon.ErrorMsg())
-
 	return .
 
 //This proc ensures that the connection to the feedback database (global variable dbcon) is established
-proc/establish_old_db_connection()
+/proc/establish_old_db_connection()
+	if (!sqlenabled)
+		return 0
 	if(failed_old_db_connections > FAILED_DB_CONNECTION_CUTOFF)
 		return 0
 
@@ -712,9 +630,7 @@ proc/establish_old_db_connection()
 	else
 		return 1
 
+#undef RECOMMENDED_VERSION
 #undef FAILED_DB_CONNECTION_CUTOFF
-
-/world/proc/enable_debugger()
-	var/dll = world.GetConfig("env", "EXTOOLS_DLL")
-	if (dll)
-		call(dll, "debug_initialize")()
+#undef THROTTLE_MAX_BURST
+#undef SET_THROTTLE

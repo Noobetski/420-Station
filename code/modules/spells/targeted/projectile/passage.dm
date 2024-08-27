@@ -22,14 +22,14 @@
 	hud_state = "gen_project"
 	cast_sound = 'sound/magic/lightning_bolt.ogg'
 
-/spell/targeted/projectile/dumbfire/passage/prox_cast(var/list/targets, atom/spell_holder)
+/spell/targeted/projectile/dumbfire/passage/prox_cast(list/targets, atom/spell_holder)
 	for(var/mob/living/L in targets)
 		apply_spell_damage(L)
 
 	var/turf/T = get_turf(spell_holder)
 
 	holder.forceMove(T)
-	var/datum/effect/effect/system/smoke_spread/S = new /datum/effect/effect/system/smoke_spread()
+	var/datum/effect/smoke_spread/S = new /datum/effect/smoke_spread()
 	S.set_up(3,0,T)
 	S.start()
 	playsound(src, 'sound/magic/lightningshock.ogg', 50)

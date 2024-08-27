@@ -1,6 +1,6 @@
 GLOBAL_LIST_EMPTY(banned_ruin_ids)
 
-/proc/seedRuins(list/zlevels, budget, list/potentialRuins, allowed_area = /area/space, var/maxx = world.maxx, var/maxy = world.maxy)
+/proc/seedRuins(list/zlevels, budget, list/potentialRuins, allowed_area = /area/space, maxx = world.maxx, maxy = world.maxy)
 	if (!length(z_levels))
 		UNLINT(WARNING("No Z levels provided - Not generating ruins"))
 		return
@@ -13,8 +13,16 @@ GLOBAL_LIST_EMPTY(banned_ruin_ids)
 
 	var/list/available = list()
 	var/list/selected = list()
-	var/remaining = budget
+	var/ruin_budget = budget
+	var/player_budget = -(GLOB.using_map.min_offmap_players)
 
+	for (var/client/C)
+		++player_budget
+
+	for (var/datum/map_template/ruin/map in SSmapping.map_templates)
+		if (map.loaded && map.player_cost)
+			player_budget -= map.player_cost
+	player_budget = max(0, player_budget)
 	for(var/datum/map_template/ruin/ruin in potentialRuins)
 		if (ruin.id in GLOB.banned_ruin_ids)
 			continue
@@ -23,9 +31,9 @@ GLOBAL_LIST_EMPTY(banned_ruin_ids)
 	if (!length(available))
 		UNLINT(WARNING("No ruins available - Not generating ruins"))
 
-	while (remaining > 0 && length(available))
+	while (ruin_budget > 0 && length(available))
 		var/datum/map_template/ruin/ruin = pickweight(available)
-		if (ruin.cost > budget)
+		if (ruin.spawn_cost > ruin_budget || ruin.player_cost > player_budget)
 			available -= ruin
 			continue
 
@@ -54,18 +62,19 @@ GLOBAL_LIST_EMPTY(banned_ruin_ids)
 
 			load_ruin(choice, ruin)
 			selected += ruin
-			if (ruin.cost > 0)
-				remaining -= ruin.cost
+			if (ruin.spawn_cost > 0 || ruin.player_cost > 0)
+				ruin_budget -= ruin.spawn_cost
+				player_budget -= ruin.player_cost
 			if (!(ruin.template_flags & TEMPLATE_FLAG_ALLOW_DUPLICATES))
 				GLOB.banned_ruin_ids += ruin.id
 				available -= ruin
 			break
 
-	if (remaining)
+	if (ruin_budget)
 		log_world("Ruin loader had no ruins to pick from with [budget] left to spend.")
 
 	if (length(selected))
-		report_progress("Finished selecting planet ruins ([english_list(selected)]) for [budget - remaining] cost of [budget] budget.")
+		report_progress("Finished selecting planet ruins ([english_list(selected)]) for [budget - ruin_budget] cost of [budget] budget.")
 
 	return selected
 
@@ -79,5 +88,5 @@ GLOBAL_LIST_EMPTY(banned_ruin_ids)
 	template.load(central_turf,centered = TRUE)
 	var/datum/map_template/ruin = template
 	if(istype(ruin))
-		new /obj/effect/landmark/ruin(central_turf, ruin)
+		new /obj/landmark/ruin(central_turf, ruin)
 	return TRUE

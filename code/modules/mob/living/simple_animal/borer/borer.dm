@@ -3,7 +3,7 @@
 	real_name = "cortical borer"
 	desc = "A small, quivering sluglike creature."
 	speak_emote = list("chirrups")
-	emote_hear = list("chirrups")
+	// emote_hear = list("chirrups")
 	response_help  = "pokes"
 	response_disarm = "prods"
 	response_harm   = "stomps on"
@@ -13,23 +13,26 @@
 	icon_dead = "brainslug_dead"
 	speed = 5
 	a_intent = I_HURT
-	stop_automated_movement = 1
 	status_flags = CANPUSH
-	attacktext = "nipped"
+	natural_weapon = /obj/item/natural_weapon/bite/weak
 	friendly = "prods"
-	wander = 0
 	pass_flags = PASS_FLAG_TABLE
 	universal_understand = TRUE
-	holder_type = /obj/item/weapon/holder/borer
+	holder_type = /obj/item/holder/borer
 	mob_size = MOB_SMALL
 	can_escape = TRUE
+	density = FALSE
 
 	bleed_colour = "#816e12"
 
 	var/static/list/chemical_types = list(
 		"bicaridine" = /datum/reagent/bicaridine,
 		"hyperzine" =  /datum/reagent/hyperzine,
-		"tramadol" =   /datum/reagent/tramadol
+		"tramadol" =   /datum/reagent/tramadol,
+		"dermaline" =  /datum/reagent/dermaline,
+		"peridaxon" =  /datum/reagent/peridaxon,
+		"inaprovaline" =  /datum/reagent/inaprovaline,
+		"dylovene" =  /datum/reagent/dylovene
 	)
 
 	var/generation = 1
@@ -69,7 +72,7 @@
 		client.screen -= hud_elements
 		client.screen -= hud_intent_selector
 
-/mob/living/simple_animal/borer/Initialize(var/mapload, var/gen=1)
+/mob/living/simple_animal/borer/Initialize(mapload, gen=1)
 
 	hud_intent_selector =  new
 	hud_inject_chemicals = new
@@ -91,16 +94,14 @@
 	generation = gen
 	set_borer_name()
 
-	if(!roundstart) 
+	if(!roundstart)
 		request_player()
 
 	aura_image = create_aura_image(src)
 	aura_image.color = "#aaffaa"
 	aura_image.blend_mode = BLEND_SUBTRACT
 	aura_image.alpha = 125
-	var/matrix/M = matrix()
-	M.Scale(0.33)
-	aura_image.transform = M
+	aura_image.SetTransform(scale = 0.33)
 
 /mob/living/simple_animal/borer/death(gibbed, deathmessage, show_dead_message)
 	if(aura_image)
@@ -123,7 +124,7 @@
 	. = ..()
 
 /mob/living/simple_animal/borer/proc/set_borer_name()
-	truename = "[borer_names[min(generation, borer_names.len)]] [random_id("borer[generation]", 1000, 9999)]"
+	truename = "[borer_names[min(generation, length(borer_names))]] [random_id("borer[generation]", 1000, 9999)]"
 
 /mob/living/simple_animal/borer/Life()
 
@@ -249,11 +250,11 @@
 	qdel(host_brain)
 
 #define COLOR_BORER_RED "#ff5555"
-/mob/living/simple_animal/borer/proc/set_ability_cooldown(var/amt)
+/mob/living/simple_animal/borer/proc/set_ability_cooldown(amt)
 	last_special = world.time + amt
 	for(var/obj/thing in hud_elements)
 		thing.color = COLOR_BORER_RED
-	addtimer(CALLBACK(src, /mob/living/simple_animal/borer/proc/reset_ui_callback), amt)
+	addtimer(new Callback(src, /mob/living/simple_animal/borer/proc/reset_ui_callback), amt)
 #undef COLOR_BORER_RED
 
 /mob/living/simple_animal/borer/proc/leave_host()

@@ -1,10 +1,10 @@
 #include "magshield_areas.dm"
 
-/obj/effect/overmap/visitable/sector/magshield
+/obj/overmap/visitable/sector/magshield
 	name = "orbital station"
 	desc = "Sensors detect an orbital station above the exoplanet. Sporadic magentic impulses are registred inside it. Planet landing is impossible due to lower orbits being cluttered with chaotically moving metal chunks."
 	icon_state = "object"
-	known = 0
+
 
 	initial_generic_waypoints = list(
 		"nav_magshield_1",
@@ -19,26 +19,26 @@
 	id = "awaysite_magshield"
 	description = "It's an orbital shield station."
 	suffixes = list("magshield/magshield.dmm")
-	cost = 1
+	spawn_cost = 1
 	area_usage_test_exempted_root_areas = list(/area/magshield)
 
-/obj/effect/shuttle_landmark/nav_magshield/nav1
+/obj/shuttle_landmark/nav_magshield/nav1
 	name = "Orbital Station Navpoint #1"
 	landmark_tag = "nav_magshield_1"
 
-/obj/effect/shuttle_landmark/nav_magshield/nav2
+/obj/shuttle_landmark/nav_magshield/nav2
 	name = "Orbital Station Navpoint #2"
 	landmark_tag = "nav_magshield_2"
 
-/obj/effect/shuttle_landmark/nav_magshield/nav3
+/obj/shuttle_landmark/nav_magshield/nav3
 	name = "Orbital Station Navpoint #3"
 	landmark_tag = "nav_magshield_3"
 
-/obj/effect/shuttle_landmark/nav_magshield/nav4
+/obj/shuttle_landmark/nav_magshield/nav4
 	name = "Orbital Station Navpoint #4"
 	landmark_tag = "nav_magshield_4"
 
-/obj/effect/shuttle_landmark/nav_magshield/nav5
+/obj/shuttle_landmark/nav_magshield/nav5
 	name = "Orbital Station Navpoint #5"
 	landmark_tag = "nav_magshield_antag"
 
@@ -47,15 +47,14 @@
 	desc = "A large three-handed generator with rotating top. It is used to create high-power magnetic fields in hard vacuum."
 	icon = 'magshield_sprites.dmi'
 	icon_state = "maggen"
-	anchored = 1
-	density = 1
-	light_outer_range = 3
-	light_max_bright = 1
+	anchored = TRUE
+	density = TRUE
+	light_range = 3
+	light_power = 1
 	light_color = "#ffea61"
 	var/heavy_range = 10
 	var/lighter_range = 20
 	var/chance = 0
-	var/being_stopped = 0
 
 /obj/structure/magshield/maggen/Initialize()
 	. = ..()
@@ -73,7 +72,7 @@
 		var/turf/T = get_turf(src)
 		var/area/A = get_area(src)
 		log_game("EMP with size ([heavy_range], [lighter_range]) in area [A] ([T.x], [T.y], [T.z])")
-		visible_message("<span class='notice'>\the [src] suddenly activates.</span>", "<span class='notice'>Few lightnings jump between [src]'s rotating hands. You feel everything metal being pulled towards \the [src].</span>")
+		visible_message(SPAN_NOTICE("\the [src] suddenly activates."), SPAN_NOTICE("Few lightnings jump between [src]'s rotating hands. You feel everything metal being pulled towards \the [src]."))
 		for(var/mob/living/carbon/M in hear(10, get_turf(src)))
 			eye_safety = M.eyecheck()
 			if(eye_safety < FLASH_PROTECTION_MODERATE)
@@ -82,56 +81,62 @@
 
 /obj/structure/magshield/maggen/attack_hand(mob/user)
 	..()
-	to_chat(user, "<span class='notice'> You don't see how you could turn off \the [src]. You can try to stick something in rotating hands.</span>")
+	to_chat(user, SPAN_NOTICE(" You don't see how you could turn off \the [src]. You can try to stick something in rotating hands."))
 
-/obj/structure/magshield/maggen/attackby(obj/item/W as obj, mob/user as mob)
-	if (being_stopped)
-		to_chat(user, "<span class='notice'> Somebody is already interacting with \the [src].</span>")
-		return
-	if(istype(W, /obj/item/stack/material/rods))
-		var/obj/item/stack/material/rods/R = W
-		to_chat(user, "<span class='notice'> You start to stick [R.singular_name] into rotating hands to make them stuck.</span>")
-		being_stopped = 1
-		if (!do_after(user, 100, src))
-			to_chat(user, "<span class='notice'> You pull back [R.singular_name].</span>")
-			being_stopped = 0
-			return
-		R.use(1)
-		visible_message("<span class='warning'>\The [src] stops rotating and releases cloud of sparks. Better get to safe distance!</span>")
-		var/datum/effect/effect/system/spark_spread/s = new /datum/effect/effect/system/spark_spread
-		s.set_up(10, 0, src)
-		s.start()
-		sleep(50)
-		visible_message("<span class='warning'>\The [src] explodes!</span>")
-		var/turf/T = get_turf(src)
-		explosion(T, 2, 3, 4, 10, 1)
-		empulse(src, heavy_range*2, lighter_range*2, 1)
-		qdel(src)
-	if(istype(W, /obj/item/weapon/mop))
-		to_chat(user, "<span class='notice'> You stick [W] into rotating hands. It breaks to smallest pieces.</span>")
-		qdel(W)
+
+/obj/structure/magshield/maggen/use_tool(obj/item/tool, mob/user, list/click_params)
+	// Rods - Jam generator
+	if (istype(tool, /obj/item/stack/material/rods))
+		var/obj/item/stack/material/rods/rods = tool
+		user.visible_message(
+			SPAN_NOTICE("\The [user] starts to stick [rods.get_vague_name(FALSE)] into \the [src]'s rotating hands."),
+			SPAN_NOTICE("You start to stick [rods.get_exact_name(1)] into \the [src]'s rotating hands.")
+		)
+		if (!do_after(user, 10 SECONDS, src, DO_PUBLIC_UNIQUE) || !user.use_sanity_check(src, tool))
+			return TRUE
+		user.visible_message(
+			SPAN_WARNING("\The [user] sticks [rods.get_vague_name(FALSE)] into \the [src]'s rotating hands."),
+			SPAN_WARNING("You stick [rods.get_exact_name(1)] into \the [src]'s rotating hands.")
+		)
+		rods.use(1)
+		visible_message(SPAN_DANGER("\The [src] stops rotating and releases a cloud of sparks. Better get to a safe distance!"))
+		var/datum/effect/spark_spread/sparks = new(src)
+		sparks.set_up(10, EMPTY_BITFIELD, src)
+		sparks.start()
+		addtimer(new Callback(src, .proc/explode), 5 SECONDS)
+		return TRUE
+
+	return ..()
+
+
+/obj/structure/magshield/maggen/proc/explode()
+	visible_message(SPAN_DANGER("\The [src] explodes!"))
+	explosion(src, 17, EX_ACT_DEVASTATING)
+	empulse(src, heavy_range * 2, lighter_range * 2, 1)
+	qdel_self()
+
 
 /obj/structure/magshield/rad_sensor
 	name = "radiation sensor"
 	desc = "Very sensitive vacuum radiation sensor. On top of the metal stand two modified Wilson Cloud Chambers filled with deuterium and tritium water."
 	icon = 'magshield_sprites.dmi'
 	icon_state = "rad_sensor"
-	anchored = 1
+	anchored = TRUE
 
 /obj/structure/magshield/nav_light
 	name = "navigation light"
 	desc = "Large and bright light regularly emitting green flashes."
 	icon = 'magshield_sprites.dmi'
 	icon_state = "nav_light_green"
-	anchored = 1
-	density = 1
-	light_outer_range = 10
-	light_max_bright = 1
+	anchored = TRUE
+	density = TRUE
+	light_range = 10
+	light_power = 1
 	light_color = "#00ee00"
 
 /obj/structure/magshield/nav_light/New()//try make flashing through the process
 	..()
-	set_light(light_max_bright, light_outer_range / 6, light_outer_range, 2, light_color)
+	set_light(light_range, light_power, light_color)
 
 /obj/structure/magshield/nav_light/red
 	desc = "Large and bright light regularly emitting red flashes."
@@ -139,7 +144,7 @@
 	icon_state = "nav_light_red"
 
 
-/obj/item/weapon/book/manual/magshield_manual
+/obj/item/book/manual/magshield_manual
 	name = "SOP for Planetary Shield Orbital Station"
 	icon = 'magshield_sprites.dmi'
 	icon_state = "mg_guide"
@@ -174,10 +179,10 @@
 			</html>
 			"}
 
-/obj/item/weapon/paper/magshield/tornpage
+/obj/item/paper/magshield/tornpage
 	name = "torn book page"
 	info = "...you must carefully control radiation sensor automatics during solar flares. Sudden burst of high-energy plasma may cause positive feedback loop and increase magnetic genretors output in order of magnitude. This situation would lead to general damage of unprotected electronic devices as well as trajectory changes in nearby nickel-ferrum astero#&$"
 
-/obj/item/weapon/paper/magshield/log
+/obj/item/paper/magshield/log
 	name = "printed page"
 	info = "\[07:31\] Attention: solar flare detected! Automatic countermeasures activated.<br>\[07:33\] Warning: ERROR: NULL input at FARADAY_CAGE#12.TFI - line 2067: No command found. System will be rebooted.<br>\[07:39\] Warning: radiaton countermeasures inactive. Please initiate emergency protocol.<br>\[07:40\] Warning: radiaton countermeasures inactive. Please initiate emergency protocol.<br>\[07:41\] Warning: radiaton countermeasures inactive. Please initiate emergency protocol.<br>\[07:45\] Attention! Multiple systems failure. Please initiate emergency protocol<br>\[07:52\] Warning: LIDAR-ASTRA system detected multiple meteors approaching. Estimate impact time: 12.478 seconds. <br>\[07:52\] Warning! Miltiple hull breaches det~!!@#"

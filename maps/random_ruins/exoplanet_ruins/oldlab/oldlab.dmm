@@ -57,7 +57,7 @@
 /turf/simulated/floor/tiled/techfloor/grid,
 /area/map_template/oldlab/solars)
 "aW" = (
-/obj/effect/spider/eggcluster,
+/obj/spider/eggcluster,
 /turf/simulated/floor/tiled/white,
 /area/map_template/oldlab/station/xenobio)
 "bc" = (
@@ -93,8 +93,8 @@
 /turf/simulated/floor/tiled/white,
 /area/map_template/oldlab/station/chem)
 "bq" = (
-/obj/effect/floor_decal/corner/red,
-/obj/effect/floor_decal/corner/red{
+/obj/floor_decal/corner/red,
+/obj/floor_decal/corner/red{
 	dir = 1
 	},
 /obj/structure/extinguisher_cabinet{
@@ -108,7 +108,7 @@
 /area/map_template/oldlab/station/southairlock)
 "bz" = (
 /obj/machinery/atmospherics/pipe/manifold/hidden/supply,
-/obj/effect/floor_decal/techfloor,
+/obj/floor_decal/techfloor,
 /turf/simulated/floor/tiled/techfloor/grid,
 /area/map_template/oldlab/station/northairlockatmos)
 "bJ" = (
@@ -150,11 +150,11 @@
 /turf/simulated/floor/tiled/white,
 /area/map_template/oldlab/station/chem)
 "cv" = (
-/obj/effect/landmark/clear,
+/obj/landmark/clear,
 /turf/simulated/floor/exoplanet/concrete/reinforced,
 /area/map_template/oldlab/station/southairlock)
 "cw" = (
-/obj/effect/floor_decal/techfloor{
+/obj/floor_decal/techfloor{
 	dir = 4
 	},
 /obj/machinery/computer/rdconsole/robotics{
@@ -163,7 +163,7 @@
 /turf/simulated/floor/tiled/techfloor/grid,
 /area/map_template/oldlab/station/northairlockatmos)
 "cI" = (
-/obj/effect/floor_decal/techfloor{
+/obj/floor_decal/techfloor{
 	dir = 6
 	},
 /obj/machinery/power/port_gen/pacman/mrs,
@@ -171,6 +171,7 @@
 /area/map_template/oldlab/station/northairlockatmos)
 "cY" = (
 /obj/machinery/reagentgrinder,
+/obj/item/reagent_containers/glass/beaker/large,
 /turf/simulated/floor/tiled/white,
 /area/map_template/oldlab/station/chem)
 "dc" = (
@@ -185,7 +186,7 @@
 /turf/simulated/floor/tiled/white,
 /area/map_template/oldlab/station/breakroom)
 "dd" = (
-/obj/effect/floor_decal/techfloor{
+/obj/floor_decal/techfloor{
 	dir = 6
 	},
 /obj/machinery/atmospherics/unary/vent_scrubber/on{
@@ -270,7 +271,7 @@
 /obj/machinery/light/small{
 	dir = 8
 	},
-/obj/effect/floor_decal/techfloor{
+/obj/floor_decal/techfloor{
 	dir = 8
 	},
 /obj/machinery/optable{
@@ -293,7 +294,7 @@
 /turf/simulated/floor/tiled/techfloor/grid,
 /area/map_template/oldlab/station/southairlock)
 "eu" = (
-/obj/effect/floor_decal/techfloor{
+/obj/floor_decal/techfloor{
 	dir = 1
 	},
 /obj/machinery/atmospherics/pipe/simple/hidden/supply{
@@ -337,14 +338,14 @@
 "fk" = (
 /obj/machinery/atmospherics/pipe/simple/hidden/supply,
 /obj/machinery/atmospherics/pipe/simple/hidden/scrubbers,
-/obj/effect/floor_decal/corner/red,
-/obj/effect/floor_decal/corner/red{
+/obj/floor_decal/corner/red,
+/obj/floor_decal/corner/red{
 	dir = 1
 	},
 /turf/simulated/floor/tiled/white,
 /area/map_template/oldlab/station/breakroom)
 "fs" = (
-/obj/effect/floor_decal/techfloor{
+/obj/floor_decal/techfloor{
 	dir = 5
 	},
 /obj/machinery/recharge_station,
@@ -368,10 +369,10 @@
 /turf/simulated/floor/tiled/steel_grid,
 /area/map_template/oldlab/station/living)
 "fY" = (
-/obj/effect/floor_decal/techfloor{
+/obj/floor_decal/techfloor{
 	dir = 1
 	},
-/obj/effect/floor_decal/techfloor,
+/obj/floor_decal/techfloor,
 /obj/machinery/door/airlock/civilian,
 /obj/machinery/atmospherics/pipe/simple/hidden/supply{
 	dir = 4
@@ -382,7 +383,7 @@
 /turf/simulated/floor/tiled/techfloor/grid,
 /area/map_template/oldlab/station/northairlockatmos)
 "gi" = (
-/obj/effect/floor_decal/techfloor{
+/obj/floor_decal/techfloor{
 	dir = 5
 	},
 /obj/structure/reagent_dispensers/watertank,
@@ -406,13 +407,13 @@
 /area/map_template/oldlab/station/living)
 "gu" = (
 /obj/machinery/light,
-/obj/effect/floor_decal/corner/paleblue{
+/obj/floor_decal/corner/paleblue{
 	dir = 10
 	},
 /turf/simulated/floor/tiled/white,
 /area/map_template/oldlab/station/hall)
 "gG" = (
-/obj/effect/floor_decal/techfloor{
+/obj/floor_decal/techfloor{
 	dir = 4
 	},
 /obj/structure/cable/yellow,
@@ -431,7 +432,7 @@
 /turf/simulated/floor/tiled/techfloor/grid,
 /area/map_template/oldlab/solars)
 "gL" = (
-/obj/effect/floor_decal/techfloor{
+/obj/floor_decal/techfloor{
 	dir = 10
 	},
 /obj/structure/table/steel,
@@ -448,7 +449,7 @@
 /turf/simulated/floor/tiled/techfloor/grid,
 /area/map_template/oldlab/station/southairlock)
 "hq" = (
-/obj/effect/floor_decal/techfloor{
+/obj/floor_decal/techfloor{
 	dir = 8
 	},
 /turf/simulated/floor/tiled/techfloor/grid,
@@ -463,7 +464,7 @@
 /turf/simulated/floor/tiled/steel_grid,
 /area/map_template/oldlab/station/living)
 "hI" = (
-/obj/effect/floor_decal/techfloor,
+/obj/floor_decal/techfloor,
 /turf/simulated/floor/tiled/techfloor/grid,
 /area/map_template/oldlab/station/southairlock)
 "hK" = (
@@ -476,7 +477,7 @@
 /turf/simulated/floor/tiled/techfloor/grid,
 /area/map_template/oldlab/station/northairlockatmos)
 "hO" = (
-/obj/effect/floor_decal/techfloor{
+/obj/floor_decal/techfloor{
 	dir = 8
 	},
 /obj/machinery/computer/atmos_alert{
@@ -499,7 +500,7 @@
 /obj/machinery/door/firedoor,
 /obj/machinery/atmospherics/pipe/simple/hidden/supply,
 /obj/machinery/atmospherics/pipe/simple/hidden/scrubbers,
-/obj/effect/floor_decal/industrial/hatch/yellow,
+/obj/floor_decal/industrial/hatch/yellow,
 /turf/simulated/floor/tiled/techfloor/grid,
 /area/map_template/oldlab/station/northairlockatmos)
 "ii" = (
@@ -519,12 +520,12 @@
 /area/map_template/oldlab/solars)
 "ij" = (
 /obj/structure/table/rack,
-/obj/item/weapon/crowbar,
-/obj/item/weapon/shovel,
+/obj/item/crowbar,
+/obj/item/shovel,
 /turf/simulated/floor/tiled/techfloor/grid,
 /area/map_template/oldlab/station/southairlock)
 "it" = (
-/obj/effect/floor_decal/techfloor{
+/obj/floor_decal/techfloor{
 	dir = 1
 	},
 /obj/machinery/light{
@@ -563,7 +564,7 @@
 /area/map_template/oldlab/solars)
 "iG" = (
 /obj/machinery/door/firedoor,
-/obj/effect/floor_decal/industrial/hatch/yellow,
+/obj/floor_decal/industrial/hatch/yellow,
 /turf/simulated/floor/tiled/techfloor/grid,
 /area/map_template/oldlab/station/northairlockatmos)
 "iR" = (
@@ -578,7 +579,7 @@
 /turf/simulated/floor/tiled/white,
 /area/map_template/oldlab/station/chem)
 "jf" = (
-/obj/effect/floor_decal/corner/paleblue{
+/obj/floor_decal/corner/paleblue{
 	dir = 10
 	},
 /turf/simulated/floor/tiled/white,
@@ -593,8 +594,8 @@
 	dir = 6
 	},
 /obj/machinery/atmospherics/pipe/simple/hidden/scrubbers,
-/obj/effect/floor_decal/corner/red,
-/obj/effect/floor_decal/corner/red{
+/obj/floor_decal/corner/red,
+/obj/floor_decal/corner/red{
 	dir = 1
 	},
 /turf/simulated/floor/tiled/white,
@@ -607,7 +608,7 @@
 /turf/simulated/floor/tiled/white,
 /area/map_template/oldlab/station/hall)
 "jr" = (
-/obj/effect/floor_decal/techfloor{
+/obj/floor_decal/techfloor{
 	dir = 1
 	},
 /obj/machinery/atmospherics/unary/vent_scrubber/on,
@@ -624,7 +625,7 @@
 /turf/simulated/floor/tiled/white,
 /area/map_template/oldlab/station/hall)
 "ke" = (
-/obj/effect/floor_decal/techfloor{
+/obj/floor_decal/techfloor{
 	dir = 8
 	},
 /obj/machinery/light/small{
@@ -637,7 +638,7 @@
 /turf/simulated/floor/tiled/techfloor/grid,
 /area/map_template/oldlab/station/northairlockatmos)
 "kQ" = (
-/obj/effect/floor_decal/techfloor{
+/obj/floor_decal/techfloor{
 	dir = 9
 	},
 /obj/machinery/atmospherics/unary/tank/air,
@@ -677,8 +678,8 @@
 /obj/machinery/light{
 	dir = 8
 	},
-/obj/effect/floor_decal/corner/red,
-/obj/effect/floor_decal/corner/red{
+/obj/floor_decal/corner/red,
+/obj/floor_decal/corner/red{
 	dir = 1
 	},
 /obj/structure/closet/hydrant{
@@ -687,7 +688,7 @@
 /turf/simulated/floor/tiled/white,
 /area/map_template/oldlab/station/breakroom)
 "lo" = (
-/obj/effect/floor_decal/techfloor{
+/obj/floor_decal/techfloor{
 	dir = 5
 	},
 /obj/machinery/vending/robotics{
@@ -707,7 +708,7 @@
 /turf/simulated/floor/tiled/white,
 /area/map_template/oldlab/station/chem)
 "lC" = (
-/obj/effect/floor_decal/techfloor{
+/obj/floor_decal/techfloor{
 	dir = 1
 	},
 /obj/structure/cable/yellow{
@@ -764,12 +765,12 @@
 /turf/simulated/floor/tiled/white,
 /area/map_template/oldlab/station/hall)
 "lV" = (
-/obj/effect/landmark/clear,
+/obj/landmark/clear,
 /obj/machinery/light/spot,
 /turf/simulated/floor/exoplanet/concrete/reinforced,
 /area/map_template/oldlab/station/northairlockatmos)
 "mn" = (
-/obj/effect/floor_decal/techfloor{
+/obj/floor_decal/techfloor{
 	dir = 4
 	},
 /obj/structure/cable/yellow{
@@ -782,7 +783,7 @@
 /turf/simulated/floor/tiled/techfloor/grid,
 /area/map_template/oldlab/station/northairlockatmos)
 "mz" = (
-/obj/effect/floor_decal/techfloor{
+/obj/floor_decal/techfloor{
 	dir = 6
 	},
 /obj/machinery/light/small{
@@ -800,7 +801,7 @@
 /turf/simulated/floor/tiled/freezer,
 /area/map_template/oldlab/station/breakroom)
 "mR" = (
-/obj/effect/floor_decal/techfloor,
+/obj/floor_decal/techfloor,
 /obj/machinery/atmospherics/portables_connector{
 	dir = 4
 	},
@@ -816,8 +817,8 @@
 /obj/structure/bed/chair{
 	dir = 1
 	},
-/obj/effect/floor_decal/corner/red,
-/obj/effect/floor_decal/corner/red{
+/obj/floor_decal/corner/red,
+/obj/floor_decal/corner/red{
 	dir = 1
 	},
 /turf/simulated/floor/tiled/white,
@@ -858,7 +859,7 @@
 /obj/machinery/oxygen_pump{
 	pixel_x = -32
 	},
-/obj/effect/floor_decal/techfloor{
+/obj/floor_decal/techfloor{
 	dir = 8
 	},
 /turf/simulated/floor/tiled/techfloor/grid,
@@ -875,11 +876,11 @@
 /area/map_template/oldlab/solars)
 "ns" = (
 /obj/structure/table/steel,
-/obj/item/weapon/reagent_containers/glass/beaker/insulated,
+/obj/item/reagent_containers/glass/beaker/insulated,
 /turf/simulated/floor/tiled/white,
 /area/map_template/oldlab/station/chem)
 "nz" = (
-/obj/effect/floor_decal/techfloor{
+/obj/floor_decal/techfloor{
 	dir = 1
 	},
 /obj/machinery/atmospherics/pipe/simple/hidden/supply{
@@ -891,7 +892,7 @@
 /turf/simulated/floor/tiled/techfloor/grid,
 /area/map_template/oldlab/station/northairlockatmos)
 "nD" = (
-/obj/effect/floor_decal/techfloor,
+/obj/floor_decal/techfloor,
 /turf/simulated/floor/tiled/techfloor/grid,
 /area/map_template/oldlab/station/northairlockatmos)
 "nS" = (
@@ -904,7 +905,7 @@
 /turf/simulated/floor/tiled/techfloor/grid,
 /area/map_template/oldlab/station/northairlockatmos)
 "nV" = (
-/obj/effect/floor_decal/techfloor{
+/obj/floor_decal/techfloor{
 	dir = 8
 	},
 /obj/machinery/atmospherics/unary/vent_pump/on{
@@ -920,8 +921,8 @@
 /obj/machinery/atmospherics/pipe/simple/hidden/scrubbers{
 	dir = 9
 	},
-/obj/effect/floor_decal/corner/red,
-/obj/effect/floor_decal/corner/red{
+/obj/floor_decal/corner/red,
+/obj/floor_decal/corner/red{
 	dir = 1
 	},
 /turf/simulated/floor/tiled/white,
@@ -935,7 +936,7 @@
 	name = "Lab Shutters Control";
 	pixel_x = -32
 	},
-/obj/effect/floor_decal/corner/paleblue{
+/obj/floor_decal/corner/paleblue{
 	dir = 9
 	},
 /turf/simulated/floor/tiled/white,
@@ -946,7 +947,6 @@
 /area/map_template/oldlab/station/hall)
 "ol" = (
 /obj/machinery/access_button{
-	active_power_usage = "portlab_airlock";
 	command = "cycle_interior";
 	frequency = 1379;
 	master_tag = "labport_airlock";
@@ -963,7 +963,7 @@
 "ow" = (
 /obj/structure/closet/firecloset,
 /obj/machinery/light,
-/obj/effect/floor_decal/industrial/outline/yellow,
+/obj/floor_decal/industrial/outline/yellow,
 /turf/simulated/floor/tiled/white,
 /area/map_template/oldlab/station/hall)
 "oF" = (
@@ -982,7 +982,7 @@
 /turf/simulated/floor/tiled/white,
 /area/map_template/oldlab/station/chem)
 "oI" = (
-/obj/effect/floor_decal/techfloor{
+/obj/floor_decal/techfloor{
 	dir = 8
 	},
 /obj/random/tech_supply,
@@ -993,11 +993,11 @@
 /area/map_template/oldlab/station/southairlock)
 "oM" = (
 /obj/structure/table/steel,
-/obj/item/weapon/reagent_containers/glass/beaker,
+/obj/item/reagent_containers/glass/beaker,
 /turf/simulated/floor/tiled/white,
 /area/map_template/oldlab/station/chem)
 "oU" = (
-/obj/effect/landmark/clear,
+/obj/landmark/clear,
 /obj/machinery/light/spot{
 	dir = 8
 	},
@@ -1014,13 +1014,13 @@
 	pixel_x = -6;
 	pixel_y = -24
 	},
-/obj/effect/floor_decal/corner/paleblue{
+/obj/floor_decal/corner/paleblue{
 	dir = 10
 	},
 /turf/simulated/floor/tiled/white,
 /area/map_template/oldlab/station/hall)
 "pt" = (
-/obj/effect/floor_decal/techfloor,
+/obj/floor_decal/techfloor,
 /obj/structure/cable/yellow{
 	d2 = 8;
 	icon_state = "0-8"
@@ -1033,14 +1033,14 @@
 /turf/simulated/floor/tiled/techfloor/grid,
 /area/map_template/oldlab/station/northairlockatmos)
 "pB" = (
-/obj/effect/floor_decal/corner/red,
-/obj/effect/floor_decal/corner/red{
+/obj/floor_decal/corner/red,
+/obj/floor_decal/corner/red{
 	dir = 1
 	},
 /turf/simulated/floor/tiled/white,
 /area/map_template/oldlab/station/breakroom)
 "pH" = (
-/obj/effect/floor_decal/corner/paleblue{
+/obj/floor_decal/corner/paleblue{
 	dir = 5
 	},
 /turf/simulated/floor/tiled/white,
@@ -1078,14 +1078,14 @@
 "qF" = (
 /obj/structure/table/steel,
 /obj/random/mre,
-/obj/effect/floor_decal/corner/red,
-/obj/effect/floor_decal/corner/red{
+/obj/floor_decal/corner/red,
+/obj/floor_decal/corner/red{
 	dir = 1
 	},
 /turf/simulated/floor/tiled/white,
 /area/map_template/oldlab/station/breakroom)
 "qR" = (
-/obj/effect/floor_decal/corner/paleblue{
+/obj/floor_decal/corner/paleblue{
 	dir = 5
 	},
 /mob/living/simple_animal/hostile/giant_spider/guard,
@@ -1110,7 +1110,7 @@
 	name = "Lab Shutters Control";
 	pixel_x = 32
 	},
-/obj/effect/floor_decal/corner/paleblue{
+/obj/floor_decal/corner/paleblue{
 	dir = 5
 	},
 /turf/simulated/floor/tiled/white,
@@ -1136,7 +1136,7 @@
 /obj/machinery/light{
 	dir = 8
 	},
-/obj/effect/floor_decal/corner/paleblue{
+/obj/floor_decal/corner/paleblue{
 	dir = 9
 	},
 /turf/simulated/floor/tiled/white,
@@ -1155,7 +1155,7 @@
 /turf/simulated/floor/tiled/freezer,
 /area/map_template/oldlab/station/living)
 "rQ" = (
-/obj/effect/floor_decal/techfloor,
+/obj/floor_decal/techfloor,
 /obj/machinery/light,
 /obj/machinery/atmospherics/pipe/simple/hidden/scrubbers{
 	dir = 5
@@ -1175,7 +1175,7 @@
 /turf/simulated/floor/tiled/white,
 /area/map_template/oldlab/station/xenobio)
 "sj" = (
-/obj/effect/floor_decal/techfloor,
+/obj/floor_decal/techfloor,
 /obj/structure/table/steel,
 /obj/item/device/robotanalyzer,
 /obj/machinery/recharger,
@@ -1203,15 +1203,15 @@
 /turf/simulated/floor/tiled/techfloor/grid,
 /area/map_template/oldlab/station/northairlockatmos)
 "ty" = (
-/obj/effect/floor_decal/techfloor{
+/obj/floor_decal/techfloor{
 	dir = 4
 	},
 /obj/machinery/suit_storage_unit/engineering/alt,
-/obj/effect/floor_decal/industrial/outline/yellow,
+/obj/floor_decal/industrial/outline/yellow,
 /turf/simulated/floor/tiled/techfloor/grid,
 /area/map_template/oldlab/station/southairlock)
 "tI" = (
-/obj/effect/floor_decal/techfloor{
+/obj/floor_decal/techfloor{
 	dir = 1
 	},
 /obj/machinery/portable_atmospherics/powered/scrubber,
@@ -1231,7 +1231,7 @@
 /turf/simulated/floor/tiled/white,
 /area/map_template/oldlab/station/xenobio)
 "tO" = (
-/obj/effect/floor_decal/techfloor{
+/obj/floor_decal/techfloor{
 	dir = 10
 	},
 /obj/structure/table/steel,
@@ -1256,10 +1256,10 @@
 /obj/machinery/atmospherics/unary/vent_scrubber/on{
 	dir = 8
 	},
-/obj/effect/floor_decal/corner/paleblue{
+/obj/floor_decal/corner/paleblue{
 	dir = 8
 	},
-/obj/effect/floor_decal/corner/paleblue{
+/obj/floor_decal/corner/paleblue{
 	dir = 6
 	},
 /turf/simulated/floor/tiled/white,
@@ -1291,11 +1291,11 @@
 /turf/simulated/floor/tiled/freezer,
 /area/map_template/oldlab/station/breakroom)
 "vh" = (
-/obj/effect/floor_decal/techfloor{
+/obj/floor_decal/techfloor{
 	dir = 9
 	},
 /obj/structure/closet/toolcloset,
-/obj/item/weapon/storage/box/lights/mixed,
+/obj/item/storage/box/lights/mixed,
 /obj/random/handgun,
 /obj/random/accessory,
 /turf/simulated/floor/tiled/techfloor/grid,
@@ -1322,8 +1322,8 @@
 	name = "west bump";
 	pixel_x = -24
 	},
-/obj/effect/floor_decal/corner/red,
-/obj/effect/floor_decal/corner/red{
+/obj/floor_decal/corner/red,
+/obj/floor_decal/corner/red{
 	dir = 1
 	},
 /turf/simulated/floor/tiled/white,
@@ -1344,8 +1344,8 @@
 	d2 = 2;
 	icon_state = "1-2"
 	},
-/obj/effect/floor_decal/corner/red,
-/obj/effect/floor_decal/corner/red{
+/obj/floor_decal/corner/red,
+/obj/floor_decal/corner/red{
 	dir = 1
 	},
 /turf/simulated/floor/tiled/white,
@@ -1367,13 +1367,13 @@
 	name = "north bump";
 	pixel_y = 24
 	},
-/obj/effect/floor_decal/corner/paleblue{
+/obj/floor_decal/corner/paleblue{
 	dir = 5
 	},
 /turf/simulated/floor/tiled/white,
 /area/map_template/oldlab/station/hall)
 "wq" = (
-/obj/effect/floor_decal/techfloor{
+/obj/floor_decal/techfloor{
 	dir = 1
 	},
 /obj/machinery/light{
@@ -1401,13 +1401,12 @@
 /turf/simulated/floor/exoplanet/concrete/reinforced,
 /area/map_template/oldlab/solars)
 "wD" = (
-/obj/effect/wallframe_spawn/reinforced/titanium,
+/obj/wallframe_spawn/reinforced/titanium,
 /obj/machinery/door/blast/shutters{
 	icon_state = "shutter0";
-	id_tag = "research_lab_shutters";
-	opacity = 0
+	id_tag = "research_lab_shutters"
 	},
-/obj/effect/paint/black,
+/obj/paint/black,
 /turf/simulated/floor/tiled/techfloor/grid,
 /area/map_template/oldlab/station/xenobio)
 "xg" = (
@@ -1416,8 +1415,8 @@
 	dir = 8;
 	pixel_x = 22
 	},
-/obj/effect/floor_decal/corner/red,
-/obj/effect/floor_decal/corner/red{
+/obj/floor_decal/corner/red,
+/obj/floor_decal/corner/red{
 	dir = 1
 	},
 /turf/simulated/floor/tiled/white,
@@ -1435,7 +1434,7 @@
 /turf/simulated/floor/tiled/white,
 /area/map_template/oldlab/station/chem)
 "xB" = (
-/obj/effect/floor_decal/techfloor{
+/obj/floor_decal/techfloor{
 	dir = 8
 	},
 /obj/machinery/computer/rcon{
@@ -1462,7 +1461,7 @@
 /turf/simulated/floor/exoplanet/concrete/reinforced,
 /area/map_template/oldlab/solars)
 "xH" = (
-/obj/effect/landmark/clear,
+/obj/landmark/clear,
 /obj/machinery/light/spot{
 	dir = 1
 	},
@@ -1509,17 +1508,16 @@
 /turf/simulated/floor/tiled/white,
 /area/map_template/oldlab/station/xenobio)
 "yW" = (
-/obj/structure/bed/roller,
+/obj/structure/roller_bed,
 /turf/simulated/floor/tiled/white,
 /area/map_template/oldlab/station/xenobio)
 "za" = (
-/obj/effect/wallframe_spawn/reinforced/titanium,
+/obj/wallframe_spawn/reinforced/titanium,
 /obj/machinery/door/blast/shutters{
 	icon_state = "shutter0";
-	id_tag = "research_lab_shutters";
-	opacity = 0
+	id_tag = "research_lab_shutters"
 	},
-/obj/effect/paint/black,
+/obj/paint/black,
 /turf/simulated/floor/tiled/techfloor/grid,
 /area/map_template/oldlab/station/chem)
 "zb" = (
@@ -1528,7 +1526,7 @@
 	d2 = 4;
 	icon_state = "1-4"
 	},
-/obj/item/weapon/stool,
+/obj/item/stool,
 /obj/machinery/atmospherics/pipe/simple/hidden/supply{
 	dir = 9
 	},
@@ -1566,7 +1564,7 @@
 	name = "Exterior Lab Shutters Control";
 	pixel_x = 32
 	},
-/obj/effect/floor_decal/corner/paleblue{
+/obj/floor_decal/corner/paleblue{
 	dir = 10
 	},
 /turf/simulated/floor/tiled/white,
@@ -1578,7 +1576,6 @@
 	pixel_y = -6
 	},
 /obj/machinery/embedded_controller/radio/airlock/airlock_controller{
-	active_power_usage = "labport_sensor";
 	anchor_fall = "labport_airlock";
 	dir = 8;
 	id_tag = "labport_airlock";
@@ -1591,7 +1588,7 @@
 	tag_exterior_sensor = "labport_sensor_external";
 	tag_interior_door = "labport_inner"
 	},
-/obj/effect/floor_decal/techfloor{
+/obj/floor_decal/techfloor{
 	dir = 4
 	},
 /obj/machinery/atmospherics/pipe/simple/visible{
@@ -1604,7 +1601,7 @@
 /area/map_template/oldlab/station/northairlockatmos)
 "zR" = (
 /obj/machinery/atmospherics/unary/vent_scrubber/on,
-/obj/effect/floor_decal/corner/paleblue{
+/obj/floor_decal/corner/paleblue{
 	dir = 9
 	},
 /obj/structure/extinguisher_cabinet{
@@ -1613,7 +1610,7 @@
 /turf/simulated/floor/tiled/white,
 /area/map_template/oldlab/station/hall)
 "Ak" = (
-/obj/effect/floor_decal/techfloor{
+/obj/floor_decal/techfloor{
 	dir = 4
 	},
 /obj/machinery/atmospherics/pipe/manifold/visible{
@@ -1623,11 +1620,11 @@
 /area/map_template/oldlab/station/southairlock)
 "As" = (
 /obj/structure/closet/emcloset,
-/obj/effect/floor_decal/industrial/outline/yellow,
+/obj/floor_decal/industrial/outline/yellow,
 /turf/simulated/floor/tiled/white,
 /area/map_template/oldlab/station/hall)
 "AE" = (
-/obj/effect/landmark/clear,
+/obj/landmark/clear,
 /obj/machinery/light/spot{
 	dir = 8
 	},
@@ -1654,7 +1651,7 @@
 /turf/simulated/floor/tiled/white,
 /area/map_template/oldlab/station/hall)
 "BD" = (
-/obj/effect/floor_decal/techfloor{
+/obj/floor_decal/techfloor{
 	dir = 8
 	},
 /obj/structure/table/steel,
@@ -1666,7 +1663,7 @@
 /turf/simulated/floor/tiled/techfloor/grid,
 /area/map_template/oldlab/solars)
 "BY" = (
-/obj/effect/floor_decal/techfloor{
+/obj/floor_decal/techfloor{
 	dir = 8
 	},
 /obj/structure/table/steel,
@@ -1676,7 +1673,7 @@
 /turf/simulated/floor/tiled/techfloor/grid,
 /area/map_template/oldlab/solars)
 "Cd" = (
-/obj/effect/floor_decal/techfloor{
+/obj/floor_decal/techfloor{
 	dir = 8
 	},
 /obj/machinery/light/small{
@@ -1690,13 +1687,13 @@
 	dir = 4;
 	pixel_x = -22
 	},
-/obj/effect/floor_decal/corner/paleblue{
+/obj/floor_decal/corner/paleblue{
 	dir = 9
 	},
 /turf/simulated/floor/tiled/white,
 /area/map_template/oldlab/station/hall)
 "Cz" = (
-/obj/structure/closet/secure_closet/freezer/fridge,
+/obj/structure/closet/fridge,
 /obj/machinery/atmospherics/unary/vent_pump/on{
 	level = 2
 	},
@@ -1706,8 +1703,8 @@
 /obj/structure/reagent_dispensers/water_cooler{
 	dir = 8
 	},
-/obj/effect/floor_decal/corner/red,
-/obj/effect/floor_decal/corner/red{
+/obj/floor_decal/corner/red,
+/obj/floor_decal/corner/red{
 	dir = 1
 	},
 /turf/simulated/floor/tiled/white,
@@ -1745,14 +1742,14 @@
 /obj/machinery/atmospherics/pipe/simple/hidden/scrubbers{
 	dir = 10
 	},
-/obj/effect/floor_decal/corner/red,
-/obj/effect/floor_decal/corner/red{
+/obj/floor_decal/corner/red,
+/obj/floor_decal/corner/red{
 	dir = 1
 	},
 /turf/simulated/floor/tiled/white,
 /area/map_template/oldlab/station/breakroom)
 "Dr" = (
-/obj/effect/floor_decal/techfloor,
+/obj/floor_decal/techfloor,
 /obj/structure/cable/yellow{
 	d1 = 4;
 	d2 = 8;
@@ -1769,7 +1766,7 @@
 /obj/machinery/atmospherics/pipe/simple/hidden/supply{
 	dir = 5
 	},
-/obj/effect/floor_decal/techfloor{
+/obj/floor_decal/techfloor{
 	dir = 10
 	},
 /obj/machinery/light/small{
@@ -1778,7 +1775,7 @@
 /turf/simulated/floor/tiled/techfloor/grid,
 /area/map_template/oldlab/station/northairlockatmos)
 "DC" = (
-/obj/effect/floor_decal/techfloor{
+/obj/floor_decal/techfloor{
 	dir = 9
 	},
 /obj/structure/table/steel,
@@ -1786,11 +1783,11 @@
 /area/map_template/oldlab/solars)
 "DD" = (
 /obj/machinery/door/firedoor,
-/obj/effect/floor_decal/industrial/hatch/yellow,
+/obj/floor_decal/industrial/hatch/yellow,
 /turf/simulated/floor/tiled/techfloor/grid,
 /area/map_template/oldlab/station/southairlock)
 "DK" = (
-/obj/effect/floor_decal/techfloor{
+/obj/floor_decal/techfloor{
 	dir = 8
 	},
 /turf/simulated/floor/tiled/techfloor/grid,
@@ -1806,7 +1803,7 @@
 /turf/simulated/floor/tiled/white,
 /area/map_template/oldlab/station/chem)
 "Ej" = (
-/obj/effect/floor_decal/techfloor{
+/obj/floor_decal/techfloor{
 	dir = 9
 	},
 /obj/machinery/fabricator,
@@ -1833,11 +1830,11 @@
 /obj/machinery/atmospherics/pipe/simple/hidden/supply{
 	dir = 5
 	},
-/obj/structure/iv_drip,
+/obj/structure/iv_stand,
 /turf/simulated/floor/tiled/white,
 /area/map_template/oldlab/station/xenobio)
 "EE" = (
-/obj/structure/closet/secure_closet/freezer/fridge,
+/obj/structure/closet/fridge,
 /turf/simulated/floor/tiled/freezer,
 /area/map_template/oldlab/station/breakroom)
 "EH" = (
@@ -1847,20 +1844,20 @@
 	pixel_y = -22
 	},
 /obj/machinery/atmospherics/pipe/manifold/hidden/scrubbers,
-/obj/effect/floor_decal/corner/red,
-/obj/effect/floor_decal/corner/red{
+/obj/floor_decal/corner/red,
+/obj/floor_decal/corner/red{
 	dir = 1
 	},
 /turf/simulated/floor/tiled/white,
 /area/map_template/oldlab/station/breakroom)
 "Fg" = (
-/obj/effect/wallframe_spawn/reinforced/titanium,
+/obj/wallframe_spawn/reinforced/titanium,
 /obj/structure/cable/yellow{
 	d1 = 1;
 	d2 = 2;
 	icon_state = "1-2"
 	},
-/obj/effect/paint/black,
+/obj/paint/black,
 /turf/simulated/floor/exoplanet/concrete/reinforced,
 /area/map_template/oldlab/solars)
 "Fj" = (
@@ -1879,7 +1876,7 @@
 	name = "east bump";
 	pixel_x = 24
 	},
-/obj/item/weapon/bedsheet/blue,
+/obj/item/bedsheet/blue,
 /obj/structure/bed/padded,
 /obj/random/plushie,
 /turf/simulated/floor/tiled/steel_grid,
@@ -1908,7 +1905,7 @@
 /turf/simulated/floor/exoplanet/concrete/reinforced,
 /area/map_template/oldlab/solars)
 "FF" = (
-/obj/effect/floor_decal/techfloor{
+/obj/floor_decal/techfloor{
 	dir = 4
 	},
 /obj/machinery/robotics_fabricator,
@@ -1927,9 +1924,8 @@
 	pixel_y = 24;
 	req_access = list("ACCESS_MAINT")
 	},
-/obj/effect/landmark/clear,
+/obj/landmark/clear,
 /obj/machinery/airlock_sensor{
-	frequency = 1550;
 	id_tag = "starboardlab_sensor_external";
 	pixel_x = -24;
 	pixel_y = 24
@@ -1958,19 +1954,19 @@
 /obj/machinery/light{
 	dir = 8
 	},
-/obj/effect/floor_decal/corner/paleblue{
+/obj/floor_decal/corner/paleblue{
 	dir = 9
 	},
 /turf/simulated/floor/tiled/white,
 /area/map_template/oldlab/station/hall)
 "Hc" = (
-/obj/effect/floor_decal/techfloor{
+/obj/floor_decal/techfloor{
 	dir = 1
 	},
 /obj/machinery/light/small{
 	dir = 1
 	},
-/obj/item/weapon/bedsheet/brown,
+/obj/item/bedsheet/brown,
 /obj/structure/bed/padded,
 /obj/machinery/alarm{
 	dir = 8;
@@ -1987,7 +1983,7 @@
 /turf/simulated/floor/tiled/freezer,
 /area/map_template/oldlab/station/living)
 "Hk" = (
-/obj/effect/floor_decal/techfloor,
+/obj/floor_decal/techfloor,
 /obj/structure/cable/yellow{
 	d1 = 4;
 	d2 = 8;
@@ -2003,7 +1999,7 @@
 /turf/simulated/floor/tiled/techfloor/grid,
 /area/map_template/oldlab/solars)
 "Hp" = (
-/obj/effect/floor_decal/techfloor,
+/obj/floor_decal/techfloor,
 /obj/structure/cable/yellow{
 	d1 = 4;
 	d2 = 8;
@@ -2028,7 +2024,7 @@
 /turf/simulated/floor/tiled/techfloor/grid,
 /area/map_template/oldlab/station/southairlock)
 "HG" = (
-/obj/effect/floor_decal/techfloor{
+/obj/floor_decal/techfloor{
 	dir = 4
 	},
 /obj/machinery/atmospherics/pipe/simple/hidden/supply,
@@ -2039,7 +2035,7 @@
 /area/map_template/oldlab/station/northairlockatmos)
 "HU" = (
 /obj/machinery/power/solar/improved,
-/obj/effect/floor_decal/solarpanel,
+/obj/floor_decal/solarpanel,
 /obj/structure/cable/yellow,
 /obj/structure/cable/yellow{
 	d2 = 2;
@@ -2048,7 +2044,7 @@
 /turf/simulated/floor/exoplanet/concrete/reinforced,
 /area/map_template/oldlab/solars)
 "HV" = (
-/obj/effect/floor_decal/techfloor{
+/obj/floor_decal/techfloor{
 	dir = 1
 	},
 /obj/machinery/atmospherics/pipe/simple/hidden/supply{
@@ -2064,18 +2060,18 @@
 /turf/simulated/floor/tiled/techfloor/grid,
 /area/map_template/oldlab/solars)
 "If" = (
-/obj/effect/floor_decal/techfloor{
+/obj/floor_decal/techfloor{
 	dir = 4
 	},
-/obj/effect/floor_decal/techfloor{
+/obj/floor_decal/techfloor{
 	dir = 6
 	},
 /obj/machinery/power/smes/buildable/outpost_substation,
 /turf/simulated/floor/tiled/techfloor/grid,
 /area/map_template/oldlab/solars)
 "Is" = (
-/obj/effect/wallframe_spawn/reinforced/titanium,
-/obj/effect/paint/black,
+/obj/wallframe_spawn/reinforced/titanium,
+/obj/paint/black,
 /turf/simulated/floor/exoplanet/concrete/reinforced,
 /area/map_template/oldlab/solars)
 "IV" = (
@@ -2109,7 +2105,7 @@
 /turf/simulated/floor/tiled/techfloor/grid,
 /area/map_template/oldlab/solars)
 "Jz" = (
-/obj/effect/floor_decal/techfloor,
+/obj/floor_decal/techfloor,
 /obj/structure/cable/yellow{
 	d1 = 4;
 	d2 = 8;
@@ -2123,7 +2119,7 @@
 /area/map_template/oldlab/solars)
 "JC" = (
 /obj/structure/table/steel,
-/obj/item/weapon/storage/firstaid/surgery,
+/obj/item/storage/firstaid/surgery,
 /obj/item/device/radio/intercom/entertainment{
 	pixel_y = 24
 	},
@@ -2133,14 +2129,14 @@
 /turf/simulated/wall/r_wall/prepainted,
 /area/map_template/oldlab/station/southairlock)
 "Km" = (
-/obj/effect/floor_decal/techfloor{
+/obj/floor_decal/techfloor{
 	dir = 1
 	},
-/obj/machinery/computer/power_monitor,
+/obj/machinery/computer/modular/preset/engineering,
 /turf/simulated/floor/tiled/techfloor/grid,
 /area/map_template/oldlab/solars)
 "Ku" = (
-/obj/effect/floor_decal/techfloor,
+/obj/floor_decal/techfloor,
 /obj/machinery/light,
 /obj/machinery/atmospherics/unary/vent_pump/on{
 	dir = 1;
@@ -2149,7 +2145,7 @@
 /turf/simulated/floor/tiled/techfloor/grid,
 /area/map_template/oldlab/station/northairlockatmos)
 "Ky" = (
-/obj/effect/floor_decal/techfloor{
+/obj/floor_decal/techfloor{
 	dir = 8
 	},
 /obj/machinery/atmospherics/unary/vent_scrubber/on{
@@ -2178,14 +2174,14 @@
 /turf/simulated/floor/tiled/techfloor/grid,
 /area/map_template/oldlab/station/northairlockatmos)
 "Lg" = (
-/obj/effect/floor_decal/techfloor{
+/obj/floor_decal/techfloor{
 	dir = 1
 	},
 /obj/machinery/atmospherics/unary/tank/air,
 /turf/simulated/floor/tiled/techfloor/grid,
 /area/map_template/oldlab/station/northairlockatmos)
 "Lh" = (
-/obj/effect/floor_decal/techfloor{
+/obj/floor_decal/techfloor{
 	dir = 10
 	},
 /obj/structure/table/steel,
@@ -2193,7 +2189,7 @@
 	dir = 1;
 	pixel_y = -22
 	},
-/obj/item/weapon/reagent_containers/spray/cleaner,
+/obj/item/reagent_containers/spray/cleaner,
 /turf/simulated/floor/tiled/techfloor/grid,
 /area/map_template/oldlab/station/southairlock)
 "Ll" = (
@@ -2207,8 +2203,8 @@
 	pixel_x = -6;
 	pixel_y = -24
 	},
-/obj/effect/floor_decal/corner/red,
-/obj/effect/floor_decal/corner/red{
+/obj/floor_decal/corner/red,
+/obj/floor_decal/corner/red{
 	dir = 1
 	},
 /turf/simulated/floor/tiled/white,
@@ -2219,7 +2215,7 @@
 	dir = 4;
 	pixel_x = -23
 	},
-/obj/effect/floor_decal/corner/paleblue{
+/obj/floor_decal/corner/paleblue{
 	dir = 9
 	},
 /turf/simulated/floor/tiled/white,
@@ -2229,16 +2225,16 @@
 /obj/machinery/atmospherics/unary/vent_scrubber/on{
 	dir = 8
 	},
-/obj/effect/floor_decal/corner/paleblue{
+/obj/floor_decal/corner/paleblue{
 	dir = 1
 	},
-/obj/effect/floor_decal/corner/paleblue{
+/obj/floor_decal/corner/paleblue{
 	dir = 6
 	},
 /turf/simulated/floor/tiled/white,
 /area/map_template/oldlab/station/hall)
 "Ly" = (
-/obj/effect/floor_decal/techfloor,
+/obj/floor_decal/techfloor,
 /obj/structure/cable/yellow{
 	d1 = 4;
 	d2 = 8;
@@ -2278,14 +2274,13 @@
 /turf/simulated/floor/tiled/white,
 /area/map_template/oldlab/station/xenobio)
 "LP" = (
-/obj/effect/wallframe_spawn/reinforced/titanium,
+/obj/wallframe_spawn/reinforced/titanium,
 /obj/machinery/door/blast/shutters{
 	dir = 4;
 	icon_state = "shutter0";
-	id_tag = "research_lab_shutters";
-	opacity = 0
+	id_tag = "research_lab_shutters"
 	},
-/obj/effect/paint/black,
+/obj/paint/black,
 /turf/simulated/floor/tiled/techfloor/grid,
 /area/map_template/oldlab/station/xenobio)
 "LW" = (
@@ -2317,7 +2312,7 @@
 /turf/simulated/floor/tiled/white,
 /area/map_template/oldlab/station/xenobio)
 "Ms" = (
-/obj/effect/landmark/clear,
+/obj/landmark/clear,
 /turf/simulated/floor/exoplanet/concrete/reinforced,
 /area/map_template/oldlab/station/northairlockatmos)
 "Mx" = (
@@ -2327,12 +2322,17 @@
 /obj/machinery/atmospherics/pipe/simple/hidden/scrubbers{
 	dir = 4
 	},
-/obj/effect/floor_decal/corner/red,
-/obj/effect/floor_decal/corner/red{
+/obj/floor_decal/corner/red,
+/obj/floor_decal/corner/red{
 	dir = 1
 	},
 /turf/simulated/floor/tiled/white,
 /area/map_template/oldlab/station/breakroom)
+"MB" = (
+/obj/structure/grille,
+/obj/machinery/computer/modular/preset/engineering,
+/turf/simulated/floor/exoplanet/concrete/reinforced,
+/area/map_template/oldlab/solars)
 "ME" = (
 /obj/structure/cable/yellow{
 	d1 = 1;
@@ -2345,7 +2345,7 @@
 /turf/simulated/floor/tiled/techfloor/grid,
 /area/map_template/oldlab/station/southairlock)
 "MH" = (
-/obj/effect/floor_decal/techfloor{
+/obj/floor_decal/techfloor{
 	dir = 1
 	},
 /obj/machinery/alarm{
@@ -2354,7 +2354,7 @@
 /turf/simulated/floor/tiled/techfloor/grid,
 /area/map_template/oldlab/solars)
 "MN" = (
-/obj/effect/floor_decal/techfloor,
+/obj/floor_decal/techfloor,
 /obj/structure/table/steel,
 /obj/machinery/light/small,
 /obj/random/single/playing_cards,
@@ -2368,7 +2368,7 @@
 	dir = 1;
 	level = 2
 	},
-/obj/effect/floor_decal/techfloor{
+/obj/floor_decal/techfloor{
 	dir = 4
 	},
 /turf/simulated/floor/tiled/techfloor/grid,
@@ -2399,7 +2399,7 @@
 /turf/simulated/floor/tiled/techfloor/grid,
 /area/map_template/oldlab/solars)
 "Ni" = (
-/obj/effect/floor_decal/techfloor{
+/obj/floor_decal/techfloor{
 	dir = 4
 	},
 /obj/machinery/light{
@@ -2413,8 +2413,8 @@
 /area/map_template/oldlab/solars)
 "NB" = (
 /obj/structure/table/rack,
-/obj/item/stack/cable_coil/random,
-/obj/item/weapon/crowbar/brace_jack,
+/obj/random/single/color/cable_coil,
+/obj/item/material/twohanded/jack,
 /turf/simulated/floor/tiled/techfloor/grid,
 /area/map_template/oldlab/station/southairlock)
 "NO" = (
@@ -2466,11 +2466,11 @@
 /area/map_template/oldlab/solars)
 "OI" = (
 /obj/machinery/door/firedoor,
-/obj/effect/floor_decal/industrial/hatch/yellow,
+/obj/floor_decal/industrial/hatch/yellow,
 /turf/simulated/floor/tiled/white,
 /area/map_template/oldlab/station/hall)
 "OJ" = (
-/obj/effect/floor_decal/techfloor{
+/obj/floor_decal/techfloor{
 	dir = 4
 	},
 /obj/machinery/atmospherics/unary/vent_scrubber/on{
@@ -2483,7 +2483,7 @@
 /turf/simulated/floor/tiled/techfloor/grid,
 /area/map_template/oldlab/station/northairlockatmos)
 "Pj" = (
-/obj/effect/floor_decal/techfloor{
+/obj/floor_decal/techfloor{
 	dir = 1
 	},
 /turf/simulated/floor/tiled/techfloor/grid,
@@ -2492,15 +2492,15 @@
 /obj/machinery/light{
 	dir = 4
 	},
-/obj/effect/floor_decal/corner/red,
-/obj/effect/floor_decal/corner/red{
+/obj/floor_decal/corner/red,
+/obj/floor_decal/corner/red{
 	dir = 1
 	},
 /turf/simulated/floor/tiled/white,
 /area/map_template/oldlab/station/breakroom)
 "PL" = (
 /obj/machinery/atmospherics/pipe/simple/hidden/scrubbers,
-/obj/effect/floor_decal/corner/paleblue{
+/obj/floor_decal/corner/paleblue{
 	dir = 9
 	},
 /turf/simulated/floor/tiled/white,
@@ -2515,7 +2515,7 @@
 /turf/simulated/floor/tiled/techfloor/grid,
 /area/map_template/oldlab/station/southairlock)
 "PY" = (
-/obj/effect/floor_decal/techfloor{
+/obj/floor_decal/techfloor{
 	dir = 9
 	},
 /obj/structure/reagent_dispensers/fueltank,
@@ -2561,13 +2561,13 @@
 	dir = 1;
 	pixel_y = -22
 	},
-/obj/effect/floor_decal/corner/paleblue{
+/obj/floor_decal/corner/paleblue{
 	dir = 10
 	},
 /turf/simulated/floor/tiled/white,
 /area/map_template/oldlab/station/hall)
 "Rk" = (
-/obj/effect/floor_decal/techfloor{
+/obj/floor_decal/techfloor{
 	dir = 4
 	},
 /obj/structure/cable/yellow{
@@ -2586,8 +2586,8 @@
 /area/map_template/oldlab/station/xenobio)
 "RA" = (
 /obj/machinery/cooker/grill,
-/obj/effect/floor_decal/corner/red,
-/obj/effect/floor_decal/corner/red{
+/obj/floor_decal/corner/red,
+/obj/floor_decal/corner/red{
 	dir = 1
 	},
 /turf/simulated/floor/tiled/white,
@@ -2601,7 +2601,7 @@
 /obj/machinery/door/firedoor,
 /obj/machinery/atmospherics/pipe/simple/hidden/supply,
 /obj/machinery/atmospherics/pipe/simple/hidden/scrubbers,
-/obj/effect/floor_decal/industrial/hatch/yellow,
+/obj/floor_decal/industrial/hatch/yellow,
 /turf/simulated/floor/tiled/techfloor/grid,
 /area/map_template/oldlab/station/southairlock)
 "RN" = (
@@ -2610,14 +2610,14 @@
 /obj/machinery/light_switch{
 	pixel_y = 25
 	},
-/obj/effect/floor_decal/corner/red,
-/obj/effect/floor_decal/corner/red{
+/obj/floor_decal/corner/red,
+/obj/floor_decal/corner/red{
 	dir = 1
 	},
 /turf/simulated/floor/tiled/white,
 /area/map_template/oldlab/station/breakroom)
 "RX" = (
-/obj/effect/floor_decal/techfloor{
+/obj/floor_decal/techfloor{
 	dir = 4
 	},
 /obj/machinery/power/terminal,
@@ -2644,15 +2644,15 @@
 /obj/machinery/atmospherics/unary/vent_pump/on{
 	dir = 8
 	},
-/obj/effect/floor_decal/corner/red,
-/obj/effect/floor_decal/corner/red{
+/obj/floor_decal/corner/red,
+/obj/floor_decal/corner/red{
 	dir = 1
 	},
 /mob/living/simple_animal/hostile/giant_spider/hunter,
 /turf/simulated/floor/tiled/white,
 /area/map_template/oldlab/station/breakroom)
 "Sk" = (
-/obj/effect/floor_decal/techfloor,
+/obj/floor_decal/techfloor,
 /obj/structure/cable/yellow{
 	d1 = 4;
 	d2 = 8;
@@ -2662,7 +2662,7 @@
 /area/map_template/oldlab/solars)
 "Sp" = (
 /obj/machinery/atmospherics/pipe/simple/hidden/scrubbers,
-/obj/effect/floor_decal/corner/paleblue{
+/obj/floor_decal/corner/paleblue{
 	dir = 9
 	},
 /obj/structure/closet/hydrant{
@@ -2672,13 +2672,12 @@
 /area/map_template/oldlab/station/hall)
 "SB" = (
 /obj/structure/table/steel,
-/obj/machinery/reagent_temperature/cooler,
 /turf/simulated/floor/tiled/white,
 /area/map_template/oldlab/station/chem)
 "SL" = (
 /obj/machinery/cooker/oven,
-/obj/effect/floor_decal/corner/red,
-/obj/effect/floor_decal/corner/red{
+/obj/floor_decal/corner/red,
+/obj/floor_decal/corner/red{
 	dir = 1
 	},
 /turf/simulated/floor/tiled/white,
@@ -2728,34 +2727,33 @@
 /obj/machinery/atmospherics/unary/vent_scrubber/on{
 	dir = 1
 	},
-/obj/effect/floor_decal/corner/paleblue{
+/obj/floor_decal/corner/paleblue{
 	dir = 9
 	},
 /turf/simulated/floor/tiled/white,
 /area/map_template/oldlab/station/hall)
 "TF" = (
-/obj/effect/wallframe_spawn/reinforced/titanium,
+/obj/wallframe_spawn/reinforced/titanium,
 /obj/machinery/door/blast/shutters{
 	dir = 4;
 	icon_state = "shutter0";
-	id_tag = "exterior_lab_shutters";
-	opacity = 0
+	id_tag = "exterior_lab_shutters"
 	},
-/obj/effect/paint/black,
+/obj/paint/black,
 /turf/simulated/floor/tiled/techfloor/grid,
 /area/map_template/oldlab/station/hall)
 "TS" = (
 /turf/simulated/wall/r_wall/prepainted,
 /area/map_template/oldlab/station/hall)
 "TV" = (
-/obj/effect/floor_decal/techfloor{
+/obj/floor_decal/techfloor{
 	dir = 9
 	},
 /obj/machinery/recharge_station,
 /turf/simulated/floor/tiled/techfloor/grid,
 /area/map_template/oldlab/station/northairlockatmos)
 "TX" = (
-/obj/effect/floor_decal/techfloor{
+/obj/floor_decal/techfloor{
 	dir = 5
 	},
 /obj/machinery/portable_atmospherics/powered/pump/filled,
@@ -2810,8 +2808,8 @@
 "UR" = (
 /obj/structure/table/steel,
 /obj/machinery/microwave,
-/obj/effect/floor_decal/corner/red,
-/obj/effect/floor_decal/corner/red{
+/obj/floor_decal/corner/red,
+/obj/floor_decal/corner/red{
 	dir = 1
 	},
 /turf/simulated/floor/tiled/white,
@@ -2824,7 +2822,7 @@
 /obj/machinery/light/small{
 	dir = 8
 	},
-/obj/effect/floor_decal/techfloor{
+/obj/floor_decal/techfloor{
 	dir = 8
 	},
 /obj/machinery/atmospherics/unary/vent_pump/high_volume/airlock{
@@ -2854,7 +2852,7 @@
 	dir = 4
 	},
 /obj/machinery/door/firedoor,
-/obj/effect/floor_decal/industrial/hatch/yellow,
+/obj/floor_decal/industrial/hatch/yellow,
 /turf/simulated/floor/tiled/white,
 /area/map_template/oldlab/station/hall)
 "Vs" = (
@@ -2865,15 +2863,15 @@
 /area/map_template/oldlab/station/chem)
 "VC" = (
 /obj/structure/table/steel,
-/obj/item/weapon/reagent_containers/glass/beaker/vial/random{
+/obj/item/reagent_containers/glass/beaker/vial/random{
 	pixel_x = 3;
 	pixel_y = 7
 	},
-/obj/item/weapon/reagent_containers/glass/beaker/vial/random{
+/obj/item/reagent_containers/glass/beaker/vial/random{
 	pixel_x = 9;
 	pixel_y = 6
 	},
-/obj/item/weapon/reagent_containers/glass/beaker/vial/random,
+/obj/item/reagent_containers/glass/beaker/vial/random,
 /turf/simulated/floor/tiled/white,
 /area/map_template/oldlab/station/chem)
 "VK" = (
@@ -2899,11 +2897,11 @@
 /obj/machinery/light{
 	dir = 1
 	},
-/obj/effect/floor_decal/industrial/outline/yellow,
+/obj/floor_decal/industrial/outline/yellow,
 /turf/simulated/floor/tiled/white,
 /area/map_template/oldlab/station/hall)
 "Wo" = (
-/obj/effect/floor_decal/techfloor{
+/obj/floor_decal/techfloor{
 	dir = 4
 	},
 /obj/structure/cable/yellow{
@@ -2916,7 +2914,7 @@
 /turf/simulated/floor/tiled/techfloor/grid,
 /area/map_template/oldlab/station/southairlock)
 "WG" = (
-/obj/effect/floor_decal/techfloor{
+/obj/floor_decal/techfloor{
 	dir = 4
 	},
 /obj/machinery/vending/tool{
@@ -2928,7 +2926,7 @@
 /turf/simulated/wall/r_wall/prepainted,
 /area/map_template/oldlab/solars)
 "WM" = (
-/obj/effect/floor_decal/techfloor,
+/obj/floor_decal/techfloor,
 /obj/structure/table/steel,
 /obj/item/modular_computer/laptop,
 /turf/simulated/floor/tiled/techfloor/grid,
@@ -2949,7 +2947,7 @@
 /obj/structure/table/rack,
 /obj/random/tool,
 /obj/random/tool,
-/obj/item/weapon/storage/belt/utility/full,
+/obj/item/storage/belt/utility/full,
 /obj/item/device/suit_cooling_unit,
 /obj/random/technology_scanner,
 /obj/random/tool,
@@ -2980,7 +2978,7 @@
 /area/map_template/oldlab/station/living)
 "Yh" = (
 /obj/machinery/power/solar_control,
-/obj/effect/floor_decal/techfloor{
+/obj/floor_decal/techfloor{
 	dir = 5
 	},
 /obj/structure/cable/yellow,
@@ -2994,7 +2992,7 @@
 /turf/simulated/floor/tiled/white,
 /area/map_template/oldlab/station/xenobio)
 "Yp" = (
-/obj/effect/floor_decal/techfloor{
+/obj/floor_decal/techfloor{
 	dir = 1
 	},
 /obj/machinery/light{
@@ -3017,7 +3015,7 @@
 /turf/simulated/floor/tiled/white,
 /area/map_template/oldlab/station/chem)
 "YW" = (
-/obj/effect/floor_decal/techfloor{
+/obj/floor_decal/techfloor{
 	dir = 6
 	},
 /obj/structure/reagent_dispensers/acid{
@@ -3046,7 +3044,7 @@
 /turf/simulated/floor/tiled/white,
 /area/map_template/oldlab/station/hall)
 "Zf" = (
-/obj/effect/floor_decal/techfloor{
+/obj/floor_decal/techfloor{
 	dir = 4
 	},
 /obj/machinery/alarm{
@@ -3060,7 +3058,7 @@
 	dir = 1
 	},
 /obj/machinery/light,
-/obj/effect/floor_decal/corner/paleblue{
+/obj/floor_decal/corner/paleblue{
 	dir = 10
 	},
 /turf/simulated/floor/tiled/white,
@@ -3091,7 +3089,7 @@
 /area/map_template/oldlab/solars)
 
 (1,1,1) = {"
-Xx
+MB
 Xx
 Xx
 Xx

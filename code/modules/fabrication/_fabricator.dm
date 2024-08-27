@@ -3,8 +3,8 @@
 	desc = "It produces common day to day items from a variety of materials."
 	icon = 'icons/obj/machines/fabricators/autolathe.dmi'
 	icon_state = "autolathe"
-	density = 1
-	anchored = 1
+	density = TRUE
+	anchored = TRUE
 	idle_power_usage = 10
 	active_power_usage = 2000
 	clicksound = "keyboard"
@@ -13,10 +13,12 @@
 	stat_immune = 0
 	wires =           /datum/wires/fabricator
 	base_type =       /obj/machinery/fabricator
-	construct_state = /decl/machine_construction/default/panel_closed
+	construct_state = /singleton/machine_construction/default/panel_closed
+
+	machine_name = "autolathe"
+	machine_desc = "Autolathes can produce a very wide array of useful objects from raw materials."
 
 	var/has_recycler = TRUE
-	var/list/material_overlays = list()
 	var/base_icon_state = "autolathe"
 	var/image/panel_image
 
@@ -38,7 +40,7 @@
 	var/fab_status_flags = 0
 	var/mat_efficiency = 1.1
 	var/build_time_multiplier = 1
-	var/global/list/stored_substances_to_names = list()
+	var/static/list/stored_substances_to_names = list()
 
 /obj/machinery/fabricator/Destroy()
 	QDEL_NULL(currently_building)
@@ -74,7 +76,7 @@
 				var/datum/reagent/reg = mat
 				stored_substances_to_names[mat] = initial(reg.name)
 
-/obj/machinery/fabricator/state_transition(var/decl/machine_construction/default/new_state)
+/obj/machinery/fabricator/state_transition(singleton/machine_construction/default/new_state)
 	. = ..()
 	if(istype(new_state))
 		updateUsrDialog()
@@ -88,36 +90,33 @@
 	return ..()
 
 /obj/machinery/fabricator/proc/is_functioning()
-	. = use_power != POWER_USE_OFF && !(stat & NOPOWER) && !(stat & BROKEN) && !(fab_status_flags & FAB_DISABLED)
+	. = use_power != POWER_USE_OFF && is_powered() && !MACHINE_IS_BROKEN(src) && !(fab_status_flags & FAB_DISABLED)
 
-/obj/machinery/fabricator/Process(var/wait)
+/obj/machinery/fabricator/Process(wait)
 	..()
 	if(use_power == POWER_USE_ACTIVE && (fab_status_flags & FAB_BUSY))
 		update_current_build(wait)
 
 /obj/machinery/fabricator/on_update_icon()
-	overlays.Cut()
-	if(stat & NOPOWER)
-		icon_state = "[base_icon_state]_d"
-	else if(currently_building)
-		icon_state = "[base_icon_state]_p"
-	else
-		icon_state = base_icon_state
-
-	var/list/new_overlays = material_overlays.Copy()
+	ClearOverlays()
 	if(panel_open)
-		new_overlays += panel_image
-	overlays = new_overlays
+		AddOverlays("[icon_state]_panel")
+	if(currently_building)
+		AddOverlays(emissive_appearance(icon, "[icon_state]_lights_working"))
+		AddOverlays("[icon_state]_lights_working")
+	else if(is_powered())
+		AddOverlays(emissive_appearance(icon, "[icon_state]_lights"))
+		AddOverlays("[icon_state]_lights")
 
-/obj/machinery/fabricator/proc/remove_mat_overlay(var/mat_overlay)
-	material_overlays -= mat_overlay
+/obj/machinery/fabricator/proc/remove_mat_overlay(mat_overlay)
+	CutOverlays(mat_overlay)
 	update_icon()
 
 //Updates overall lathe storage size.
 /obj/machinery/fabricator/RefreshParts()
 	..()
-	var/mb_rating = Clamp(total_component_rating_of_type(/obj/item/weapon/stock_parts/matter_bin), 0, 10)
-	var/man_rating = Clamp(total_component_rating_of_type(/obj/item/weapon/stock_parts/manipulator), 0.5, 3.5)
+	var/mb_rating = clamp(total_component_rating_of_type(/obj/item/stock_parts/matter_bin), 0, 10)
+	var/man_rating = clamp(total_component_rating_of_type(/obj/item/stock_parts/manipulator), 0.5, 3.5)
 	storage_capacity = list()
 	for(var/mat in base_storage_capacity)
 		storage_capacity[mat] = mb_rating * base_storage_capacity[mat]

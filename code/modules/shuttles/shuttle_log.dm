@@ -28,7 +28,7 @@
 	registered += module
 
 /datum/shuttle_log/proc/unregister(datum/nano_module/module)
-	registered -= module	
+	registered -= module
 
 /datum/shuttle_log/proc/update_registred()
 	for(var/datum/nano_module/module in registered)
@@ -106,7 +106,7 @@
 		current_mission.stage = SHUTTLE_MISSION_QUEUED
 		current_mission = null //We'll reset this at the end.
 	var/index = queued_missions.Find(mission)
-	var/new_index = Clamp(index - relative_position, 1, length(queued_missions))
+	var/new_index = clamp(index - relative_position, 1, length(queued_missions))
 	queued_missions -= mission
 	queued_missions.Insert(new_index, mission)
 	process_queue()
@@ -116,8 +116,8 @@
 		if(given_id == mission.ID)
 			return mission
 
-/datum/shuttle_log/proc/handle_move(obj/effect/shuttle_landmark/origin, obj/effect/shuttle_landmark/destination)
-	var/obj/effect/shuttle_landmark/home = SSshuttle.get_landmark(home_base)
+/datum/shuttle_log/proc/handle_move(obj/shuttle_landmark/origin, obj/shuttle_landmark/destination)
+	var/obj/shuttle_landmark/home = SSshuttle.get_landmark(home_base)
 	if(origin == home)
 		shuttle_launched()
 	if(destination == home)

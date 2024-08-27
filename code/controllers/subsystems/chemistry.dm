@@ -2,78 +2,93 @@ SUBSYSTEM_DEF(chemistry)
 	name = "Chemistry"
 	priority = SS_PRIORITY_CHEMISTRY
 	init_order = SS_INIT_CHEMISTRY
-	wait = 5
+	runlevels = RUNLEVEL_LOBBY | RUNLEVELS_GAME
+	wait = 0.5 SECONDS
 
-	var/list/active_holders =               list()
-	var/list/chemical_reactions =           list()
-	var/list/chemical_reactions_by_id =     list()
-	var/list/chemical_reactions_by_result = list()
-	var/list/processing_holders =           list()
+	/// A map of (type = list(...reactions)) where type is the first reagent of a reaction
+	var/static/list/id_reactions_map = list()
 
-	var/list/random_chem_prototypes =       list()
+	/// A map of (type = list(...reactions)) where type is what the reactions create
+	var/static/list/product_reactions_map = list()
 
-/datum/controller/subsystem/chemistry/stat_entry()
-	..("AH:[active_holders.len]")
+	/// A map of (type = prototype instance) of randomized chems in typesof(/datum/reagent/random)
+	var/static/list/datum/reagent/random/random_chem_prototypes = list()
 
-/datum/controller/subsystem/chemistry/Initialize()
+	/// The waiting list of reagents datums to process reactions for
+	var/static/list/datum/reagents/active_reagents = list()
 
-	// Init reaction list.
-	//Chemical Reactions - Initialises all /datum/chemical_reaction into a list
-	// It is filtered into multiple lists within a list.
-	// For example:
-	// chemical_reaction_list["phoron"] is a list of all reactions relating to phoron
-	// Note that entries in the list are NOT duplicated. So if a reaction pertains to
-	// more than one chemical it will still only appear in only one of the sublists.
+	/// The current queue of reagents datums being processed
+	var/static/list/datum/reagents/queue = list()
 
-	for(var/path in subtypesof(/datum/chemical_reaction))
-		var/datum/chemical_reaction/D = new path()
-		chemical_reactions += D
-		if(!chemical_reactions_by_result[D.result])
-			chemical_reactions_by_result[D.result] = list()
-		chemical_reactions_by_result[D.result] += D
-		if(D.required_reagents && D.required_reagents.len)
-			var/reagent_id = D.required_reagents[1]
-			if(!chemical_reactions_by_id[reagent_id])
-				chemical_reactions_by_id[reagent_id] = list()
-			chemical_reactions_by_id[reagent_id] += D
-	. = ..()
+	/// If the queue was not finished, the index to read from on the next run
+	var/static/saved_index
 
-/datum/controller/subsystem/chemistry/fire(resumed = FALSE)
-	if (!resumed)
-		processing_holders = active_holders.Copy()
 
-	while(processing_holders.len)
-		var/datum/reagents/holder = processing_holders[processing_holders.len]
-		processing_holders.len--
+/datum/controller/subsystem/chemistry/UpdateStat(time)
+	if (PreventUpdateStat(time))
+		return ..()
+	..("Reaction Queue: [length(active_reagents)]")
 
-		if (QDELETED(holder))
-			active_holders -= holder
-			log_debug("SSchemistry: QDELETED holder found in processing list!")
-			if(MC_TICK_CHECK)
-				return
+
+/datum/controller/subsystem/chemistry/Initialize(start_uptime)
+	for (var/singleton/reaction/reaction as anything in GET_SINGLETON_SUBTYPE_LIST(/singleton/reaction))
+		var/result = reaction.result
+		if (!product_reactions_map[result])
+			product_reactions_map[result] = list()
+		product_reactions_map[result] += reaction
+		if (!length(reaction.required_reagents))
 			continue
+		var/id = reaction.required_reagents[1]
+		if (!id_reactions_map[id])
+			id_reactions_map[id] = list()
+		id_reactions_map[id] += reaction
 
-		if (!holder.process_reactions())
-			active_holders -= holder
 
-		if (MC_TICK_CHECK)
-			return
+/datum/controller/subsystem/chemistry/Recover()
+	QDEL_NULL_LIST(active_reagents)
+	active_reagents = list()
+	queue.Cut()
 
-/datum/controller/subsystem/chemistry/proc/get_prototype(given_type, temperature)
-	if(!ispath(given_type, /datum/reagent/random))
+
+/datum/controller/subsystem/chemistry/fire(resumed, no_mc_tick)
+	if (!resumed)
+		queue = active_reagents.Copy()
+		saved_index = 1
+	var/queue_length = length(queue)
+	if (!queue_length)
 		return
-	var/datum/reagent/random/prototype = random_chem_prototypes[given_type]
-	if(!prototype)
-		prototype = new given_type(null, TRUE)
+	var/datum/reagents/reagents
+	for (var/i = saved_index to queue_length)
+		reagents = queue[i]
+		if (QDELETED(reagents))
+			log_debug("SSchemistry: deleted reagents datum in active set! Info: [reagents?.del_info || "(nulled)"]")
+			active_reagents -= reagents
+		if (!reagents.process_reactions())
+			active_reagents -= reagents
+		if (no_mc_tick)
+			CHECK_TICK
+		else if (MC_TICK_CHECK)
+			saved_index = i + 1
+			return
+	queue.Cut()
+
+
+/datum/controller/subsystem/chemistry/proc/get_prototype(path, temperature)
+	if (!ispath(path, /datum/reagent/random))
+		return
+	var/datum/reagent/random/prototype = random_chem_prototypes[path]
+	if (!prototype)
+		prototype = new path (null, TRUE)
 		prototype.randomize_data(temperature)
-		random_chem_prototypes[given_type] = prototype
-	if(temperature && !prototype.stable_at_temperature(temperature))
+		random_chem_prototypes[path] = prototype
+	if (!isnull(temperature) && !prototype.stable_at_temperature(temperature))
 		return
 	return prototype
 
-/datum/controller/subsystem/chemistry/proc/get_random_chem(var/only_if_unique = FALSE, temperature = T20C)
-	for(var/type in typesof(/datum/reagent/random))
-		if(only_if_unique && random_chem_prototypes[type])
+
+/datum/controller/subsystem/chemistry/proc/get_random_chem(only_if_unique, temperature = T20C)
+	for (var/type in shuffle(typesof(/datum/reagent/random), TRUE))
+		if (only_if_unique && random_chem_prototypes[type])
 			continue
-		if(get_prototype(type, temperature)) //returns truthy if it's valid for the given temperature
+		if (get_prototype(type, temperature))
 			return type

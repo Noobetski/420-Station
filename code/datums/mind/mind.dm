@@ -49,7 +49,10 @@
 	var/has_been_rev = 0//Tracks if this mind has been a rev or not
 
 	var/faction 			//associated faction
-	var/datum/changeling/changeling		//changeling holder
+	var/datum/changeling/changeling		//changeling holde
+
+	///String. Last spoken message.
+	var/last_words
 
 	var/rev_cooldown = 0
 
@@ -61,12 +64,15 @@
 
 	var/list/initial_email_login = list("login" = "", "password" = "")
 
-/datum/mind/New(var/key)
+	var/list/known_mobs = list()
+
+/datum/mind/New(key)
 	src.key = key
 	..()
 
 /datum/mind/Destroy()
 	QDEL_NULL_LIST(memories)
+	QDEL_NULL_LIST(goals)
 	SSticker.minds -= src
 	. = ..()
 
@@ -88,7 +94,7 @@
 	current = new_character		//link ourself to our new body
 	new_character.mind = src	//and link our new body to ourself
 
-	if(learned_spells && learned_spells.len)
+	if(learned_spells && length(learned_spells))
 		restore_spells(new_character)
 
 	if(changeling)
@@ -114,7 +120,7 @@
 	out += "</table><hr>"
 	out += "<b>Objectives</b></br>"
 
-	if(objectives && objectives.len)
+	if(objectives && length(objectives))
 		var/num = 1
 		for(var/datum/objective/O in objectives)
 			out += "<b>Objective #[num]:</b> [O.explanation_text] "
@@ -130,11 +136,6 @@
 	out += "<b>Ambitions:</b> [ambition ? ambition.description : "None"] <a href='?src=\ref[src];amb_edit=\ref[src]'>\[edit\]</a></br>"
 	show_browser(usr, out, "window=edit_memory[src]")
 
-/datum/mind/proc/get_goal_from_href(var/href)
-	var/ind = isnum(href) ? href : text2num(href)
-	if(ind > 0 && ind <= LAZYLEN(goals))
-		return goals[ind]
-
 /datum/mind/Topic(href, href_list)
 
 	var/is_admin =   FALSE
@@ -145,14 +146,16 @@
 	if(href_list["add_goal"])
 
 		var/mob/caller = locate(href_list["add_goal_caller"])
-		if(caller && caller == current) can_modify = TRUE
+		if(!isghost(usr) && caller && caller == current) can_modify = TRUE
 
 		if(can_modify)
-			if(is_admin)
-				log_admin("[key_name_admin(usr)] added a random goal to [key_name(current)].")
-			var/did_generate_goal = generate_goals(assigned_job, TRUE, 1)
-			if(did_generate_goal)
-				to_chat(current, SPAN_NOTICE("You have received a new goal. Use <b>Show Goals</b> to view it."))
+			var/did_generate_goal = generate_goals(assigned_job, TRUE, 1, bypass_goal_checks = is_admin)
+			if(did_generate_goal && goals)
+				var/datum/goal/goal = goals[LAZYLEN(goals)]
+				to_chat(current, SPAN_NOTICE("<b>You have received a new goal:</b> '[goal.summarize(FALSE, FALSE)]'."))
+				if(usr != current)
+					to_chat(usr, SPAN_NOTICE("<b>You have added a new goal to \the [current]:</b> '[goal.summarize(FALSE, FALSE)]'."))
+					log_admin("[key_name_admin(usr)] added a random goal to [key_name(current)].")
 		return TRUE // To avoid 'you are not an admin' spam.
 
 	if(href_list["remove_memory"])
@@ -161,36 +164,38 @@
 		return TRUE
 
 	if(href_list["abandon_goal"])
-		var/datum/goal/goal = get_goal_from_href(href_list["abandon_goal"])
+		var/datum/goal/goal = locate(href_list["abandon_goal"])
 
 		var/mob/caller = locate(href_list["abandon_goal_caller"])
-		if(caller && caller == current) can_modify = TRUE
+		if(!isghost(usr) && caller && caller == current) can_modify = TRUE
 
-		if(goal && can_modify)
-			if(usr == current)
-				to_chat(current, SPAN_NOTICE("<b>You have abandoned your goal:</b> '[goal.summarize(FALSE, FALSE)]'."))
-			else
-				to_chat(usr, SPAN_NOTICE("<b>You have removed a goal from \the [current]:</b> '[goal.summarize(FALSE, FALSE)]'."))
-				to_chat(current, SPAN_NOTICE("<b>A goal has been removed:</b> '[goal.summarize(FALSE, FALSE)]'."))
-			qdel(goal)
+		if(can_modify && goal && (goal in goals))
+			if(delete_goal(assigned_job, goal, is_admin))
+				if(usr == current)
+					to_chat(current, SPAN_NOTICE("<b>You have abandoned your goal:</b> '[goal.summarize(FALSE, FALSE)]'."))
+				else
+					to_chat(usr, SPAN_NOTICE("<b>You have removed a goal from \the [current]:</b> '[goal.summarize(FALSE, FALSE)]'."))
+					to_chat(current, SPAN_NOTICE("<b>A goal has been removed:</b> '[goal.summarize(FALSE, FALSE)]'."))
+					log_admin("[key_name_admin(usr)] removed a goal from [key_name(current)].")
 		return TRUE
 
 	if(href_list["reroll_goal"])
-		var/datum/goal/goal = get_goal_from_href(href_list["reroll_goal"])
+		var/datum/goal/goal = locate(href_list["reroll_goal"])
 
 		var/mob/caller = locate(href_list["reroll_goal_caller"])
-		if(caller && caller == current) can_modify = TRUE
+		if(!isghost(usr) && caller && caller == current) can_modify = TRUE
 
-		if(goal && (goal in goals) && can_modify)
-			qdel(goal)
-			generate_goals(assigned_job, TRUE, 1)
-			if(goals)
-				goal = goals[LAZYLEN(goals)]
-				if(usr == current)
-					to_chat(usr, SPAN_NOTICE("<b>You have re-rolled a goal. Your new goal is:</b> '[goal.summarize(FALSE, FALSE)]'."))
-				else
-					to_chat(usr, SPAN_NOTICE("<b>You have re-rolled a goal for \the [current]. Their new goal is:</b> '[goal.summarize(FALSE, FALSE)]'."))
-					to_chat(current, SPAN_NOTICE("<b>A goal has been re-rolled. Your new goal is:</b> '[goal.summarize(FALSE, FALSE)]'."))
+		if(can_modify && goal && (goal in goals))
+			if(generate_goals(assigned_job, TRUE, 1, bypass_goal_checks = TRUE))
+				delete_goal(assigned_job, goal, TRUE)
+				if(goals)
+					goal = goals[LAZYLEN(goals)]
+					if(usr == current)
+						to_chat(usr, SPAN_NOTICE("<b>You have re-rolled a goal. Your new goal is:</b> '[goal.summarize(FALSE, FALSE)]'."))
+					else
+						to_chat(usr, SPAN_NOTICE("<b>You have re-rolled a goal for \the [current]. Their new goal is:</b> '[goal.summarize(FALSE, FALSE)]'."))
+						to_chat(current, SPAN_NOTICE("<b>A goal has been re-rolled. Your new goal is:</b> '[goal.summarize(FALSE, FALSE)]'."))
+						log_admin("[key_name_admin(usr)] rerolled a goal for [key_name(current)].")
 		return TRUE
 
 	if(!is_admin) return
@@ -206,10 +211,20 @@
 	if(href_list["add_antagonist"])
 		var/datum/antagonist/antag = GLOB.all_antag_types_[href_list["add_antagonist"]]
 		if(antag)
+			if(!current)
+				to_chat(usr, SPAN_WARNING("\The [src] could not be made into a [antag.role_text]! They do not have a mob."))
+				return
+			if(src in antag.current_antagonists)
+				to_chat(usr, SPAN_WARNING("\The [src] is already a [antag.role_text]!"))
+				return
+			var/result = antag.can_become_antag_detailed(src, TRUE)
+			if(result)
+				to_chat(usr, SPAN_WARNING("\The [src] could not be made into a [antag.role_text]! [result]."))
+				return
 			if(antag.add_antagonist(src, 1, 1, 0, 1, 1)) // Ignore equipment and role type for this.
 				log_admin("[key_name_admin(usr)] made [key_name(src)] into a [antag.role_text].")
 			else
-				to_chat(usr, "<span class='warning'>[src] could not be made into a [antag.role_text]!</span>")
+				to_chat(usr, SPAN_WARNING("\The [src] could not be made into a [antag.role_text]!"))
 
 	else if(href_list["remove_antagonist"])
 		var/datum/antagonist/antag = GLOB.all_antag_types_[href_list["remove_antagonist"]]
@@ -253,15 +268,15 @@
 				if(!ambition)
 					ambition = new /datum/goal/ambition(mind)
 				ambition.description = new_ambition
-				to_chat(mind.current, "<span class='warning'>Your ambitions have been changed by higher powers, they are now: [ambition.description]</span>")
+				to_chat(mind.current, SPAN_WARNING("Your ambitions have been changed by higher powers, they are now: [ambition.description]"))
 				log_and_message_admins("made [key_name(mind.current)]'s ambitions be '[ambition.description]'.")
 			else
-				to_chat(mind.current, "<span class='warning'>Your ambitions have been unmade by higher powers.</span>")
+				to_chat(mind.current, SPAN_WARNING("Your ambitions have been unmade by higher powers."))
 				log_and_message_admins("has cleared [key_name(mind.current)]'s ambitions.")
 				if(ambition)
 					qdel(ambition)
 		else
-			to_chat(usr, "<span class='warning'>The mind has ceased to be.</span>")
+			to_chat(usr, SPAN_WARNING("The mind has ceased to be."))
 
 	else if (href_list["obj_edit"] || href_list["obj_add"])
 		var/datum/objective/objective
@@ -388,60 +403,36 @@
 	else if(href_list["implant"])
 		var/mob/living/carbon/human/H = current
 
-		BITSET(H.hud_updateflag, IMPLOYAL_HUD)   // updates that players HUD images so secHUD's pick up they are implanted or not.
+		SET_BIT(H.hud_updateflag, IMPLOYAL_HUD)   // updates that players HUD images so secHUD's pick up they are implanted or not.
 
 		switch(href_list["implant"])
 			if("remove")
-				for(var/obj/item/weapon/implant/loyalty/I in H.contents)
+				for(var/obj/item/implant/loyalty/I in H.contents)
 					for(var/obj/item/organ/external/organs in H.organs)
 						if(I in organs.implants)
 							qdel(I)
 							break
-				to_chat(H, "<span class='notice'><font size =3><B>Your loyalty implant has been deactivated.</B></font></span>")
+				to_chat(H, SPAN_NOTICE(FONT_LARGE("<B>Your loyalty implant has been deactivated.</B>")))
 				log_admin("[key_name_admin(usr)] has de-loyalty implanted [current].")
 			if("add")
-				to_chat(H, "<span class='danger'><font size =3>You somehow have become the recepient of a loyalty transplant, and it just activated!</font></span>")
+				to_chat(H, SPAN_DANGER(FONT_LARGE("You somehow have become the recepient of a loyalty transplant, and it just activated!")))
 				H.implant_loyalty(H, override = TRUE)
 				log_admin("[key_name_admin(usr)] has loyalty implanted [current].")
-			else
 	else if (href_list["silicon"])
-		BITSET(current.hud_updateflag, SPECIALROLE_HUD)
+		SET_BIT(current.hud_updateflag, SPECIALROLE_HUD)
 		switch(href_list["silicon"])
 
 			if("unemag")
 				var/mob/living/silicon/robot/R = current
 				if (istype(R))
-					R.emagged = 0
-					if (R.activated(R.module.emag))
-						R.module_active = null
-					if(R.module_state_1 == R.module.emag)
-						R.module_state_1 = null
-						R.module.emag.forceMove(null)
-					else if(R.module_state_2 == R.module.emag)
-						R.module_state_2 = null
-						R.module.emag.forceMove(null)
-					else if(R.module_state_3 == R.module.emag)
-						R.module_state_3 = null
-						R.module.emag.forceMove(null)
+					R.emagged = FALSE
 					log_admin("[key_name_admin(usr)] has unemag'ed [R].")
 
 			if("unemagcyborgs")
 				if (istype(current, /mob/living/silicon/ai))
 					var/mob/living/silicon/ai/ai = current
 					for (var/mob/living/silicon/robot/R in ai.connected_robots)
-						R.emagged = 0
-						if (R.module)
-							if (R.activated(R.module.emag))
-								R.module_active = null
-							if(R.module_state_1 == R.module.emag)
-								R.module_state_1 = null
-								R.module.emag.forceMove(null)
-							else if(R.module_state_2 == R.module.emag)
-								R.module_state_2 = null
-								R.module.emag.forceMove(null)
-							else if(R.module_state_3 == R.module.emag)
-								R.module_state_3 = null
-								R.module.emag.forceMove(null)
+						R.emagged = FALSE
 					log_admin("[key_name_admin(usr)] has unemag'ed [ai]'s Cyborgs.")
 
 	else if (href_list["common"])
@@ -455,7 +446,7 @@
 				if (usr.client.holder.rights & R_FUN)
 					var/obj/item/device/uplink/suplink = find_syndicate_uplink()
 					if(!suplink)
-						to_chat(usr, "<span class='warning'>Failed to find an uplink.</span>")
+						to_chat(usr, SPAN_WARNING("Failed to find an uplink."))
 						return
 					var/crystals = suplink.uses
 					crystals = input("Amount of telecrystals for [key]","Operative uplink", crystals) as null|num
@@ -465,7 +456,7 @@
 
 	else if (href_list["obj_announce"])
 		var/obj_count = 1
-		to_chat(current, "<span class='notice'>Your current objectives:</span>")
+		to_chat(current, SPAN_NOTICE("Your current objectives:"))
 		for(var/datum/objective/objective in objectives)
 			to_chat(current, "<B>Objective #[obj_count]</B>: [objective.explanation_text]")
 			obj_count++
@@ -510,7 +501,7 @@
 	special_role =    null
 	role_alt_title =  null
 	assigned_job =    null
-	//faction =       null //Uncommenting this causes a compile error due to 'undefined type', fucked if I know.
+	faction =		  MOB_FACTION_NEUTRAL
 	changeling =      null
 	initial_account = null
 	objectives =      list()
@@ -518,6 +509,10 @@
 	has_been_rev =    0
 	rev_cooldown =    0
 	brigged_since =   -1
+
+/datum/mind/proc/add_known_mob(mob/M)
+	if(ismob(M))
+		known_mobs += M
 
 //Antagonist role check
 /mob/living/proc/check_special_role(role)
@@ -574,7 +569,7 @@
 	..()
 	mind.assigned_role = "Animal"
 
-/mob/living/simple_animal/corgi/mind_initialize()
+/mob/living/simple_animal/passive/corgi/mind_initialize()
 	..()
 	mind.assigned_role = "Corgi"
 

@@ -1,11 +1,13 @@
 /mob
-	density = 1
+	density = TRUE
 	plane = DEFAULT_PLANE
 	layer = MOB_LAYER
 
-	appearance_flags = PIXEL_SCALE
+	appearance_flags = DEFAULT_APPEARANCE_FLAGS | PIXEL_SCALE
 	animate_movement = 2
 	movable_flags = MOVABLE_FLAG_PROXMOVE
+
+	blocks_emissive = EMISSIVE_BLOCK_GENERIC
 
 	virtual_mob = /mob/observer/virtual/mob
 
@@ -57,7 +59,6 @@
 	var/obj/screen/gun/item/item_use_icon = null
 	var/obj/screen/gun/radio/radio_use_icon = null
 	var/obj/screen/gun/move/gun_move_icon = null
-	var/obj/screen/gun/run/gun_run_icon = null
 	var/obj/screen/gun/mode/gun_setting_icon = null
 
 	var/obj/screen/movable/ability_master/ability_master = null
@@ -82,19 +83,21 @@
 	var/next_move = null
 	var/hand = null
 	var/real_name = null
+	var/fake_name = null
 
 	var/bhunger = 0			//Carbon
 
 	var/druggy = 0			//Carbon
-	var/confused = 0		//Carbon
+	/// Positive Integer. The mob's current confusion level. Ticks down every `Fire()` in SSMobs. See `set_confused()`, `mod_confused()`, `clear_confused()`, and `is_confused()`.
+	VAR_PRIVATE/confused = 0
 	var/sleeping = 0		//Carbon
-	var/resting = 0			//Carbon
+	var/resting = FALSE			//Carbon
 	var/lying = 0
 	var/lying_prev = 0
 
 	var/radio_interrupt_cooldown = 0
 
-	var/unacidable = 0
+	var/unacidable = FALSE
 	var/list/pinned = list()            // List of things pinning this creature to walls (see living_defense.dm)
 	var/list/embedded = list()          // Embedded items, since simple mobs don't have organs.
 	var/list/languages = list()         // For speaking/listening.
@@ -116,24 +119,22 @@
 	var/shakecamera = 0
 	var/a_intent = I_HELP//Living
 
-	var/decl/move_intent/move_intent = /decl/move_intent/walk
-	var/list/move_intents = list(/decl/move_intent/walk)
+	var/singleton/move_intent/move_intent = /singleton/move_intent/walk
+	var/list/move_intents = list(/singleton/move_intent/walk)
 
-	var/decl/move_intent/default_walk_intent
-	var/decl/move_intent/default_run_intent
+	var/singleton/move_intent/default_walk_intent
+	var/singleton/move_intent/default_run_intent
 
 	var/obj/buckled = null//Living
 	var/obj/item/l_hand = null//Living
 	var/obj/item/r_hand = null//Living
-	var/obj/item/weapon/back = null//Human/Monkey
-	var/obj/item/weapon/storage/s_active = null//Carbon
+	var/obj/item/back = null//Human/Monkey
+	var/obj/item/storage/s_active = null//Carbon
 	var/obj/item/clothing/mask/wear_mask = null//Carbon
 
 	var/list/grabbed_by = list()
 
 	var/in_throw_mode = 0
-
-	var/inertia_dir = 0
 
 //	var/job = null//Living
 
@@ -150,6 +151,7 @@
 	var/voice_name = "unidentifiable voice"
 
 	var/faction = MOB_FACTION_NEUTRAL //Used for checking whether hostile simple animals will attack you, possibly more stuff later
+	var/last_faction = MOB_FACTION_NEUTRAL
 	var/blinded = null
 	var/ear_deaf = null		//Carbon
 
@@ -190,5 +192,6 @@
 
 	var/datum/skillset/skillset = /datum/skillset
 
+	var/pronouns = null
 
 	var/list/additional_vision_handlers = list() //Basically a list of atoms from which additional vision data is retrieved

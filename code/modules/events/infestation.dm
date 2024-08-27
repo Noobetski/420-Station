@@ -31,22 +31,22 @@
 
 	if(!vermin_turfs)
 		log_debug("Vermin infestation failed to find a viable spawn after 3 attempts. Aborting.")
-		kill()
+		kill(TRUE)
 
 	var/list/spawn_types = list()
 	var/max_number
 	vermin = rand(0,2)
 	switch(vermin)
 		if(VERM_MICE)
-			spawn_types = list(/mob/living/simple_animal/mouse) // The base mouse type selects a random color for us
+			spawn_types = list(/mob/living/simple_animal/passive/mouse) // The base mouse type selects a random color for us
 			max_number = 12
 			vermstring = "mice"
 		if(VERM_LIZARDS)
-			spawn_types = list(/mob/living/simple_animal/lizard)
+			spawn_types = list(/mob/living/simple_animal/passive/lizard)
 			max_number = 6
 			vermstring = "lizards"
 		if(VERM_SPIDERS)
-			spawn_types = list(/obj/effect/spider/spiderling)
+			spawn_types = list(/obj/spider/spiderling)
 			max_number = 3
 			vermstring = "spiders"
 
@@ -54,14 +54,14 @@
 		var/num = 0
 		for(var/i = 1 to severity)
 			num += rand(2,max_number)
-		log_and_message_admins("Vermin infestation spawned ([vermstring] x[num]) in \the [location]", location = pick_area_turf(location))
-		while(vermin_turfs.len && num > 0)
+		log_and_message_admins("Vermin infestation spawned ([vermstring] x[num]) in \the [location]", user = null, location = pick_area_turf(location))
+		while(length(vermin_turfs) && num > 0)
 			var/turf/simulated/floor/T = pick(vermin_turfs)
 			vermin_turfs.Remove(T)
 			num--
 
 			var/spawn_type = pick(spawn_types)
-			var/obj/effect/spider/spiderling/S = new spawn_type(T)
+			var/obj/spider/spiderling/S = new spawn_type(T)
 			if(istype(S))
 				S.amount_grown = -1
 
@@ -72,11 +72,11 @@
 	location = pick_area(list(/proc/is_not_space_area, /proc/is_station_area))
 	if(!location)
 		log_debug("Vermin infestation failed to find a viable area. Aborting.")
-		kill()
+		kill(TRUE)
 		return
 
 	var/list/vermin_turfs = get_area_turfs(location, list(/proc/not_turf_contains_dense_objects, /proc/IsTurfAtmosSafe))
-	if(!vermin_turfs.len)
+	if(!length(vermin_turfs))
 		log_debug("Vermin infestation failed to find viable turfs in \the [location].")
 		return
 	return vermin_turfs

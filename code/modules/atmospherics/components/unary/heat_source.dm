@@ -4,16 +4,19 @@
 /obj/machinery/atmospherics/unary/heater
 	name = "gas heating system"
 	desc = "Heats gas when connected to a pipe network."
-	icon = 'icons/obj/Cryogenic2.dmi'
-	icon_state = "heater_0"
-	density = 1
-	anchored = 1
+	icon = 'icons/obj/atmospherics/temperature_machines.dmi'
+	icon_state = "heater"
+	density = TRUE
+	anchored = TRUE
 	use_power = POWER_USE_OFF
 	idle_power_usage = 5			//5 Watts for thermostat related circuitry
 	base_type = /obj/machinery/atmospherics/unary/heater
-	construct_state = /decl/machine_construction/default/panel_closed
+	construct_state = /singleton/machine_construction/default/panel_closed
 	uncreated_component_parts = null
 	stat_immune = 0
+
+	machine_name = "gas heating system"
+	machine_desc = "While active, this machine increases the temperature of a connected gas line to the configured amount. Gas pressure increases with heat."
 
 	var/max_temperature = T20C + 680
 	var/internal_volume = 600	//L
@@ -48,20 +51,25 @@
 
 
 /obj/machinery/atmospherics/unary/heater/on_update_icon()
-	if(node)
-		if(use_power && heating)
-			icon_state = "heater_1"
-		else
-			icon_state = "heater"
-	else
-		icon_state = "heater_0"
-	return
+	ClearOverlays()
+	if(panel_open)
+		AddOverlays("freezer_panel")
+	if(is_powered())
+		AddOverlays(emissive_appearance(icon, "freezer_lights"))
+		AddOverlays("freezer_lights")
+		if(node)
+			if(use_power && heating)
+				AddOverlays(emissive_appearance(icon, "[icon_state]_lights_working"))
+				AddOverlays("[icon_state]_lights_working")
+			else
+				AddOverlays(emissive_appearance(icon, "freezer_lights_standby"))
+				AddOverlays("freezer_lights_standby")
 
 
 /obj/machinery/atmospherics/unary/heater/Process()
 	..()
 
-	if(stat & (NOPOWER|BROKEN) || !use_power)
+	if(inoperable() || !use_power)
 		heating = 0
 		update_icon()
 		return
@@ -81,7 +89,7 @@
 	ui_interact(user)
 	return TRUE
 
-/obj/machinery/atmospherics/unary/heater/ui_interact(mob/user, ui_key = "main", var/datum/nanoui/ui = null, var/force_open = 1)
+/obj/machinery/atmospherics/unary/heater/ui_interact(mob/user, ui_key = "main", datum/nanoui/ui = null, force_open = 1)
 	// this is the data which will be sent to the ui
 	var/data[0]
 	data["on"] = use_power ? 1 : 0
@@ -123,7 +131,7 @@
 		else
 			set_temperature = max(set_temperature + amount, 0)
 	if(href_list["setPower"]) //setting power to 0 is redundant anyways
-		var/new_setting = between(0, text2num(href_list["setPower"]), 100)
+		var/new_setting = clamp(text2num(href_list["setPower"]), 0, 100)
 		set_power_level(new_setting)
 
 	add_fingerprint(usr)
@@ -131,15 +139,15 @@
 //upgrading parts
 /obj/machinery/atmospherics/unary/heater/RefreshParts()
 	..()
-	var/cap_rating = Clamp(total_component_rating_of_type(/obj/item/weapon/stock_parts/capacitor), 1, 20)
-	var/bin_rating = Clamp(total_component_rating_of_type(/obj/item/weapon/stock_parts/matter_bin), 0, 10)
+	var/cap_rating = clamp(total_component_rating_of_type(/obj/item/stock_parts/capacitor), 1, 20)
+	var/bin_rating = clamp(total_component_rating_of_type(/obj/item/stock_parts/matter_bin), 0, 10)
 
 	max_power_rating = initial(max_power_rating) * cap_rating / 2
 	max_temperature = max(initial(max_temperature) - T20C, 0) * ((bin_rating * 4 + cap_rating) / 5) + T20C
 	air_contents.volume = max(initial(internal_volume) - 200, 0) + 200 * bin_rating
 	set_power_level(power_setting)
 
-/obj/machinery/atmospherics/unary/heater/proc/set_power_level(var/new_power_setting)
+/obj/machinery/atmospherics/unary/heater/proc/set_power_level(new_power_setting)
 	power_setting = new_power_setting
 	power_rating = max_power_rating * (power_setting/100)
 

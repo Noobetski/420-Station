@@ -1,6 +1,6 @@
-var/list/all_robolimbs = list()
-var/list/chargen_robolimbs = list()
-var/datum/robolimb/basic_robolimb
+var/global/list/all_robolimbs = list()
+var/global/list/chargen_robolimbs = list()
+var/global/datum/robolimb/basic_robolimb
 
 /proc/populate_robolimb_list()
 	basic_robolimb = new()
@@ -25,6 +25,8 @@ var/datum/robolimb/basic_robolimb
 	var/list/restricted_to = list()
 	var/list/applies_to_part = list() //TODO.
 	var/list/allowed_bodytypes = list(SPECIES_HUMAN, SPECIES_IPC, SPECIES_SKRELL, SPECIES_UNATHI)
+	var/has_screen = FALSE
+	var/display_text
 
 /datum/robolimb/bishop
 	company = "Bishop"
@@ -50,6 +52,7 @@ var/datum/robolimb/basic_robolimb
 	icon = 'icons/mob/human_races/cyberlimbs/bishop/bishop_monitor.dmi'
 	allowed_bodytypes = list(SPECIES_IPC)
 	unavailable_at_fab = 1
+	has_screen = TRUE
 
 /datum/robolimb/hephaestus
 	company = "Hephaestus Industries"
@@ -76,6 +79,7 @@ var/datum/robolimb/basic_robolimb
 	allowed_bodytypes = list(SPECIES_IPC)
 	can_eat = null
 	unavailable_at_fab = 1
+	has_screen = TRUE
 
 /datum/robolimb/zenghu
 	company = "Zeng-Hu"
@@ -114,6 +118,7 @@ var/datum/robolimb/basic_robolimb
 	allowed_bodytypes = list(SPECIES_IPC)
 	can_eat = null
 	unavailable_at_fab = 1
+	has_screen = TRUE
 
 /datum/robolimb/nanotrasen
 	company = "NanoTrasen"
@@ -144,6 +149,7 @@ var/datum/robolimb/basic_robolimb
 	allowed_bodytypes = list(SPECIES_IPC)
 	can_eat = null
 	unavailable_at_fab = 1
+	has_screen = TRUE
 
 /datum/robolimb/morpheus
 	company = "Morpheus"
@@ -192,6 +198,7 @@ var/datum/robolimb/basic_robolimb
 	unavailable_at_fab = 1
 	has_eyes = FALSE
 	allowed_bodytypes = list(SPECIES_IPC)
+	has_screen = TRUE
 
 /datum/robolimb/veymed
 	company = "Vey-Med"
@@ -219,13 +226,13 @@ var/datum/robolimb/basic_robolimb
 	applies_to_part = list(BP_HEAD)
 	unavailable_at_fab = 1
 	allowed_bodytypes = list(SPECIES_IPC)
+	has_screen = TRUE
 
 /datum/robolimb/vox
 	company = "Arkmade"
 	icon = 'icons/mob/human_races/cyberlimbs/vox/primalis.dmi'
 	unavailable_at_fab = 1
 	allowed_bodytypes = list(SPECIES_VOX)
-	species_cannot_use = list(SPECIES_VOX_ARMALIS)
 
 /datum/robolimb/vox/crap
 	company = "Improvised"

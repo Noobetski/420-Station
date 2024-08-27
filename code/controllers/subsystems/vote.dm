@@ -3,7 +3,7 @@ SUBSYSTEM_DEF(vote)
 	wait = 1 SECOND
 	priority = SS_PRIORITY_VOTE
 	flags = SS_NO_TICK_CHECK | SS_KEEP_TIMING
-	runlevels = RUNLEVELS_DEFAULT | RUNLEVEL_LOBBY
+	runlevels = RUNLEVELS_PREGAME | RUNLEVELS_GAME
 
 	var/last_started_time        //To enforce delay between votes.
 	var/antag_added              //Enforces a maximum of one added antag per round.
@@ -15,13 +15,13 @@ SUBSYSTEM_DEF(vote)
 	var/list/voting = list()     //Clients recieving UI updates.
 	var/list/vote_prototypes     //To run checks on whether they are available.
 
-/datum/controller/subsystem/vote/Initialize()
+/datum/controller/subsystem/vote/Initialize(start_uptime)
 	vote_prototypes = list()
 	for(var/vote_type in subtypesof(/datum/vote))
 		var/datum/vote/fake_vote = vote_type
 		if(initial(fake_vote.manual_allowed))
 			vote_prototypes[vote_type] = new vote_type
-	return ..()
+
 
 /datum/controller/subsystem/vote/fire(resumed = 0)
 	if(!active_vote)
@@ -45,8 +45,10 @@ SUBSYSTEM_DEF(vote)
 			for(var/client/C in voting)
 				show_panel(C.mob)
 
-/datum/controller/subsystem/vote/stat_entry()
-	..("Vote:[active_vote ? "[active_vote.name], [active_vote.time_remaining]" : "none"]")
+/datum/controller/subsystem/vote/UpdateStat(time)
+	if (PreventUpdateStat(time))
+		return ..()
+	..("Vote: [active_vote ? "[active_vote.name], [active_vote.time_remaining]" : "None"]")
 
 /datum/controller/subsystem/vote/Recover()
 	last_started_time = SSvote.last_started_time
@@ -67,11 +69,11 @@ SUBSYSTEM_DEF(vote)
 	if(!automatic && (!istype(creator) || !creator.client))
 		return FALSE
 
-	if(last_started_time != null && !(is_admin(creator) || automatic))
+	if(last_started_time != null && !(isadmin(creator) || automatic))
 		var/next_allowed_time = (last_started_time + config.vote_delay)
 		if(next_allowed_time > world.time)
 			return FALSE
-	
+
 	var/datum/vote/new_vote = new vote_type
 	if(!new_vote.setup(creator, automatic))
 		return FALSE
@@ -83,11 +85,10 @@ SUBSYSTEM_DEF(vote)
 /datum/controller/subsystem/vote/proc/interface(client/C)
 	if(!C)
 		return
-	var/admin = is_admin(C)
+	var/admin = isadmin(C)
 	voting |= C
 
 	. = list()
-	. += "<html><head><title>Voting Panel</title></head><body>"
 	if(active_vote)
 		. += active_vote.interface(C.mob)
 		if(admin)
@@ -100,7 +101,7 @@ SUBSYSTEM_DEF(vote)
 			if(vote_datum.can_run(C.mob))
 				. += "[capitalize(vote_datum.name)]"
 			else
-				. += "<font color='grey'>[capitalize(vote_datum.name)] (Disallowed)</font>"
+				. += SPAN_COLOR("grey", "[capitalize(vote_datum.name)] (Disallowed)")
 			. += "</a>"
 			var/toggle = vote_datum.check_toggle()
 			if(admin && toggle)
@@ -108,7 +109,7 @@ SUBSYSTEM_DEF(vote)
 			. += "</li>"
 		. += "</ul><hr>"
 
-	. += "<a href='?src=\ref[src];close=1' style='position:absolute;right:50px'>Close</a></body></html>"
+	. += "<a href='?src=\ref[src];close=1' style='position:absolute;right:50px'>Close</a>"
 	return JOINTEXT(.)
 
 /datum/controller/subsystem/vote/proc/show_panel(mob/user)
@@ -117,8 +118,9 @@ SUBSYSTEM_DEF(vote)
 	if(active_vote)
 		win_x = active_vote.win_x
 		win_y = active_vote.win_y
-	show_browser(user, interface(user.client),"window=vote;size=[win_x]x[win_y]")
-	onclose(user, "vote", src)
+	var/datum/browser/popup = new(user, "vote", "Voting Panel", win_x, win_y)
+	popup.set_content(interface(user.client))
+	popup.open()
 
 /datum/controller/subsystem/vote/proc/close_panel(mob/user)
 	show_browser(user, null, "window=vote")
@@ -126,7 +128,7 @@ SUBSYSTEM_DEF(vote)
 		voting -= user.client
 
 /datum/controller/subsystem/vote/proc/cancel_vote(mob/user)
-	if(!is_admin(user))
+	if(!isadmin(user))
 		return
 	active_vote.report_result() // Will not make announcement, but do any override failure reporting tasks.
 	QDEL_NULL(active_vote)
@@ -166,7 +168,6 @@ SUBSYSTEM_DEF(vote)
 	set waitfor = FALSE
 
 	to_world("World restarting due to vote...")
-	SSstatistics.set_field_details("end_error","restart vote")
 	sleep(50)
 	log_game("Rebooting due to restart vote")
 	world.Reboot()
@@ -180,7 +181,7 @@ SUBSYSTEM_DEF(vote)
 		return 0
 	if(automatic)
 		return (SSticker.mode.addantag_allowed & ADDANTAG_AUTO) && !antag_added
-	if(is_admin(creator))
+	if(isadmin(creator))
 		return SSticker.mode.addantag_allowed & (ADDANTAG_ADMIN|ADDANTAG_PLAYER)
 	else
 		return (SSticker.mode.addantag_allowed & ADDANTAG_PLAYER) && !antag_added

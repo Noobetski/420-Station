@@ -49,7 +49,7 @@
 			var/datum/language/L = all_languages[name_language]
 			if(L)
 				name = L.get_random_name(pick(MALE,FEMALE))
-	if(possible_origins && possible_origins.len)
+	if(possible_origins && length(possible_origins))
 		origin = pick(possible_origins)
 
 	//Generate the
@@ -62,18 +62,22 @@
 		add_to_pool(trading_items, possible_trading_items, force = 1)
 		add_to_pool(wanted_items, possible_wanted_items, force = 1)
 
-/datum/trader/proc/generate_pool(var/list/trading_pool)
-	. = list()
-	for(var/type in trading_pool)
-		var/status = trading_pool[type]
-		if(status & TRADER_THIS_TYPE)
-			. += type
-		if(status & TRADER_SUBTYPES_ONLY)
-			. += subtypesof(type)
-		if(status & TRADER_BLACKLIST)
-			. -= type
-		if(status & TRADER_BLACKLIST_SUB)
-			. -= subtypesof(type)
+
+/datum/trader/proc/generate_pool(list/pool)
+	var/list/result = list()
+	for (var/path in pool)
+		var/status = pool[path]
+		if (GET_FLAGS(status, TRADER_THIS_TYPE) && !is_abstract(path))
+			result += path
+		if (GET_FLAGS(status, TRADER_SUBTYPES_ONLY))
+			result += subtypesof_real(path)
+	for (var/path in result)
+		var/status = pool[path]
+		if (GET_FLAGS(status, TRADER_BLACKLIST))
+			result -= path
+		if (GET_FLAGS(status, TRADER_BLACKLIST_SUB))
+			result -= subtypesof(path)
+	return result
 
 
 //If this hits 0 then they decide to up and leave.
@@ -83,23 +87,23 @@
 	remove_from_pool(possible_trading_items, 9) //We want the stock to change every so often, so we make it so that they have roughly 10~11 ish items max
 	return 1
 
-/datum/trader/proc/remove_from_pool(var/list/pool, var/chance_per_item)
-	if(pool && prob(chance_per_item * pool.len))
-		var/i = rand(1,pool.len)
+/datum/trader/proc/remove_from_pool(list/pool, chance_per_item)
+	if(pool && prob(chance_per_item * length(pool)))
+		var/i = rand(1,length(pool))
 		pool[pool[i]] = null
 		pool -= pool[i]
 
-/datum/trader/proc/add_to_pool(var/list/pool, var/list/possible, var/base_chance = 100, var/force = 0)
+/datum/trader/proc/add_to_pool(list/pool, list/possible, base_chance = 100, force = 0)
 	var/divisor = 1
-	if(pool && pool.len)
-		divisor = pool.len
+	if(pool && length(pool))
+		divisor = length(pool)
 	if(force || prob(base_chance/divisor))
 		var/new_item = get_possible_item(possible)
 		if(new_item)
 			pool |= new_item
 
-/datum/trader/proc/get_possible_item(var/list/trading_pool)
-	if(!trading_pool || !trading_pool.len)
+/datum/trader/proc/get_possible_item(list/trading_pool)
+	if(!trading_pool || !length(trading_pool))
 		return
 	var/picked = pick(trading_pool)
 	var/atom/A = picked
@@ -107,7 +111,7 @@
 		return null
 	return picked
 
-/datum/trader/proc/get_response(var/key, var/default)
+/datum/trader/proc/get_response(key, default)
 	if(speech && speech[key])
 		. = speech[key]
 	else
@@ -117,24 +121,24 @@
 	. = replacetext(.,"CURRENCY_SINGULAR", GLOB.using_map.local_currency_name_singular)
 	. = replacetext(.,"CURRENCY", GLOB.using_map.local_currency_name)
 
-/datum/trader/proc/print_trading_items(var/num)
-	num = Clamp(num,1,trading_items.len)
+/datum/trader/proc/print_trading_items(num)
+	num = clamp(num,1,length(trading_items))
 	if(trading_items[num])
 		var/atom/movable/M = trading_items[num]
 		return "<b>[initial(M.name)]</b>"
 
 /datum/trader/proc/skill_curve(skill)
 	switch(skill)
-		if(SKILL_EXPERT)
+		if(SKILL_EXPERIENCED)
 			. = 1
-		if(SKILL_EXPERT to SKILL_MAX)
-			. = 1 + (SKILL_EXPERT - skill) * 0.2
+		if(SKILL_EXPERIENCED to SKILL_MAX)
+			. = 1 + (SKILL_EXPERIENCED - skill) * 0.2
 		else
-			. = 1 + (SKILL_EXPERT - skill) ** 2
+			. = 1 + (SKILL_EXPERIENCED - skill) ** 2
 	//This condition ensures that the buy price is higher than the sell price on generic goods, i.e. the merchant can't be exploited
 	. = max(., price_rng/((margin - 1)*(200 - price_rng)))
 
-/datum/trader/proc/get_item_value(var/trading_num, skill = SKILL_MAX)
+/datum/trader/proc/get_item_value(trading_num, skill = SKILL_MAX)
 	if(!trading_items[trading_items[trading_num]])
 		var/type = trading_items[trading_num]
 		var/value = get_value(type)
@@ -149,34 +153,34 @@
 		. *= want_multiplier
 	. *= max(1 - (margin - 1) * skill_curve(skill), 0.1) //Trader will underpay at lower skill.
 
-/datum/trader/proc/make_response(var/response_type, var/response_default, var/delta = 0, var/success = TRUE)
+/datum/trader/proc/make_response(response_type, response_default, delta = 0, success = TRUE)
 	. = new /datum/trade_response(get_response(response_type, response_default), delta, success)
 
-/datum/trader/proc/offer_money_for_trade(var/trade_num, var/money_amount, var/turf/location, skill = SKILL_MAX)
+/datum/trader/proc/offer_money_for_bulk(quantity, trade_num, money_amount, turf/location, skill = SKILL_MAX)
 	if(!(trade_flags & TRADER_MONEY))
-		return make_response(TRADER_NO_MONEY, "I don't like money", 0, FALSE)
-	var/value = get_item_value(trade_num, skill)
+		return make_response(TRADER_NO_MONEY, "I don't like money.", 0, FALSE)
+	var/value = get_item_value(trade_num, skill) * quantity
 	if(money_amount < value)
 		return make_response(TRADER_NOT_ENOUGH, "I need more money!", 0, FALSE)
-	trade(list(), trade_num, location)
+	trade_quantity(quantity, list(), trade_num, location)
 	return make_response(TRADER_TRADE_COMPLETE, "Thank you for your patronage!", -value, TRUE)
 
-/datum/trader/proc/offer_items_for_trade(var/list/offers, var/num, var/turf/location, skill = SKILL_MAX)
-	if(!offers || !offers.len)
+/datum/trader/proc/offer_items_for_bulk(quantity, list/offers, num, turf/location, skill = SKILL_MAX)
+	if(!length(offers))
 		return make_response(TRADER_NOT_ENOUGH, "That's not enough.", 0, FALSE)
-	num = Clamp(num, 1, trading_items.len)
+	num = clamp(num, 1, length(trading_items))
 	var/offer_worth = 0
 	for(var/item in offers)
 		var/atom/movable/offer = item
 		var/is_wanted = 0
-		if((trade_flags & TRADER_WANTED_ONLY) && is_type_in_list(offer,wanted_items))
+		if((trade_flags & TRADER_WANTED_ONLY) && is_type_in_list(offer, wanted_items))
 			is_wanted = 2
-		if((trade_flags & TRADER_WANTED_ALL) && is_type_in_list(offer,possible_wanted_items))
+		if((trade_flags & TRADER_WANTED_ALL) && is_type_in_list(offer, possible_wanted_items))
 			is_wanted = 1
-		if(blacklisted_trade_items && blacklisted_trade_items.len && is_type_in_list(offer,blacklisted_trade_items))
+		if(length(blacklisted_trade_items) && is_type_in_list(offer ,blacklisted_trade_items))
 			return make_response(TRADER_NO_BLACKLISTED, "I refuse to take one of those items.", 0, FALSE)
 
-		if(istype(offer,/obj/item/weapon/spacecash))
+		if(istype(offer, /obj/item/spacecash))
 			if(!(trade_flags & TRADER_MONEY))
 				return make_response(TRADER_NO_MONEY, "I don't take money.", 0, FALSE)
 		else
@@ -185,19 +189,19 @@
 			else if((trade_flags & TRADER_WANTED_ONLY|TRADER_WANTED_ALL) && !is_wanted)
 				return make_response(TRADER_FOUND_UNWANTED, "I don't want one of those items", 0, FALSE)
 
-		offer_worth += get_buy_price(offer, is_wanted - 1, skill)
+		offer_worth += get_buy_price(offer, is_wanted - 1, skill) * quantity
 	if(!offer_worth)
-		return make_response(TRADER_NOT_ENOUGH, "Everything you've gave me is worthless!", 0, FALSE)
+		return make_response(TRADER_NOT_ENOUGH, "Everything you gave me is worthless!", 0, FALSE)
 	var/trading_worth = get_item_value(num, skill)
 	if(!trading_worth)
 		return make_response(TRADER_NOT_ENOUGH, "That's not enough.", 0, FALSE)
 	var/percent = offer_worth/trading_worth
-	if(percent > max(0.9,0.9-disposition/100))
-		trade(offers, num, location)
+	if(percent > max(0.9, 0.9-disposition / 100))
+		trade_quantity(quantity, offers, num, location)
 		return make_response(TRADER_TRADE_COMPLETE, "Thank you for your patronage!", 0, TRUE)
 	return make_response(TRADER_NOT_ENOUGH, "That's not enough.", 0, FALSE)
 
-/datum/trader/proc/hail(var/mob/user)
+/datum/trader/proc/hail(mob/user)
 	if(!can_hail())
 		return make_response(TRADER_HAIL_DENY, "No, go away.", 0, FALSE)
 	var/specific
@@ -234,25 +238,27 @@
 		disposition += rand(compliment_increase, compliment_increase * 2)
 	return make_response(TRADER_COMPLEMENT_SUCCESS, "Thank you!", 0, TRUE)
 
-/datum/trader/proc/trade(var/list/offers, var/num, var/turf/location)
+/datum/trader/proc/trade_quantity(quantity, list/offers, num, turf/location)
 	for(var/offer in offers)
-		if(istype(offer,/mob))
+		if(istype(offer, /mob))
 			var/text = mob_transfer_message
 			to_chat(offer, replacetext(text, "ORIGIN", origin))
 		qdel(offer)
 
-	num = Clamp(num, 1, trading_items.len)
+	num = clamp(num, 1, length(trading_items))
 	var/type = trading_items[num]
 
-	var/atom/movable/M = new type(location)
-	playsound(location, 'sound/effects/teleport.ogg', 50, 1)
+	var/list/M = list()
+	for (var/i = 1 to quantity)
+		M += new type(location)
 
-	disposition += rand(compliment_increase,compliment_increase*3) //Traders like it when you trade with them
+	playsound(location, 'sound/effects/teleport.ogg', 50, 1)
+	disposition += quantity * (rand(compliment_increase, compliment_increase * 3))
 
 	return M
 
-/datum/trader/proc/how_much_do_you_want(var/num, skill = SKILL_MAX)
-	num = Clamp(num, 1, trading_items.len)
+/datum/trader/proc/how_much_do_you_want(num, skill = SKILL_MAX)
+	num = clamp(num, 1, length(trading_items))
 	var/atom/movable/M = trading_items[num]
 	var/datum/trade_response/tr = make_response(TRADER_HOW_MUCH, "Hmm.... how about VALUE CURRENCY?", 0, FALSE)
 	tr.text = replacetext(replacetext(tr.text, "ITEM", initial(M.name)), "VALUE", get_item_value(num, skill))
@@ -270,10 +276,10 @@
 	tr.text += " [english_list(want_english)]"
 	return tr
 
-/datum/trader/proc/sell_items(var/list/offers, skill = SKILL_MAX)
+/datum/trader/proc/sell_items(list/offers, skill = SKILL_MAX)
 	if(!(trade_flags & TRADER_GOODS))
 		return make_response(TRADER_GOODS, "I'm not buying.", 0, FALSE)
-	if(!offers || !offers.len)
+	if(!offers || !length(offers))
 		return make_response(TRADER_NOT_ENOUGH, "I'm not buying that.", 0, FALSE)
 
 	var/wanted
@@ -292,5 +298,5 @@
 		qdel(offer)
 	return make_response(TRADER_TRADE_COMPLETE, "Thanks for the goods!", total, TRUE)
 
-/datum/trader/proc/bribe_to_stay_longer(var/amt)
+/datum/trader/proc/bribe_to_stay_longer(amt)
 	return make_response(TRADER_BRIBE_FAILURE, "How about no?", 0, FALSE)

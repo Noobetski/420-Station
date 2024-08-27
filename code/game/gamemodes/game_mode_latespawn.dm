@@ -14,20 +14,18 @@
 		return FALSE
 	if(evacuation_controller.is_evacuating() || evacuation_controller.has_evacuated())
 		return FALSE
-	// Don't create auto-antags in the last twenty minutes of the round, but only if the vote interval is longer than 20 minutes
-	if((config.vote_autotransfer_interval > 20 MINUTES) && (transfer_controller.time_till_transfer_vote() < 20 MINUTES))
+	if (SSroundend.vote_check && SSroundend.vote_cache < config.transfer_vote_block_antag_time)
 		return FALSE
-
 	return TRUE
 
 //This can be overriden in case a game mode needs to do stuff when a player latejoins
-/datum/game_mode/proc/handle_latejoin(var/mob/living/carbon/human/character)
+/datum/game_mode/proc/handle_latejoin(mob/living/carbon/human/character)
 	if(character.mind)
 		character.mind.generate_goals(character.mind.assigned_job, is_spawning=TRUE)
 		character.show_goals()
 	return 0
 
-/datum/game_mode/proc/handle_offsite_latejoin(var/mob/living/carbon/human/character)
+/datum/game_mode/proc/handle_offsite_latejoin(mob/living/carbon/human/character)
 	return 0
 
 /datum/game_mode/proc/process_autoantag()
@@ -39,12 +37,12 @@
 			message_admins("[uppertext(name)]: [A.id] selected for spawn attempt.")
 			usable_templates |= A
 
-	if(!usable_templates.len)
+	if(!length(usable_templates))
 		message_admins("[uppertext(name)]: Failed to find configured mode spawn templates, please re-enable auto-antagonists after one is added.")
 		round_autoantag = 0
 		return
 
-	while(usable_templates.len)
+	while(length(usable_templates))
 		var/datum/antagonist/spawn_antag = pick(usable_templates)
 		usable_templates -= spawn_antag
 

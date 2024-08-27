@@ -5,7 +5,6 @@
 	simulated = FALSE
 	screen_loc = "CENTER:-224,CENTER:-224"
 	plane = SKYBOX_PLANE
-	blend_mode = BLEND_MULTIPLY
 
 /client
 	var/obj/skybox/skybox
@@ -19,8 +18,8 @@
 	var/turf/T = get_turf(eye)
 	if(T)
 		if(rebuild)
-			skybox.overlays.Cut()
-			skybox.overlays += SSskybox.get_skybox(T.z)
+			skybox.ClearOverlays()
+			skybox.AddOverlays(SSskybox.get_skybox(T.z))
 			screen |= skybox
 		skybox.screen_loc = "CENTER:[-224 - T.x],CENTER:[-224 - T.y]"
 

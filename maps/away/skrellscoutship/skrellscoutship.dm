@@ -2,13 +2,16 @@
 
 #include "skrellscoutship_areas.dm"
 #include "skrellscoutship_shuttles.dm"
+#include "skrellscoutship_radio.dm"
+#include "skrellscoutship_machines.dm"
 
 /datum/map_template/ruin/away_site/skrellscoutship
 	name = "Skrellian Scout Ship"
 	id = "awaysite_skrell_scout"
 	description = "A Skrellian SDTF scouting vessel."
 	suffixes = list("skrellscoutship/skrellscoutship_revamp.dmm")
-	cost = 0.5
+	spawn_cost = 0.5
+	player_cost = 4
 	shuttles_to_initialise = list(/datum/shuttle/autodock/overmap/skrellscoutship, /datum/shuttle/autodock/overmap/skrellscoutshuttle)
 	apc_test_exempt_areas = list(
 		/area/ship/skrellscoutship/externalwing/port = NO_SCRUBBER|NO_VENT|NO_APC,
@@ -16,28 +19,28 @@
 	)
 	spawn_weight = 0.67
 
-/obj/effect/overmap/visitable/sector/skrellscoutspace
+/obj/overmap/visitable/sector/skrellscoutspace
 	name = "Empty Sector"
 	desc = "Slight traces of a cloaking device are present. Unable to determine exact location."
-	in_space = 1
 	icon_state = "event"
 	hide_from_reports = TRUE
+	sensor_visibility = 10
 
-/obj/effect/submap_landmark/joinable_submap/skrellscoutship
+/obj/submap_landmark/joinable_submap/skrellscoutship
 	name = "Xilvuxix"
-	archetype = /decl/submap_archetype/skrellscoutship
+	archetype = /singleton/submap_archetype/skrellscoutship
 
-/obj/effect/submap_landmark/spawnpoint/skrellscoutship
+/obj/submap_landmark/spawnpoint/skrellscoutship
 	name = "Qrri-Zuumqix"
 	movable_flags = MOVABLE_FLAG_EFFECTMOVE
 
-/obj/effect/submap_landmark/spawnpoint/skrellscoutship/leader
+/obj/submap_landmark/spawnpoint/skrellscoutship/leader
 	name = "Qrri-Vuxix"
 
-/decl/webhook/submap_loaded/skrell
+/singleton/webhook/submap_loaded/skrell
 	id = WEBHOOK_SUBMAP_LOADED_SKRELL
 
-/decl/submap_archetype/skrellscoutship
+/singleton/submap_archetype/skrellscoutship
 	descriptor = "Skrellian Scout Ship"
 	map = "Xilvuxix"
 	crew_jobs = list(
@@ -48,14 +51,14 @@
 
 //Access + Loadout
 
-/var/const/access_skrellscoutship = "ACCESS_SKRELLSCOUT"
+var/global/const/access_skrellscoutship = "ACCESS_SKRELLSCOUT"
 
 /datum/access/skrellscoutship
 	id = access_skrellscoutship
 	desc = "SSV Crewman"
 	region = ACCESS_REGION_NONE
 
-/obj/item/weapon/card/id/skrellscoutship
+/obj/item/card/id/skrellscoutship
 	color = COLOR_GRAY40
 	detail_color = "#7331c4"
 	access = list(access_skrellscoutship)
@@ -64,22 +67,24 @@
 	title = "Qrri-Vuxix"
 	supervisors = "your SDTF"
 	total_positions = 1
-	outfit_type = /decl/hierarchy/outfit/job/skrellscoutship
+	outfit_type = /singleton/hierarchy/outfit/job/skrellscoutship
 	info = "Your vessel is scouting through unknown space, working to map out any potential dangers, as well as potential allies."
 	is_semi_antagonist = TRUE
-	min_skill = list(SKILL_EVA = SKILL_ADEPT,
-					SKILL_PILOT = SKILL_ADEPT,
-					SKILL_HAULING = SKILL_ADEPT,
-					SKILL_COMBAT = SKILL_ADEPT,
-					SKILL_WEAPONS = SKILL_ADEPT,
-					SKILL_MEDICAL = SKILL_BASIC)
+	min_skill = list( // 24 points
+		SKILL_EVA = SKILL_TRAINED, // 2 points
+		SKILL_PILOT = SKILL_TRAINED, // 4 points
+		SKILL_HAULING = SKILL_TRAINED, // 2 points
+		SKILL_COMBAT = SKILL_TRAINED, // 6 points
+		SKILL_WEAPONS = SKILL_TRAINED, // 6 points
+		SKILL_MEDICAL = SKILL_BASIC // 4 points
+	)
 
 /datum/job/submap/skrellscoutship_crew
 	title = "Qrri-Zuumqix"
 	supervisors = "your Qrri-Vuxix"
 	total_positions = 5
 	whitelisted_species = list("Skrell")
-	outfit_type = /decl/hierarchy/outfit/job/skrellscoutship
+	outfit_type = /singleton/hierarchy/outfit/job/skrellscoutship
 	info = "Your vessel is scouting through unknown space, working to map out any potential dangers, as well as potential allies."
 	branch = /datum/mil_branch/skrell_fleet
 	rank = /datum/mil_rank/skrell_fleet
@@ -87,19 +92,22 @@
 	allowed_ranks = list(/datum/mil_rank/skrell_fleet)
 	skill_points = 30
 	is_semi_antagonist = TRUE
-	min_skill = list(SKILL_EVA = SKILL_ADEPT,
-					SKILL_HAULING = SKILL_ADEPT,
-					SKILL_COMBAT = SKILL_ADEPT,
-					SKILL_WEAPONS = SKILL_ADEPT,
-					SKILL_MEDICAL = SKILL_BASIC)
+	min_skill = list( // 20 points
+		SKILL_EVA = SKILL_TRAINED, // 2 points
+		SKILL_HAULING = SKILL_TRAINED, // 2 points
+		SKILL_COMBAT = SKILL_TRAINED, // 6 points
+		SKILL_WEAPONS = SKILL_TRAINED, // 6 points
+		SKILL_MEDICAL = SKILL_BASIC // 4 points
+	)
 
-/datum/job/submap/skrellscoutship_crew/equip(var/mob/living/carbon/human/H, var/alt_title, var/datum/mil_branch/branch, var/datum/mil_rank/grade)
+/datum/job/submap/skrellscoutship_crew/equip(mob/living/carbon/human/H, alt_title, datum/mil_branch/branch, datum/mil_rank/grade)
 	. = ..(H, alt_title, branch, grade)	//passing through arguments
-	//Limited to subcastes that make sense on the vessel. No need for ground-forces or R&D on such a ship.
+	//Limited to subcastes that make sense on the vessel. No need for ground-forces on such a ship.
 	var/skrellscoutcastes = list(
 		"Malish-Katish" = list(
 			"Mero'ta-Ketish",
-			"Toglo'i-Ketish"
+			"Toglo'i-Ketish",
+			"Keloa-Ketish"
 		),
 		"Kanin-Katish" = list(
 			"Xiqarr-Ketish",
@@ -116,7 +124,7 @@
 	var/skrellcaste = input(H, "What is your Skrell's Caste?", "SDTF Rank") as null|anything in skrellscoutcastes
 	if(skrellcaste)
 		var/skrellsubcaste = input(H, "What is your Skrell's Subcaste?", "SDTF Rank") as null|anything in skrellscoutcastes[skrellcaste]
-		var/obj/item/weapon/card/id/C = H.wear_id
+		var/obj/item/card/id/C = H.wear_id
 		if(istype(C))
 			C.assignment = skrellsubcaste
 
@@ -131,53 +139,28 @@
 	item_state = "skrell_suit"
 	worn_state = "skrell_suit"
 
-/decl/hierarchy/outfit/job/skrellscoutship
+/singleton/hierarchy/outfit/job/skrellscoutship
 	name = "Xilvuxix Crew"
 	uniform = /obj/item/clothing/under/skrelljumpsuit
 	shoes = /obj/item/clothing/shoes/dutyboots
 	gloves = /obj/item/clothing/gloves/thick/swat/skrell
 	pda_type = /obj/item/modular_computer/pda
 	pda_slot = slot_l_store
-	l_ear = /obj/item/device/radio/headset/skrellian
-	id_types = list(/obj/item/weapon/card/id/skrellscoutship)
+	l_ear = /obj/item/device/radio/headset/map_preset/skrellscoutship
+	id_types = list(/obj/item/card/id/skrellscoutship)
 	l_pocket = /obj/item/clothing/accessory/badge/tags/skrell
 
-/obj/item/weapon/stock_parts/circuitboard/telecomms/allinone/skrellscoutship
-	build_path = /obj/machinery/telecomms/allinone/skrellscoutship
 
-/obj/machinery/telecomms/allinone/skrellscoutship
-	listening_freqs = list(SKRELL_FREQ)
-	channel_color = COMMS_COLOR_SKRELL
-	channel_name = "Recon"
-	circuitboard = /obj/item/weapon/stock_parts/circuitboard/telecomms/allinone/skrellscoutship
-
-/obj/item/device/radio/headset/skrellian
-	name = "recon headset"
-	icon_state = "srv_headset"
-	ks1type = /obj/item/device/encryptionkey/skrellian
-
-/obj/item/device/radio/headset/skrellian/Initialize()
-	. = ..()
-	set_frequency(SKRELL_FREQ)	//Not going to be random or just set to the common frequency, but can be set later.
-
-/obj/item/device/encryptionkey/skrellian
-	name = "recon radio encryption key"
-	icon_state = "medsci_cypherkey"
-	channels = list("Recon" = 1)
-
-/obj/item/weapon/reagent_containers/food/condiment/psilocybin
-	label_text = "Psilocybin"
-	starting_reagents = list(/datum/reagent/psilocybin = 50)
+/obj/item/reagent_containers/food/condiment/psilocybin
+	starting_reagents = list(/datum/reagent/drugs/psilocybin = 50)
 
 
-/obj/item/weapon/reagent_containers/food/condiment/mindbreaker
-	label_text = "Mindbreaker"
-	starting_reagents = list(/datum/reagent/mindbreaker = 50)
+/obj/item/reagent_containers/food/condiment/mindbreaker
+	starting_reagents = list(/datum/reagent/drugs/mindbreaker = 50)
 
 
-/obj/item/weapon/reagent_containers/food/condiment/space_drugs
-	label_text = "Ambrosia"
-	starting_reagents = list(/datum/reagent/space_drugs = 50)
+/obj/item/reagent_containers/food/condiment/hextro
+	starting_reagents = list(/datum/reagent/drugs/hextro = 50)
 
 
 /datum/mil_branch/skrell_fleet
@@ -203,10 +186,17 @@
 	TLV["pressure"] =		list(ONE_ATMOSPHERE*0.80,ONE_ATMOSPHERE*0.90,ONE_ATMOSPHERE*1.30,ONE_ATMOSPHERE*1.40) /* kpa */
 	TLV["temperature"] =	list(T0C-26, T0C, T0C+80, T0C+90) // K
 
+/obj/machinery/alarm/skrell/server
+	target_temperature = T0C+10
+
+/obj/machinery/alarm/skrell/server/Initialize()
+	. = ..()
+	TLV["temperature"] =	list(T0C-26, T0C, T0C+30, T0C+40) // K
+
 /obj/machinery/power/smes/buildable/preset/skrell
 	uncreated_component_parts = list(
-		/obj/item/weapon/stock_parts/smes_coil/super_io = 2,
-		/obj/item/weapon/stock_parts/smes_coil/super_capacity = 2)
+		/obj/item/stock_parts/smes_coil/advanced = 2
+	)
 	_input_maxed = TRUE
 	_output_maxed = TRUE
 	_input_on = TRUE
@@ -217,72 +207,73 @@
 	req_access = list(access_skrellscoutship)
 
 /obj/machinery/power/apc/debug/skrell
-	cell_type = /obj/item/weapon/cell/infinite
+	cell_type = /obj/item/cell/infinite
 	req_access = list(access_skrellscoutship)
 
 #undef WEBHOOK_SUBMAP_LOADED_SKRELL
 
 //Skrell Security Belt
-/obj/item/weapon/storage/belt/holster/skrell
+/obj/item/storage/belt/holster/skrell
 	name = "skrellian holster belt"
 	desc = "Can hold security gear like handcuffs and flashes. This one has a convenient holster."
 	icon_state = "securitybelt"
 	item_state = "security"
 	storage_slots = 8
 	overlay_flags = BELT_OVERLAY_ITEMS|BELT_OVERLAY_HOLSTER
-	can_hold = list(
-		/obj/item/weapon/crowbar,
-		/obj/item/weapon/grenade,
-		/obj/item/weapon/reagent_containers/spray/pepper,
-		/obj/item/weapon/handcuffs,
+	contents_allowed = list(
+		/obj/item/crowbar,
+		/obj/item/grenade,
+		/obj/item/reagent_containers/spray/pepper,
+		/obj/item/handcuffs,
 		/obj/item/device/flash,
 		/obj/item/clothing/glasses,
 		/obj/item/ammo_casing/shotgun,
 		/obj/item/ammo_magazine,
-		/obj/item/weapon/reagent_containers/food/snacks/donut/,
-		/obj/item/weapon/melee/baton,
-		/obj/item/weapon/melee/telebaton,
-		/obj/item/weapon/flame/lighter,
+		/obj/item/reagent_containers/food/snacks/donut,
+		/obj/item/melee/baton,
+		/obj/item/melee/telebaton,
+		/obj/item/flame/lighter,
 		/obj/item/device/flashlight,
 		/obj/item/modular_computer/pda,
 		/obj/item/device/radio/headset,
 		/obj/item/device/hailer,
 		/obj/item/device/megaphone,
-		/obj/item/weapon/melee,
+		/obj/item/melee,
 		/obj/item/taperoll,
 		/obj/item/device/holowarrant,
-		/obj/item/weapon/magnetic_ammo,
+		/obj/item/magnetic_ammo,
 		/obj/item/device/binoculars,
 		/obj/item/clothing/gloves,
-		/obj/item/weapon/gun/energy/gun/skrell
+		/obj/item/gun/energy/gun/skrell
 		)
 
 //Skell Lights
 
 /obj/machinery/light/skrell
 	name = "skrellian light"
-	light_type = /obj/item/weapon/light/tube/skrell
-	desc = "Some kind of strange alien lighting technology"
+	light_type = /obj/item/light/tube/skrell
+	desc = "Some kind of strange alien lighting technology."
 
 
-/obj/item/weapon/light/tube/skrell
+/obj/item/light/tube/skrell
 	name = "skrellian light filament"
-	color = COLOR_LIGHT_CYAN
-	b_colour = COLOR_LIGHT_CYAN
+	color = LIGHT_COLOUR_SKRELL
+	b_colour = LIGHT_COLOUR_SKRELL
+	desc = "Some kind of strange alien lightbulb technology."
+	random_tone = FALSE
+
+/obj/item/light/tube/large/skrell
+	name = "skrellian light filament"
+	color = LIGHT_COLOUR_SKRELL
+	b_colour = LIGHT_COLOUR_SKRELL
 	desc = "Some kind of strange alien lightbulb technology."
 
-/obj/item/weapon/light/tube/large/skrell
-	name = "skrellian light filament"
-	color = COLOR_LIGHT_CYAN
-	b_colour = COLOR_LIGHT_CYAN
-	desc = "Some kind of strange alien lightbulb technology."
 
-
-/obj/item/weapon/storage/box/lights/tubes/skrell
+/obj/item/storage/box/lights/tubes/skrell
 	name = "box of replacement tubes"
 	icon_state = "lighttube"
-	startswith = list(/obj/item/weapon/light/tube/skrell = 17,
-					/obj/item/weapon/light/tube/large/skrell = 4)
+	startswith = list(/obj/item/light/tube/skrell = 17,
+					/obj/item/light/tube/large/skrell = 4)
 
 //Skrell Suit Dispensers
 /obj/machinery/suit_storage_unit/skrell
@@ -305,7 +296,7 @@
 
 //Skrell Devices
 
-/obj/item/weapon/tape_roll/skrell
+/obj/item/tape_roll/skrell
 	name = "modular adhesive dispenser"
 	desc = "A roll of sticky tape. Possibly for taping ducks... or was that ducts?"
 	icon = 'icons/obj/bureaucracy.dmi'
@@ -317,3 +308,4 @@
 	color = "#40e0d0"
 	name = "thermal induction generator"
 	desc = "Made by Krri'gli Corp using thermal induction technology, this heater is guaranteed not to set anything, or anyone, on fire."
+	set_temperature = T0C+40

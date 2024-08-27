@@ -1,6 +1,6 @@
-/obj/item/weapon/pinpointer
+/obj/item/pinpointer
 	name = "pinpointer"
-	icon = 'icons/obj/pinpointer.dmi'
+	icon = 'icons/obj/tools/pinpointer.dmi'
 	icon_state = "pinoff"
 	obj_flags = OBJ_FLAG_CONDUCTIBLE
 	slot_flags = SLOT_BELT
@@ -11,15 +11,15 @@
 	var/active = 0
 	var/beeping = 2
 
-/obj/item/weapon/pinpointer/Destroy()
+/obj/item/pinpointer/Destroy()
 	STOP_PROCESSING(SSobj,src)
 	target = null
 	. = ..()
 
-/obj/item/weapon/pinpointer/attack_self(mob/user)
+/obj/item/pinpointer/attack_self(mob/user)
 	toggle(user)
 
-/obj/item/weapon/pinpointer/proc/toggle(mob/user)
+/obj/item/pinpointer/proc/toggle(mob/user)
 	active = !active
 	to_chat(user, "You [active ? "" : "de"]activate [src].")
 	if(!active)
@@ -30,7 +30,7 @@
 		START_PROCESSING(SSobj,src)
 	update_icon()
 
-/obj/item/weapon/pinpointer/advpinpointer/verb/toggle_sound()
+/obj/item/pinpointer/advpinpointer/verb/toggle_sound()
 	set category = "Object"
 	set name = "Toggle Pinpointer Beeping"
 	set src in view(1)
@@ -42,11 +42,11 @@
 		beeping = 0
 		to_chat(usr, "You enable the sound indication on [src].")
 
-/obj/item/weapon/pinpointer/proc/acquire_target()
-	var/obj/item/weapon/disk/nuclear/the_disk = locate()
+/obj/item/pinpointer/proc/acquire_target()
+	var/obj/item/disk/nuclear/the_disk = locate()
 	return weakref(the_disk)
 
-/obj/item/weapon/pinpointer/Process()
+/obj/item/pinpointer/Process()
 	update_icon()
 	if(!target)
 		return
@@ -73,32 +73,32 @@
 	else
 		beeping--
 
-/obj/item/weapon/pinpointer/on_update_icon()
-	overlays.Cut()
+/obj/item/pinpointer/on_update_icon()
+	ClearOverlays()
 	if(!active)
 		return
 	if(!target || !target.resolve())
-		overlays += image(icon,"pin_invalid")
+		AddOverlays(image(icon,"pin_invalid"))
 		return
 
 	var/turf/here = get_turf(src)
 	var/turf/there = get_turf(target.resolve())
 	if(!istype(there))
-		overlays += image(icon,"pin_invalid")
+		AddOverlays(image(icon,"pin_invalid"))
 		return
 
 	if(here == there)
-		overlays += image(icon,"pin_here")
+		AddOverlays(image(icon,"pin_here"))
 		return
 
 	if(!(there.z in GetConnectedZlevels(here.z)))
-		overlays += image(icon,"pin_invalid")
+		AddOverlays(image(icon,"pin_invalid"))
 		return
 	if(here.z > there.z)
-		overlays += image(icon,"pin_down")
+		AddOverlays(image(icon,"pin_down"))
 		return
 	if(here.z < there.z)
-		overlays += image(icon,"pin_up")
+		AddOverlays(image(icon,"pin_up"))
 		return
 
 	dir = get_dir(here,there)
@@ -110,13 +110,13 @@
 		pointer.color = COLOR_RED
 	else
 		pointer.color = COLOR_YELLOW
-	overlays += pointer
+	AddOverlays(pointer)
 
 //Nuke ops locator
-/obj/item/weapon/pinpointer/nukeop
+/obj/item/pinpointer/nukeop
 	var/locate_shuttle = 0
 
-/obj/item/weapon/pinpointer/nukeop/Process()
+/obj/item/pinpointer/nukeop/Process()
 	var/new_mode
 	if(!locate_shuttle && bomb_set)
 		locate_shuttle = 1
@@ -126,11 +126,11 @@
 		new_mode = "Authentication Disk Locator"
 	if(new_mode)
 		playsound(loc, 'sound/machines/twobeep.ogg', 50, 1)
-		visible_message("<span class='notice'>[new_mode] active.</span>")
+		visible_message(SPAN_NOTICE("[new_mode] active."))
 		target = acquire_target()
 	..()
 
-/obj/item/weapon/pinpointer/nukeop/acquire_target()
+/obj/item/pinpointer/nukeop/acquire_target()
 	if(locate_shuttle)
 		var/obj/machinery/computer/shuttle_control/multi/syndicate/home = locate()
 		return weakref(home)
@@ -139,7 +139,7 @@
 
 //Deathsquad locator
 
-/obj/item/weapon/pinpointer/advpinpointer/verb/toggle_mode()
+/obj/item/pinpointer/advpinpointer/verb/toggle_mode()
 	set category = "Object"
 	set name = "Toggle Pinpointer Mode"
 	set src in view(1)
@@ -147,7 +147,7 @@
 	var/selection = input(usr, "Please select the type of target to locate.", "Mode" , "") as null|anything in list("Location", "Disk Recovery", "DNA", "Other Signature")
 	switch(selection)
 		if("Disk Recovery")
-			var/obj/item/weapon/disk/nuclear/the_disk = locate()
+			var/obj/item/disk/nuclear/the_disk = locate()
 			target = weakref(the_disk)
 
 		if("Location")

@@ -1,12 +1,13 @@
 #include "bearcat_areas.dm"
 #include "bearcat_jobs.dm"
 #include "bearcat_access.dm"
+#include "bearcat_radio.dm"
 
-/obj/effect/submap_landmark/joinable_submap/bearcat
+/obj/submap_landmark/joinable_submap/bearcat
 	name = "FTV Bearcat"
-	archetype = /decl/submap_archetype/derelict/bearcat
+	archetype = /singleton/submap_archetype/derelict/bearcat
 
-/decl/submap_archetype/derelict/bearcat
+/singleton/submap_archetype/derelict/bearcat
 	descriptor = "derelict cargo vessel"
 	map = "Bearcat Wreck"
 	crew_jobs = list(
@@ -14,14 +15,14 @@
 		/datum/job/submap/bearcat_crewman
 	)
 
-/obj/effect/overmap/visitable/ship/bearcat
+/obj/overmap/visitable/ship/bearcat
 	name = "light freighter"
 	color = "#00ffff"
-	vessel_mass = 60
+	vessel_mass = 20000
 	max_speed = 1/(10 SECONDS)
 	burn_delay = 10 SECONDS
 
-/obj/effect/overmap/visitable/ship/bearcat/New()
+/obj/overmap/visitable/ship/bearcat/New()
 	name = "[pick("FTV","ITV","IEV")] [pick("Bearcat", "Firebug", "Defiant", "Unsinkable","Horizon","Vagrant")]"
 	for(var/area/ship/scrap/A)
 		A.name = "\improper [name] - [A.name]"
@@ -34,7 +35,8 @@
 	id = "awaysite_bearcat_wreck"
 	description = "A wrecked light freighter."
 	suffixes = list("bearcat/bearcat-1.dmm", "bearcat/bearcat-2.dmm")
-	cost = 1
+	spawn_cost = 1
+	player_cost = 4
 	shuttles_to_initialise = list(/datum/shuttle/autodock/ferry/lift)
 	area_usage_test_exempted_root_areas = list(/area/ship)
 	apc_test_exempt_areas = list(
@@ -71,21 +73,21 @@
 	icon_state = "tiny"
 	icon_keyboard = "tiny_keyboard"
 	icon_screen = "lift"
-	density = 0
+	density = FALSE
 
-/obj/effect/shuttle_landmark/lift/top
+/obj/shuttle_landmark/lift/top
 	name = "Top Deck"
 	landmark_tag = "nav_bearcat_lift_top"
 	flags = SLANDMARK_FLAG_AUTOSET
 
-/obj/effect/shuttle_landmark/lift/bottom
+/obj/shuttle_landmark/lift/bottom
 	name = "Lower Deck"
 	landmark_tag = "nav_bearcat_lift_bottom"
 	base_area = /area/ship/scrap/cargo/lower
 	base_turf = /turf/simulated/floor
 
 /obj/machinery/power/apc/derelict
-	cell_type = /obj/item/weapon/cell/crap/empty
+	cell_type = /obj/item/cell/crap/empty
 	locked = 0
 	coverlocked = 0
 
@@ -95,33 +97,36 @@
 /obj/machinery/door/airlock/autoname/engineering
 	door_color = COLOR_AMBER
 
-/obj/effect/landmark/deadcap
+/obj/landmark/deadcap
 	name = "Dead Captain"
-	delete_me = 1
 
-/obj/effect/landmark/deadcap/Initialize()
+/obj/landmark/deadcap/Initialize()
+	..()
+	return INITIALIZE_HINT_LATELOAD
+
+/obj/landmark/deadcap/LateInitialize(mapload)
 	var/turf/T = get_turf(src)
 	var/mob/living/carbon/human/corpse = new(T)
-	scramble(1,corpse,100)
+	scramble(1, corpse, 100)
 	corpse.real_name = "Captain"
 	corpse.name = "Captain"
-	var/decl/hierarchy/outfit/outfit = outfit_by_type(/decl/hierarchy/outfit/deadcap)
+	var/singleton/hierarchy/outfit/outfit = outfit_by_type(/singleton/hierarchy/outfit/deadcap)
 	outfit.equip(corpse)
 	corpse.adjustOxyLoss(corpse.maxHealth)
 	corpse.setBrainLoss(corpse.maxHealth)
 	var/obj/structure/bed/chair/C = locate() in T
-	if(C)
+	if (C)
 		C.buckle_mob(corpse)
-	. = ..()
+	qdel(src)
 
-/decl/hierarchy/outfit/deadcap
+/singleton/hierarchy/outfit/deadcap
 	name = "Derelict Captain"
 	uniform = /obj/item/clothing/under/casual_pants/classicjeans
 	suit = /obj/item/clothing/suit/storage/hooded/wintercoat
 	shoes = /obj/item/clothing/shoes/black
-	r_pocket = /obj/item/device/radio
+	r_pocket = /obj/item/device/radio/map_preset/bearcat
 
-/decl/hierarchy/outfit/deadcap/post_equip(mob/living/carbon/human/H)
+/singleton/hierarchy/outfit/deadcap/post_equip(mob/living/carbon/human/H)
 	..()
 	var/obj/item/clothing/uniform = H.w_uniform
 	if(uniform)
@@ -130,5 +135,5 @@
 			uniform.attach_accessory(null, eyegore)
 		else
 			qdel(eyegore)
-	var/obj/item/weapon/cell/super/C = new()
+	var/obj/item/cell/super/C = new()
 	H.put_in_any_hand_if_possible(C)

@@ -1,5 +1,6 @@
 
 /datum/admins/proc/ai_hologram_set(mob/appear as mob in world)
+	set popup_menu = FALSE
 	set name = "Set AI Hologram"
 	set desc = "Set an AI's hologram to a mob. Use this verb on the mob you want the hologram to look like."
 	set category = "Fun"
@@ -14,7 +15,7 @@
 	if(!AI) return
 
 	var/image/I = image(appear.icon, appear.icon_state)
-	I.overlays = appear.overlays
+	I.CopyOverlays(appear)
 	I.underlays = appear.underlays
 	I.color = list(
 			0.30, 0.30, 0.30, 0.0, // Greyscale and reduce the alpha of the icon
@@ -36,8 +37,8 @@
 	// Combine the mob image and the scanlines into a single KEEP_TOGETHER'd image
 	var/image/I2 = image(null)
 	I2.underlays += I
-	I2.overlays += scan
-	I2.appearance_flags = KEEP_TOGETHER
+	I2.AddOverlays(scan)
+	I2.appearance_flags = DEFAULT_APPEARANCE_FLAGS | KEEP_TOGETHER
 	I2.color = rgb(125, 180, 225) // make it blue!
 	AI.holo_icon = I2
 

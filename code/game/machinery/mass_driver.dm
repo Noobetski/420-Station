@@ -3,9 +3,9 @@
 /obj/machinery/mass_driver
 	name = "mass driver"
 	desc = "Shoots things into space."
-	icon = 'icons/obj/stationobjs.dmi'
+	icon = 'icons/obj/structures/massdriver.dmi'
 	icon_state = "mass_driver"
-	anchored = 1.0
+	anchored = TRUE
 	idle_power_usage = 2
 	active_power_usage = 50
 
@@ -14,17 +14,17 @@
 	var/drive_range = 50 //this is mostly irrelevant since current mass drivers throw into space, but you could make a lower-range mass driver for interstation transport or something I guess.
 
 	uncreated_component_parts = list(
-		/obj/item/weapon/stock_parts/radio/receiver,
-		/obj/item/weapon/stock_parts/power/apc
+		/obj/item/stock_parts/radio/receiver,
+		/obj/item/stock_parts/power/apc
 	)
 	public_methods = list(
-		/decl/public_access/public_method/driver_drive,
-		/decl/public_access/public_method/driver_drive_delayed
+		/singleton/public_access/public_method/driver_drive,
+		/singleton/public_access/public_method/driver_drive_delayed
 	)
-	stock_part_presets = list(/decl/stock_part_preset/radio/receiver/driver = 1)
+	stock_part_presets = list(/singleton/stock_part_preset/radio/receiver/driver = 1)
 
 /obj/machinery/mass_driver/proc/drive(amount)
-	if(stat & (BROKEN|NOPOWER))
+	if(inoperable())
 		return
 	use_power_oneoff(500)
 	var/O_limit
@@ -34,7 +34,7 @@
 			O_limit++
 			if(O_limit >= 20)
 				for(var/mob/M in hearers(src, null))
-					to_chat(M, "<span class='notice'>The mass driver lets out a screech, it mustn't be able to handle any more items.</span>")
+					to_chat(M, SPAN_NOTICE("The mass driver lets out a screech, it mustn't be able to handle any more items."))
 				break
 			use_power_oneoff(500)
 			spawn( 0 )
@@ -43,7 +43,7 @@
 	return
 
 /obj/machinery/mass_driver/emp_act(severity)
-	if(stat & (BROKEN|NOPOWER))
+	if(inoperable())
 		return
 	drive()
 	..(severity)
@@ -54,28 +54,28 @@
 	sleep(2 SECONDS)
 	drive()
 
-/decl/public_access/public_method/driver_drive
+/singleton/public_access/public_method/driver_drive
 	name = "launch"
-	desc = "Makes the mass driver launch immediately"
+	desc = "Makes the mass driver launch immediately."
 	call_proc = /obj/machinery/mass_driver/proc/drive
 
-/decl/public_access/public_method/driver_drive_delayed
+/singleton/public_access/public_method/driver_drive_delayed
 	name = "delayed launch"
-	desc = "Makes the mass driver launch after a short delay"
+	desc = "Makes the mass driver launch after a short delay."
 	call_proc = /obj/machinery/mass_driver/proc/delayed_drive
 
-/decl/stock_part_preset/radio/receiver/driver
+/singleton/stock_part_preset/radio/receiver/driver
 	frequency = BLAST_DOORS_FREQ
-	receive_and_call = list("button_active" = /decl/public_access/public_method/driver_drive_delayed)
+	receive_and_call = list("button_active" = /singleton/public_access/public_method/driver_drive_delayed)
 
 /obj/machinery/button/mass_driver
 	cooldown = 10 SECONDS // Whole thing with the doors takes a while.
-	stock_part_presets = list(/decl/stock_part_preset/radio/basic_transmitter/driver_button = 1)
+	stock_part_presets = list(/singleton/stock_part_preset/radio/basic_transmitter/driver_button = 1)
 
-/decl/stock_part_preset/radio/basic_transmitter/driver_button
+/singleton/stock_part_preset/radio/basic_transmitter/driver_button
 	transmit_on_change = list(
-		"open_door" = /decl/public_access/public_variable/button_active,
-		"button_active" = /decl/public_access/public_variable/button_active,
-		"close_door_delayed" = /decl/public_access/public_variable/button_active
+		"open_door" = /singleton/public_access/public_variable/button_active,
+		"button_active" = /singleton/public_access/public_variable/button_active,
+		"close_door_delayed" = /singleton/public_access/public_variable/button_active
 	)
 	frequency = BLAST_DOORS_FREQ

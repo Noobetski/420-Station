@@ -4,7 +4,7 @@
 	w_class = ITEM_SIZE_LARGE
 	icon = 'icons/obj/suitcooler.dmi'
 	icon_state = "suitcooler0"
-	item_state = "coolingpack"			// beautiful codersprites until someone makes a prettier one.
+	item_state = "coolingpack"
 	slot_flags = SLOT_BACK
 
 	//copied from tank.dm
@@ -20,18 +20,18 @@
 
 	var/on = 0								//is it turned on?
 	var/cover_open = 0						//is the cover open?
-	var/obj/item/weapon/cell/cell
+	var/obj/item/cell/cell
 	var/max_cooling = 12					// in degrees per second - probably don't need to mess with heat capacity here
 	var/charge_consumption = 2 KILOWATTS	// energy usage at full power
 	var/thermostat = T20C
 
-/obj/item/device/suit_cooling_unit/ui_action_click()
+/obj/item/device/suit_cooling_unit/ui_action_click(mob/living/user)
 	toggle(usr)
 
 /obj/item/device/suit_cooling_unit/Initialize()
 	. = ..()
 	START_PROCESSING(SSobj, src)
-	cell = new/obj/item/weapon/cell/high()		// 10K rated cell.
+	cell = new/obj/item/cell/high()		// 10K rated cell.
 	cell.forceMove(src)
 
 /obj/item/device/suit_cooling_unit/Destroy()
@@ -80,12 +80,12 @@
 	on = 1
 	update_icon()
 
-/obj/item/device/suit_cooling_unit/proc/turn_off(var/failed)
+/obj/item/device/suit_cooling_unit/proc/turn_off(failed)
 	if(failed) visible_message("\The [src] clicks and whines as it powers down.")
 	on = 0
 	update_icon()
 
-/obj/item/device/suit_cooling_unit/attack_self(var/mob/user)
+/obj/item/device/suit_cooling_unit/attack_self(mob/user)
 	if(cover_open && cell)
 		if(ishuman(user))
 			user.put_in_hands(cell)
@@ -102,40 +102,49 @@
 
 	toggle(user)
 
-/obj/item/device/suit_cooling_unit/proc/toggle(var/mob/user)
+/obj/item/device/suit_cooling_unit/proc/toggle(mob/user)
 	if(on)
 		turn_off()
 	else
 		turn_on()
-	to_chat(user, "<span class='notice'>You switch \the [src] [on ? "on" : "off"].</span>")
+	to_chat(user, SPAN_NOTICE("You switch \the [src] [on ? "on" : "off"]."))
 
-/obj/item/device/suit_cooling_unit/attackby(obj/item/weapon/W as obj, mob/user as mob)
-	if(isScrewdriver(W))
-		if(cover_open)
-			cover_open = 0
-			to_chat(user, "You screw the panel into place.")
-		else
-			cover_open = 1
-			to_chat(user, "You unscrew the panel.")
-		update_icon()
-		return
 
-	if (istype(W, /obj/item/weapon/cell))
-		if(cover_open)
-			if(cell)
-				to_chat(user, "There is a [cell] already installed here.")
-			else
-				if(!user.unEquip(W, src))
-					return
-				cell = W
-				to_chat(user, "You insert the [cell].")
+/obj/item/device/suit_cooling_unit/use_tool(obj/item/tool, mob/user, list/click_params)
+	// Screwdriver - Toggle cover
+	if (isScrewdriver(tool))
+		cover_open = !cover_open
+		playsound(src, 'sound/items/Screwdriver.ogg', 50, TRUE)
 		update_icon()
-		return
+		user.visible_message(
+			SPAN_NOTICE("\The [user] [cover_open ? "opens" : "closes"] \a [src]'s panel with \a [tool]."),
+			SPAN_NOTICE("You [cover_open ? "open" : "close"] \the [src]'s panel with \the [tool].")
+		)
+		return TRUE
+
+	// Power Cell - Install cell
+	if (istype(tool, /obj/item/cell))
+		if (!cover_open)
+			USE_FEEDBACK_FAILURE("\The [src]'s panel is closed.")
+			return TRUE
+		if (cell)
+			USE_FEEDBACK_FAILURE("\The [src] already has \a [cell] installed.")
+			return TRUE
+		if (!user.unEquip(tool, src))
+			FEEDBACK_UNEQUIP_FAILURE(user, tool)
+			return TRUE
+		cell = tool
+		update_icon()
+		user.visible_message(
+			SPAN_NOTICE("\The [user] installs \a [tool] into \a [src]."),
+			SPAN_NOTICE("You install \the [tool] into \the [src].")
+		)
 
 	return ..()
 
+
 /obj/item/device/suit_cooling_unit/on_update_icon()
-	overlays.Cut()
+	ClearOverlays()
 	if (cover_open)
 		if (cell)
 			icon_state = "suitcooler1"
@@ -150,17 +159,17 @@
 
 	switch(round(cell.percent()))
 		if(86 to INFINITY)
-			overlays.Add("battery-0")
+			AddOverlays("battery-0")
 		if(69 to 85)
-			overlays.Add("battery-1")
+			AddOverlays("battery-1")
 		if(52 to 68)
-			overlays.Add("battery-2")
+			AddOverlays("battery-2")
 		if(35 to 51)
-			overlays.Add("battery-3")
+			AddOverlays("battery-3")
 		if(18 to 34)
-			overlays.Add("battery-4")
+			AddOverlays("battery-4")
 		if(-INFINITY to 17)
-			overlays.Add("battery-5")
+			AddOverlays("battery-5")
 
 
 /obj/item/device/suit_cooling_unit/examine(mob/user, distance)

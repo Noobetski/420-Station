@@ -33,7 +33,7 @@
 			B.color = B.data["blood_colour"]
 
 //Makes a blood drop, leaking amt units of blood from the mob
-/mob/living/carbon/human/proc/drip(var/amt, var/tar = src, var/ddir)
+/mob/living/carbon/human/proc/drip(amt, tar = src, ddir)
 	if(remove_blood(amt))
 		if(bloodstr.total_volume && vessel.total_volume)
 			var/chem_share = round(0.3 * amt * (bloodstr.total_volume/vessel.total_volume), 0.01)
@@ -43,7 +43,7 @@
 	return 0
 
 #define BLOOD_SPRAY_DISTANCE 2
-/mob/living/carbon/human/proc/blood_squirt(var/amt, var/turf/sprayloc)
+/mob/living/carbon/human/proc/blood_squirt(amt, turf/sprayloc)
 	if(amt <= 0 || !istype(sprayloc))
 		return
 	var/spraydir = pick(GLOB.alldirs)
@@ -75,9 +75,9 @@
 						if(blinding)
 							H.eye_blurry = max(H.eye_blurry, 10)
 							H.eye_blind = max(H.eye_blind, 5)
-							to_chat(H, "<span class='danger'>You are blinded by a spray of blood!</span>")
+							to_chat(H, SPAN_DANGER("You are blinded by a spray of blood!"))
 						else
-							to_chat(H, "<span class='danger'>You are hit by a spray of blood!</span>")
+							to_chat(H, SPAN_DANGER("You are hit by a spray of blood!"))
 						hit_mob = TRUE
 
 				if(hit_mob || !A.CanPass(src, sprayloc))
@@ -90,7 +90,7 @@
 	return bled
 #undef BLOOD_SPRAY_DISTANCE
 
-/mob/living/carbon/human/proc/remove_blood(var/amt)
+/mob/living/carbon/human/proc/remove_blood(amt)
 	if(!should_have_organ(BP_HEART)) //TODO: Make drips come from the reagents instead.
 		return 0
 	if(!amt)
@@ -105,7 +105,7 @@
 ****************************************************/
 
 //Gets blood from mob to the container, preserving all data in it.
-/mob/living/carbon/proc/take_blood(obj/item/weapon/reagent_containers/container, var/amount)
+/mob/living/carbon/proc/take_blood(obj/item/reagent_containers/container, amount)
 	var/datum/reagent/blood/B = get_blood(container.reagents)
 	if(!B)
 		container.reagents.add_reagent(/datum/reagent/blood, amount, get_blood_data())
@@ -115,7 +115,7 @@
 	return 1
 
 //For humans, blood does not appear from blue, it comes from vessels.
-/mob/living/carbon/human/take_blood(obj/item/weapon/reagent_containers/container, var/amount)
+/mob/living/carbon/human/take_blood(obj/item/reagent_containers/container, amount)
 
 	if(!should_have_organ(BP_HEART))
 		reagents.trans_to_obj(container, amount)
@@ -131,7 +131,7 @@
 	return 1
 
 //Transfers blood from container ot vessels
-/mob/living/carbon/proc/inject_blood(var/datum/reagent/blood/injected, var/amount)
+/mob/living/carbon/proc/inject_blood(datum/reagent/blood/injected, amount)
 	if (!injected || !istype(injected))
 		return
 	var/list/chems = list()
@@ -140,7 +140,7 @@
 		src.reagents.add_reagent(C, (text2num(chems[C]) / species.blood_volume) * amount)//adds trace chemicals to owner's blood
 
 //Transfers blood from reagents to vessel, respecting blood types compatability.
-/mob/living/carbon/human/inject_blood(var/datum/reagent/blood/injected, var/amount)
+/mob/living/carbon/human/inject_blood(datum/reagent/blood/injected, amount)
 	if(!should_have_organ(BP_HEART))
 		reagents.add_reagent(/datum/reagent/blood, amount, injected.data)
 		return
@@ -187,7 +187,7 @@
 		//AB is a universal receiver.
 	return 0
 
-/mob/living/carbon/human/proc/regenerate_blood(var/amount)
+/mob/living/carbon/human/proc/regenerate_blood(amount)
 	amount *= (species.blood_volume / SPECIES_BLOOD_DEFAULT)
 	var/blood_volume_raw = vessel.get_reagent_amount(/datum/reagent/blood)
 	amount = max(0,min(amount, species.blood_volume - blood_volume_raw))
@@ -210,10 +210,11 @@
 	data["blood_colour"] = species.get_blood_colour(src)
 	return data
 
-proc/blood_splatter(var/target,var/datum/reagent/blood/source,var/large,var/spray_dir)
+/proc/blood_splatter(target,datum/reagent/blood/source,large,spray_dir)
+	RETURN_TYPE(/obj/decal/cleanable/blood)
 
-	var/obj/effect/decal/cleanable/blood/B
-	var/decal_type = /obj/effect/decal/cleanable/blood/splatter
+	var/obj/decal/cleanable/blood/B
+	var/decal_type = /obj/decal/cleanable/blood/splatter
 	var/turf/T = get_turf(target)
 
 	if(istype(source,/mob/living/carbon))
@@ -225,11 +226,11 @@ proc/blood_splatter(var/target,var/datum/reagent/blood/source,var/large,var/spra
 	// Are we dripping or splattering?
 	var/list/drips = list()
 	// Only a certain number of drips (or one large splatter) can be on a given turf.
-	for(var/obj/effect/decal/cleanable/blood/drip/drop in T)
+	for(var/obj/decal/cleanable/blood/drip/drop in T)
 		drips |= drop.drips
 		qdel(drop)
-	if(!large && drips.len < 3)
-		decal_type = /obj/effect/decal/cleanable/blood/drip
+	if(!large && length(drips) < 3)
+		decal_type = /obj/decal/cleanable/blood/drip
 
 	// Find a blood decal or create a new one.
 	if(T)
@@ -239,9 +240,9 @@ proc/blood_splatter(var/target,var/datum/reagent/blood/source,var/large,var/spra
 	if(!B)
 		B = new decal_type(T)
 
-	var/obj/effect/decal/cleanable/blood/drip/drop = B
-	if(istype(drop) && drips && drips.len && !large)
-		drop.overlays |= drips
+	var/obj/decal/cleanable/blood/drip/drop = B
+	if(istype(drop) && drips && length(drips) && !large)
+		drop.AddOverlays(drips)
 		drop.drips |= drips
 
 	// If there's no data to copy, call it quits here.
@@ -264,7 +265,7 @@ proc/blood_splatter(var/target,var/datum/reagent/blood/source,var/large,var/spra
 		else
 			B.blood_DNA[source.data["blood_DNA"]] = "O+"
 
-	B.fluorescent  = 0
+	B.fluorescent  = ATOM_FLOURESCENCE_NONE
 	B.set_invisibility(0)
 	return B
 
@@ -314,9 +315,6 @@ proc/blood_splatter(var/target,var/datum/reagent/blood/source,var/large,var/spra
 /mob/living/carbon/human/proc/get_blood_oxygenation()
 	var/blood_volume = get_blood_circulation()
 	if(blood_carries_oxygen())
-		if(is_asystole()) // Heart is missing or isn't beating and we're not breathing (hardcrit)
-			return min(blood_volume, BLOOD_VOLUME_SURVIVE)
-
 		if(!need_breathe())
 			return blood_volume
 	else

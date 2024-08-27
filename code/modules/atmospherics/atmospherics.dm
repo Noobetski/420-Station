@@ -10,7 +10,7 @@ Pipelines + Other Objects -> Pipe network
 
 */
 /obj/machinery/atmospherics
-	anchored = 1
+	anchored = TRUE
 	idle_power_usage = 0
 	active_power_usage = 0
 	power_channel = ENVIRON
@@ -27,13 +27,14 @@ Pipelines + Other Objects -> Pipe network
 	var/initialize_directions = 0
 	var/pipe_color
 
-	var/global/datum/pipe_icon_manager/icon_manager
+	var/static/datum/pipe_icon_manager/icon_manager
 	var/obj/machinery/atmospherics/node1
 	var/obj/machinery/atmospherics/node2
 
 	var/atmos_initalized = FALSE
-	var/build_icon = 'icons/obj/pipe-item.dmi'
+	var/build_icon = 'icons/obj/atmospherics/pipe-item.dmi'
 	var/build_icon_state = "buildpipe"
+	var/colorable = FALSE
 
 	var/pipe_class = PIPE_CLASS_OTHER //If somehow something isn't set properly, handle it as something with zero connections. This will prevent runtimes.
 	var/rotate_class = PIPE_ROTATE_STANDARD
@@ -55,22 +56,15 @@ Pipelines + Other Objects -> Pipe network
 /obj/machinery/atmospherics/proc/atmos_init()
 	atmos_initalized = TRUE
 
-/obj/machinery/atmospherics/hide(var/do_hide)
-	if(do_hide && level == 1)
+/obj/machinery/atmospherics/hide(do_hide)
+	if(do_hide && level == ATOM_LEVEL_UNDER_TILE)
 		layer = PIPE_LAYER
 	else
 		reset_plane_and_layer()
 
-/obj/machinery/atmospherics/attackby(atom/A, mob/user as mob)
-	if(istype(A, /obj/item/device/pipe_painter))
-		return
-	if(istype(A, /obj/item/device/scanner/gas))
-		return
-	..()
-
-/obj/machinery/atmospherics/proc/add_underlay(var/turf/T, var/obj/machinery/atmospherics/node, var/direction, var/icon_connect_type)
+/obj/machinery/atmospherics/proc/add_underlay(turf/T, obj/machinery/atmospherics/node, direction, icon_connect_type)
 	if(node)
-		if(!T.is_plating() && node.level == 1 && istype(node, /obj/machinery/atmospherics/pipe))			
+		if(!T.is_plating() && node.level == ATOM_LEVEL_UNDER_TILE && istype(node, /obj/machinery/atmospherics/pipe))
 			underlays += icon_manager.get_atmos_icon("underlay", direction, color_cache_name(node), "down" + icon_connect_type)
 		else
 			underlays += icon_manager.get_atmos_icon("underlay", direction, color_cache_name(node), "intact" + icon_connect_type)
@@ -83,13 +77,13 @@ Pipelines + Other Objects -> Pipe network
 	else
 		return 0
 
-obj/machinery/atmospherics/proc/check_connect_types(obj/machinery/atmospherics/atmos1, obj/machinery/atmospherics/atmos2)
+/obj/machinery/atmospherics/proc/check_connect_types(obj/machinery/atmospherics/atmos1, obj/machinery/atmospherics/atmos2)
 	return (atmos1.connect_types & atmos2.connect_types)
 
 /obj/machinery/atmospherics/proc/check_connect_types_construction(obj/machinery/atmospherics/atmos1, obj/item/pipe/pipe2)
 	return (atmos1.connect_types & pipe2.connect_types)
 
-/obj/machinery/atmospherics/proc/check_icon_cache(var/safety = 0)
+/obj/machinery/atmospherics/proc/check_icon_cache(safety = 0)
 	if(!istype(icon_manager))
 		if(!safety) //to prevent infinite loops
 			icon_manager = new()
@@ -98,7 +92,7 @@ obj/machinery/atmospherics/proc/check_connect_types(obj/machinery/atmospherics/a
 
 	return 1
 
-/obj/machinery/atmospherics/proc/color_cache_name(var/obj/machinery/atmospherics/node)
+/obj/machinery/atmospherics/proc/color_cache_name(obj/machinery/atmospherics/node)
 	//Don't use this for standard pipes
 	if(!istype(node))
 		return null
@@ -166,8 +160,8 @@ obj/machinery/atmospherics/proc/check_connect_types(obj/machinery/atmospherics/a
 	. = ..()
 	initialize_directions = get_initialze_directions()
 
-// Used by constructors. Shouldn't generally be called from elsewhere.
+/// Used by constructors. Shouldn't generally be called from elsewhere.
 /obj/machinery/proc/set_initial_level()
 	var/turf/T = get_turf(src)
 	if(T)
-		level = (!T.is_plating() ? 2 : 1)
+		level = (!T.is_plating() ? ATOM_LEVEL_OVER_TILE : ATOM_LEVEL_UNDER_TILE)

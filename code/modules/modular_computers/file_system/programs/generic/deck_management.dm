@@ -12,8 +12,8 @@
 	program_menu_icon = "clock"
 	extended_desc = "A tool for managing shuttles, filling out flight plans, and submitting flight-related paperwork."
 	size = 18
-	available_on_ntnet = 1
-	requires_ntnet = 1
+	available_on_ntnet = TRUE
+	requires_ntnet = TRUE
 	category = PROG_SUPPLY
 
 /datum/nano_module/deck_management
@@ -329,7 +329,7 @@
 		var/crew = selected_mission.flight_plan.manifest.get_value(in_line = 1)
 		var/time = selected_mission.flight_plan.planned_depart.get_value()
 		if(!crew || !time)
-			to_chat(user, "<span class='warning'>Please fill in the crew manifest and departure time first.</span>")
+			to_chat(user, SPAN_WARNING("Please fill in the crew manifest and departure time first."))
 			return 1
 		var/place = selected_shuttle.name
 		if(alert(user, "Would you like to choose a custom gathering point, or just use [place]?", "Announcement Creation", "Default", "Custom") == "Custom")
@@ -344,7 +344,7 @@
 			GLOB.global_announcer.autosay("The [selected_shuttle.name] is planning to depart on a mission promptly at [time]. The following crew members are to make their way to \the [place] immediately: [crew].", "Hangar Announcement System")
 			my_log.last_spam = world.time
 		else
-			to_chat(user, "<span class='warning'>It's too soon after the previous announcement!</span>")
+			to_chat(user, SPAN_WARNING("It's too soon after the previous announcement!"))
 		return 1
 	if(href_list["email_crew"])
 		var/shuttle_name = href_list["shuttle"]

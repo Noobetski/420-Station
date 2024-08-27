@@ -31,7 +31,13 @@
 		if ("play")
 			src.player.song.playing = value
 			if (src.player.song.playing)
+				GLOB.instrument_synchronizer.raise_event(player.actual_instrument)
 				src.player.song.play_song(usr)
+		if ("wait")
+			if(value)
+				src.player.wait = weakref(usr)
+			else
+				src.player.wait = null
 		if ("newsong")
 			src.player.song.lines.Cut()
 			src.player.song.tempo = src.player.song.sanitize_tempo(5) // default 120 BPM
@@ -59,7 +65,7 @@
 						src.player.song.tempo = src.player.song.sanitize_tempo(5)
 				else
 					src.player.song.tempo = src.player.song.sanitize_tempo(5) // default 120 BPM
-				if(src.player.song.lines.len > maximum_lines)
+				if(length(src.player.song.lines) > maximum_lines)
 					to_chat(usr,"Too many lines!")
 					src.player.song.lines.Cut(maximum_lines+1)
 				var/linenum = 1
@@ -97,8 +103,11 @@
 			new_coeff = round(min(max(new_coeff, GLOB.musical_config.gentlest_drop), GLOB.musical_config.steepest_drop), 0.001)
 			src.player.song.soft_coeff = new_coeff
 		if ("instrument")
+			if (!islist(instruments))
+				return
+			var/list/as_list = instruments
 			var/list/categories = list()
-			for (var/key in instruments)
+			for (var/key in as_list)
 				var/datum/instrument/instrument = instruments[key]
 				categories |= instrument.category
 
@@ -106,7 +115,7 @@
 			if(!CanInteractWith(usr, owner, GLOB.physical_state))
 				return
 			var/list/instruments_available = list()
-			for (var/key in instruments)
+			for (var/key in as_list)
 				var/datum/instrument/instrument = instruments[key]
 				if (instrument.category == category)
 					instruments_available += key
@@ -142,12 +151,13 @@
 
 
 
-/datum/real_instrument/proc/ui_call(mob/user, ui_key, var/datum/nanoui/ui = null, var/force_open = 0)
+/datum/real_instrument/proc/ui_call(mob/user, ui_key, datum/nanoui/ui = null, force_open = 0)
 	var/list/data
 	data = list(
 		"playback" = list(
 			"playing" = src.player.song.playing,
 			"autorepeat" = src.player.song.autorepeat,
+			"wait" = src.player.wait != null
 		),
 		"basic_options" = list(
 			"cur_instrument" = src.player.song.instrument_data.name,
@@ -170,13 +180,13 @@
 			"soft_coeff" = src.player.song.soft_coeff
 		),
 		"show" = list(
-			"playback" = src.player.song.lines.len > 0,
+			"playback" = length(src.player.song.lines) > 0,
 			"custom_env_options" = GLOB.musical_config.is_custom_env(src.player.virtual_environment_selected),
 			"env_settings" = GLOB.musical_config.env_settings_available
 		),
 		"status" = list(
 			"channels" = src.player.song.available_channels,
-			"events" = src.player.event_manager.events.len,
+			"events" = length(src.player.event_manager.events),
 			"max_channels" = GLOB.musical_config.channels_per_instrument,
 			"max_events" = GLOB.musical_config.max_events,
 		)
@@ -204,6 +214,7 @@
 	var/datum/instrument/instruments = list()
 	var/path = /datum/instrument
 	var/sound_player = /datum/sound_player
+	obj_flags = OBJ_FLAG_ANCHORABLE
 
 /obj/structure/synthesized_instrument/Initialize()
 	. = ..()
@@ -216,8 +227,10 @@
 
 /obj/structure/synthesized_instrument/Destroy()
 	QDEL_NULL(src.real_instrument)
-	for(var/key in instruments)
-		qdel(instruments[key])
+	if (islist(instruments))
+		var/list/as_list = instruments
+		for (var/key in as_list)
+			qdel(as_list[key])
 	instruments = null
 	. = ..()
 
@@ -230,7 +243,7 @@
 	src.ui_interact(user)
 
 
-/obj/structure/synthesized_instrument/ui_interact(mob/user, ui_key = "instrument", var/datum/nanoui/ui = null, var/force_open = 0)
+/obj/structure/synthesized_instrument/ui_interact(mob/user, ui_key = "instrument", datum/nanoui/ui = null, force_open = 0)
 	real_instrument.ui_call(user,ui_key,ui,force_open)
 
 
@@ -268,8 +281,10 @@
 
 /obj/item/device/synthesized_instrument/Destroy()
 	QDEL_NULL(src.real_instrument)
-	for(var/key in instruments)
-		qdel(instruments[key])
+	if (islist(instruments))
+		var/list/as_list = instruments
+		for (var/key in as_list)
+			qdel(as_list[key])
 	instruments = null
 	. = ..()
 
@@ -282,7 +297,7 @@
 	src.ui_interact(user)
 
 
-/obj/item/device/synthesized_instrument/ui_interact(mob/user, ui_key = "instrument", var/datum/nanoui/ui = null, var/force_open = 0)
+/obj/item/device/synthesized_instrument/ui_interact(mob/user, ui_key = "instrument", datum/nanoui/ui = null, force_open = 0)
 	if (real_instrument)
 		real_instrument.ui_call(user,ui_key,ui,force_open)
 

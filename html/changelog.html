@@ -886,3 +886,300 @@
 </td></tr></table>
 </body>
 </html>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+  <title>Baystation 12 Changelog</title>
+  <link rel="stylesheet" type="text/css" href="changelog.css">
+  <base target="_blank" />
+  <script type='text/javascript'>
+
+	function changeText(tagID, newText, linkTagID){
+		var tag = document.getElementById(tagID);
+		tag.innerHTML = newText;
+		var linkTag = document.getElementById(linkTagID);
+		linkTag.removeAttribute("href");
+		linkTag.removeAttribute("onclick");
+	}
+
+  </script>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+</head>
+
+<body>
+<table align='center' width='650'><tr><td>
+<table align='center' class="top">
+	<tr>
+		<td valign='top'>
+			<div align='center'><font size='3'><b>Baystation 12</b></font></div>
+			<div align='center'><font size='3'><b><i>A Space Station 13 Project</i></b></font></div>
+
+			<p><div align='center'><font size='3'><a href="https://baydoc.ss13.me/">Wiki</a> | <a href="https://github.com/Baystation12/Baystation12/">Source code</a></font></div></p>
+			<font size='2'>Code licensed under <a href="http://www.gnu.org/licenses/agpl.html">AGPLv3</a>. Content licensed under <a href="http://creativecommons.org/licenses/by-sa/3.0/">CC BY-SA 3.0</a>.<br><br>
+			<font size='2'><b>Join our Discord server:</b> <a href='https://bay.ss13.me/discord'>-Click Here-</a><br></font>
+			</td>
+	</tr>
+</table>
+
+<br><b>Baystation 12 Credit List</b>
+<table align='center' class="top">
+	<tr>
+		<td valign='top'>
+			<font size='2'><b>Developers:</b> CrimsonShrike, MuckerMayhem, PsiOmegaDelta, SierraKomodo<br></font>
+			<font size='2'><b>Retired Developers:</b> afterthought, chinsky, F-Tang Steve, mloc, xales<br></font>
+			<font size='2'><b>Currently Active GitHub contributor list:</b> <a href='https://github.com/Baystation12/Baystation12/graphs/contributors'>-Click Here-</a><br></font>
+			<p><font size='2'><b>Credits:</b> Abi79, Apple_Master, Arcalane, Aryn, babydoll, Cael_Aislinn, Ccomp5950, chinsky, CompactNinja, Deus Dactyl, DopeGhoti, Erthilo, Flashkirby, Hawk_v3, Head, Ipsil, Invisty, JoeyJo0, Lexusjjss, Melonstorm, Miniature, mloc, NerdyBoy1104, PsiOmegaDelta, Searif, SkyMarshal, Snapshot, Spectre, Strumpetplaya, Sunfall, Tastyfish, Uristqwerty, Xenone, cib, faux, Zuhayr<br></p>
+			<font size='2'><b>Special thanks to:</b> The developers of /tg/station, /vg/station, GoonStation, the original Space Station 13, and BYOND</font>
+			<div align='center'><font size='2' color='red'><b><br>Have a bug to report?</b> Visit our <a href="https://github.com/Baystation12/Baystation12/issues?labels=Bug&state=open">Issue Tracker</a>.<br></font></div>
+		</td>
+	</tr>
+</table>
+
+		<!--
+
+		TO ADD AN ENTRY, ADD AND MAINTAIN YOUR OWN changelog/USERNAME.yml FILE.
+
+		*** DO NOT MODIFY THIS FILE OR YOU WILL CAUSE MERGE CONFLICTS. ***
+
+		-->
+		<div class="commit sansserif">
+
+			<h2 class="date">26 August 2024</h2>
+			<h3 class="author">sdtwbaj updated:</h3>
+			<ul class="changes bgimages16">
+				<li class="tweak">Flora can be cut away with a hatchet.</li>
+				<li class="tweak">Trees can be destroyed, and drop wood!</li>
+				<li class="rscadd">woodcutting.ogg from Polaris</li>
+				<li class="rscadd">tree stumps from Polaris</li>
+			</ul>
+
+			<h2 class="date">25 August 2024</h2>
+			<h3 class="author">Mucker updated:</h3>
+			<ul class="changes bgimages16">
+				<li class="tweak">Adjusted the spawn target for merc and raider to 3, and traitor to 1.</li>
+			</ul>
+			<h3 class="author">Ryan180602 updated:</h3>
+			<ul class="changes bgimages16">
+				<li class="tweak">Throat-slit timer changed from 3.24 ~ 0.8! seconds to 3.75 ~ 2.25. On success, the user cannot act again for an extra second.</li>
+				<li class="tweak">Posibrains can be fixed outside chassis.</li>
+			</ul>
+			<h3 class="author">sick trigger updated:</h3>
+			<ul class="changes bgimages16">
+				<li class="rscadd">Orders from supply now record what time the requst was made</li>
+			</ul>
+
+			<h2 class="date">20 August 2024</h2>
+			<h3 class="author">rootoo807 updated:</h3>
+			<ul class="changes bgimages16">
+				<li class="bugfix">Fixes broken sprites / adds missing sprites for armbands, insulated gloves, soft caps, blood masks on GAS. GAS can no longer wear overalls or wizard voidsuit [snakes don't have legs for pants :(  ].</li>
+				<li class="bugfix">Adds missing sprite for flipped veteran's cap.</li>
+			</ul>
+
+			<h2 class="date">13 August 2024</h2>
+			<h3 class="author">SierraKomodo updated:</h3>
+			<ul class="changes bgimages16">
+				<li class="bugfix">Shuttle control consoles can no longer be synced to shuttles if not actually on the shuttle.</li>
+				<li class="bugfix">Regular non-overmap shuttle control consoles will no longer function on overmap shuttles, and vice-versa.</li>
+				<li class="tweak">Shuttle control consoles now automatically sync to the shuttle they're built on when created, instead of needing to be set by multitooling the board before creation.</li>
+			</ul>
+
+			<h2 class="date">06 August 2024</h2>
+			<h3 class="author">MLGTASTICa updated:</h3>
+			<ul class="changes bgimages16">
+				<li class="balance">Sugar doses over 50 units now cause brain damage for species with the sugar malus(unathi and unathi-homeworld monkeys)</li>
+			</ul>
+			<h3 class="author">Spookerton updated:</h3>
+			<ul class="changes bgimages16">
+				<li class="bugfix">Mobs that are not human, robot, or an admin observer cannot interact with microwaves.</li>
+			</ul>
+
+			<h2 class="date">01 August 2024</h2>
+			<h3 class="author"> updated:</h3>
+			<ul class="changes bgimages16">
+				<li class="tweak">Temporarily reverts description extensions.</li>
+			</ul>
+
+			<h2 class="date">31 July 2024</h2>
+			<h3 class="author">PsiOmegaDelta updated:</h3>
+			<ul class="changes bgimages16">
+				<li class="tweak">Select loadout items now dislay an extended description when selected for use.</li>
+			</ul>
+			<h3 class="author">PurplePineapple updated:</h3>
+			<ul class="changes bgimages16">
+				<li class="tweak">Disposable tasers have 10 shots now.</li>
+			</ul>
+			<h3 class="author">SierraKomodo updated:</h3>
+			<ul class="changes bgimages16">
+				<li class="bugfix">Fixed borg bottle racks not being able to pick anything up.</li>
+			</ul>
+			<h3 class="author">Spookerton updated:</h3>
+			<ul class="changes bgimages16">
+				<li class="bugfix">Wheelchairs are subject to regular mob slowdowns.</li>
+			</ul>
+
+			<h2 class="date">29 July 2024</h2>
+			<h3 class="author">Spookerton updated:</h3>
+			<ul class="changes bgimages16">
+				<li class="admin">Added a "View Byond Account" link to player panel when the mob has a ckey.</li>
+			</ul>
+
+			<h2 class="date">28 July 2024</h2>
+			<h3 class="author">Builder13 updated:</h3>
+			<ul class="changes bgimages16">
+				<li class="bugfix">Fixed atmospherics for late loaded away sites.</li>
+				<li class="bugfix">Fixed ventcrawl for animals once they attacked somebody (example:borers).</li>
+				<li class="bugfix">Fixed a lack of the specific reagents for some of the snacks.</li>
+			</ul>
+			<h3 class="author">PurplePineapple updated:</h3>
+			<ul class="changes bgimages16">
+				<li class="rscadd">Adds a variable to energy weapons allowing them to be marked as "disposable" guns. Energy guns with disposable set to true are not able to be charged or used with an inducer.</li>
+				<li class="tweak">Security basic supply packs no longer contain electrolasers. They can be purchased separately with a cheaper supply pack that contains disposable electrolasers.</li>
+			</ul>
+			<h3 class="author">Sbotkin updated:</h3>
+			<ul class="changes bgimages16">
+				<li class="maptweak">Various changes to the supply department, most notable: DC office and the warehouse lights.</li>
+				<li class="tweak">Deck crew helmets and hardhats can be worn in the hazard vest's suit slot.</li>
+				<li class="tweak">Minor shuffles in the orderable goods.</li>
+			</ul>
+			<h3 class="author">sick trigger updated:</h3>
+			<ul class="changes bgimages16">
+				<li class="rscadd">Plant potency affects the brightness of bioluminescent plants</li>
+			</ul>
+
+			<h2 class="date">27 July 2024</h2>
+			<h3 class="author">SierraKomodo updated:</h3>
+			<ul class="changes bgimages16">
+				<li class="rscadd">Airlocks can now be further damaged after the panel breaks with a sufficiently strong weapon, allowing you to fully break the airlock open by force instead of prying it or (if the door was bolted at the time it broke) going through the process of cutting through the bolts and cover.</li>
+				<li class="rscadd">Fully broken doors can be dismantled with a welding tool, giving back a small amount of resources.</li>
+			</ul>
+			<h3 class="author">sick trigger updated:</h3>
+			<ul class="changes bgimages16">
+				<li class="rscadd">Supply can purchase stasis cages</li>
+				<li class="bugfix">Fixes for selling artifacts and animals</li>
+			</ul>
+
+			<h2 class="date">26 July 2024</h2>
+			<h3 class="author">Sbotkin updated:</h3>
+			<ul class="changes bgimages16">
+				<li class="tweak">Envelopes and folders are shreddable.</li>
+				<li class="bugfix">Artifacts no longer break on scan halting.</li>
+			</ul>
+			<h3 class="author">SierraKomodo updated:</h3>
+			<ul class="changes bgimages16">
+				<li class="bugfix">Broken emags now retain all fingerprint and fibre information from their unbroken form.</li>
+				<li class="tweak">Broken emags now remain in your hand instead of dropping to the floor.</li>
+				<li class="tweak">Hacking tools no longer act as multi tools while enabled.</li>
+			</ul>
+
+			<h2 class="date">25 July 2024</h2>
+			<h3 class="author">Ryan180602 updated:</h3>
+			<ul class="changes bgimages16">
+				<li class="tweak">Edits the bridge C-Notice document to be more clearer.</li>
+			</ul>
+
+			<h2 class="date">22 July 2024</h2>
+			<h3 class="author">Builder13 updated:</h3>
+			<ul class="changes bgimages16">
+				<li class="bugfix">Fixed lighting for shuttles after transition.</li>
+				<li class="bugfix">Fixed Delete channel button for NTNet Relay Chat Client.</li>
+				<li class="bugfix">Fixed Take image verb for borgs.</li>
+			</ul>
+			<h3 class="author">Nyvrem updated:</h3>
+			<ul class="changes bgimages16">
+				<li class="tweak">Skrianhi Tea now actually does tea things, like being hot.</li>
+			</ul>
+			<h3 class="author">Qlonever updated:</h3>
+			<ul class="changes bgimages16">
+				<li class="tweak">Investigators can now take labcoats and sterile gear from the loadout menu.</li>
+			</ul>
+			<h3 class="author">Sbotkin updated:</h3>
+			<ul class="changes bgimages16">
+				<li class="tweak">Miners lose access to the exploration freq, deck technicians gain access to the hailing freq and the Pathfinder gains access to the supply freq.</li>
+			</ul>
+			<h3 class="author">SierraKomodo updated:</h3>
+			<ul class="changes bgimages16">
+				<li class="rscadd">Adds the base corrupted hivebot mobs and beacon used during the Legion itnroduction event, for future usage.</li>
+			</ul>
+			<h3 class="author">gy1ta23 updated:</h3>
+			<ul class="changes bgimages16">
+				<li class="tweak">Lockets and wallets can hold photo trinkets.</li>
+			</ul>
+
+			<h2 class="date">21 July 2024</h2>
+			<h3 class="author">Ryan180602 updated:</h3>
+			<ul class="changes bgimages16">
+				<li class="rscadd">Added two documents for bridge crew.</li>
+				<li class="rscadd">Added documents specific for COS, CE, CMO, CSO/Pathfinder, CO/SCGR, XO/DC/CS.</li>
+			</ul>
+
+			<h2 class="date">12 July 2024</h2>
+			<h3 class="author">Ryan180602 updated:</h3>
+			<ul class="changes bgimages16">
+				<li class="tweak">Remove disorientor from lockers.</li>
+				<li class="tweak">Remove disorientor design from protolathe.</li>
+				<li class="tweak">Give parapen a 1.5s delay, and only 5u of VB.</li>
+			</ul>
+
+			<h2 class="date">09 July 2024</h2>
+			<h3 class="author">Gy1ta23 updated:</h3>
+			<ul class="changes bgimages16">
+				<li class="rscadd">you can now select photographs in loadout with changeable descriptions</li>
+			</ul>
+
+			<h2 class="date">08 July 2024</h2>
+			<h3 class="author">Builder13 updated:</h3>
+			<ul class="changes bgimages16">
+				<li class="bugfix">Wizard retains all the spells in the hud upon changing/getting body.</li>
+				<li class="bugfix">It is now possible to spawn wizard packages (examples: scrying orb, mastercrafted armor).</li>
+				<li class="bugfix">Fixes for some of the spells, so they are castable again.</li>
+			</ul>
+			<h3 class="author">Gy1ta23 updated:</h3>
+			<ul class="changes bgimages16">
+				<li class="tweak">people can now see you drag on your cigarettes</li>
+			</ul>
+			<h3 class="author">Sbotkin updated:</h3>
+			<ul class="changes bgimages16">
+				<li class="tweak">The forensic microscope can now be clicked with an evidence bag, which will remove the sample from the machine and put it in the bag, no contamination if you have at least basic forensics.</li>
+			</ul>
+			<h3 class="author">Zenithstar updated:</h3>
+			<ul class="changes bgimages16">
+				<li class="bugfix">Familiars now use the appropriate sprite when they stop resting or die while resting.</li>
+			</ul>
+
+			<h2 class="date">04 July 2024</h2>
+			<h3 class="author">Nyvrem updated:</h3>
+			<ul class="changes bgimages16">
+				<li class="rscadd">Getting hit with ores/rocks now hurts a little.</li>
+			</ul>
+			<h3 class="author">Qlonever updated:</h3>
+			<ul class="changes bgimages16">
+				<li class="bugfix">Ripping out a roller bed's cannula actually detaches it now.</li>
+				<li class="bugfix">Loadout augmentations no longer create phantom copies in the chest.</li>
+				<li class="tweak">Body scans now detect implanted toolkits, leukocyte breeders, and glare dampeners.</li>
+				<li class="tweak">Various fixes to transplantation/removal surgery text.</li>
+			</ul>
+
+			<h2 class="date">03 July 2024</h2>
+			<h3 class="author">SierraKomodo updated:</h3>
+			<ul class="changes bgimages16">
+				<li class="tweak">Added a ~5-ish second delay between uses of the ice cream maker to prevent excessive spamming.</li>
+			</ul>
+
+			<h2 class="date">26 June 2024</h2>
+			<h3 class="author">Spookerton updated:</h3>
+			<ul class="changes bgimages16">
+				<li class="tweak">Spiders that explode on death no longer spawn naturally.</li>
+			</ul>
+		</div>
+
+<b>GoonStation 13 Development Team</b>
+	<div class = "top">
+	<b>Coders:</b> Stuntwaffle, Showtime, Pantaloons, Nannek, Keelin, Exadv1, hobnob, Justicefries, 0staf, sniperchance, AngriestIBM, BrianOBlivion<br>
+	<b>Spriters:</b> Supernorn, Haruhi, Stuntwaffle, Pantaloons, Rho, SynthOrange, I Said No<br>
+	</div>
+<br>
+<p class="lic"><a name="license" href="http://creativecommons.org/licenses/by-nc-sa/3.0/"><img src="88x31.png" alt="Creative Commons License" /></a><br><i>Except where otherwise noted, Goon Station 13 is licensed under a <a href="http://creativecommons.org/licenses/by-nc-sa/3.0/">Creative Commons Attribution-Noncommercial-Share Alike 3.0 License</a>.<br>Rights are currently extended to <a href="http://forums.somethingawful.com/">SomethingAwful Goons</a> only.</i></p>
+<p class="lic">Some icons by <a href="http://p.yusukekamiyamane.com/">Yusuke Kamiyamane</a>. All rights reserved. Licensed under a <a href="http://creativecommons.org/licenses/by/3.0/">Creative Commons Attribution 3.0 License</a>.</p>
+</td></tr></table>
+</body>
+</html>

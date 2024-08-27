@@ -9,9 +9,14 @@ SUBSYSTEM_DEF(materials)
 	var/list/alloy_products
 	var/list/processable_ores
 
-/datum/controller/subsystem/materials/Initialize()
+
+/datum/controller/subsystem/materials/UpdateStat(time)
+	return
+
+
+/datum/controller/subsystem/materials/Initialize(start_uptime)
 	build_material_lists()
-	. = ..()
+
 
 /datum/controller/subsystem/materials/proc/build_material_lists()
 
@@ -46,6 +51,7 @@ SUBSYSTEM_DEF(materials)
 		log_error("Unable to acquire material by name '[name]'")
 
 /proc/material_display_name(name)
+	RETURN_TYPE(/material)
 	var/material/material = SSmaterials.get_material_by_name(name)
 	if(material)
 		return material.display_name

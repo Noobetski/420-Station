@@ -4,15 +4,14 @@
 /obj/machinery/light_switch
 	name = "light switch"
 	desc = "It turns lights on and off. What are you, simple?"
-	icon = 'icons/obj/power.dmi'
+	icon = 'icons/obj/structures/buttons.dmi'
 	icon_state = "light0"
-	anchored = 1.0
+	anchored = TRUE
 	idle_power_usage = 20
 	power_channel = LIGHT
 	var/on = 0
 	var/area/connected_area = null
 	var/other_area = null
-	var/image/overlay
 
 /obj/machinery/light_switch/Initialize()
 	. = ..()
@@ -28,27 +27,25 @@
 	update_icon()
 
 /obj/machinery/light_switch/on_update_icon()
-	if(!overlay)
-		overlay = image(icon, "light1-overlay")
-		overlay.plane = EFFECTS_ABOVE_LIGHTING_PLANE
-		overlay.layer = ABOVE_LIGHTING_LAYER
-
-	overlays.Cut()
-	if(stat & (NOPOWER|BROKEN))
+	ClearOverlays()
+	if(inoperable())
 		icon_state = "light-p"
 		set_light(0)
 	else
 		icon_state = "light[on]"
-		overlay.icon_state = "light[on]-overlay"
-		overlays += overlay
-		set_light(0.1, 0.1, 1, 2, on ? "#82ff4c" : "#f86060")
+		var/color = on ? "#82ff4c" : "#f86060"
+		AddOverlays(list(
+			emissive_appearance(icon, "light[on]-overlay"),
+			overlay_image(icon, "light[on]-overlay", color)
+		))
+		set_light(2, 0.25, color)
 
 /obj/machinery/light_switch/examine(mob/user, distance)
 	. = ..()
 	if(distance)
 		to_chat(user, "A light switch. It is [on? "on" : "off"].")
 
-/obj/machinery/light_switch/proc/set_state(var/newstate)
+/obj/machinery/light_switch/proc/set_state(newstate)
 	if(on != newstate)
 		on = newstate
 		connected_area.set_lightswitch(on)
@@ -66,10 +63,13 @@
 		set_state(!on)
 		return TRUE
 
-/obj/machinery/light_switch/attackby(obj/item/tool as obj, mob/user as mob)
-	if(istype(tool, /obj/item/weapon/screwdriver))
-		new /obj/item/frame/light_switch(user.loc, 1)
+/obj/machinery/light_switch/use_tool(obj/item/tool, mob/living/user, list/click_params)
+	if (isScrewdriver(tool))
+		var/obj/item/frame/light_switch/frame = new /obj/item/frame/light_switch(user.loc, 1)
+		transfer_fingerprints_to(frame)
 		qdel(src)
+		return TRUE
+	return ..()
 
 
 /obj/machinery/light_switch/powered()
@@ -82,7 +82,7 @@
 		sync_state()
 
 /obj/machinery/light_switch/emp_act(severity)
-	if(stat & (BROKEN|NOPOWER))
+	if(inoperable())
 		..(severity)
 		return
 	power_change()

@@ -6,47 +6,47 @@
 	name = "Flavor"
 	sort_order = 4
 
-/datum/category_item/player_setup_item/physical/flavor/load_character(var/savefile/S)
-	from_save(S["flavor_texts_general"], pref.flavor_texts["general"])
-	from_save(S["flavor_texts_head"], pref.flavor_texts["head"])
-	from_save(S["flavor_texts_face"], pref.flavor_texts["face"])
-	from_save(S["flavor_texts_eyes"], pref.flavor_texts["eyes"])
-	from_save(S["flavor_texts_torso"], pref.flavor_texts["torso"])
-	from_save(S["flavor_texts_arms"], pref.flavor_texts["arms"])
-	from_save(S["flavor_texts_hands"], pref.flavor_texts["hands"])
-	from_save(S["flavor_texts_legs"], pref.flavor_texts["legs"])
-	from_save(S["flavor_texts_feet"], pref.flavor_texts["feet"])
+/datum/category_item/player_setup_item/physical/flavor/load_character(datum/pref_record_reader/R)
+	pref.flavor_texts["general"] = R.read("flavor_texts_general")
+	pref.flavor_texts["head"] = R.read("flavor_texts_head")
+	pref.flavor_texts["face"] = R.read("flavor_texts_face")
+	pref.flavor_texts["eyes"] = R.read("flavor_texts_eyes")
+	pref.flavor_texts["torso"] = R.read("flavor_texts_torso")
+	pref.flavor_texts["arms"] = R.read("flavor_texts_arms")
+	pref.flavor_texts["hands"] = R.read("flavor_texts_hands")
+	pref.flavor_texts["legs"] = R.read("flavor_texts_legs")
+	pref.flavor_texts["feet"] = R.read("flavor_texts_feet")
 
 	//Flavour text for robots.
-	from_save(S["flavour_texts_robot_Default"], pref.flavour_texts_robot["Default"])
+	pref.flavour_texts_robot["Default"] = R.read("flavour_texts_robot_Default")
 	for(var/module in SSrobots.all_module_names)
-		from_save(S["flavour_texts_robot_[module]"], pref.flavour_texts_robot[module])
+		pref.flavour_texts_robot[module] = R.read("flavour_texts_robot_[module]")
 
-/datum/category_item/player_setup_item/physical/flavor/save_character(var/savefile/S)
-	to_save(S["flavor_texts_general"], pref.flavor_texts["general"])
-	to_save(S["flavor_texts_head"], pref.flavor_texts["head"])
-	to_save(S["flavor_texts_face"], pref.flavor_texts["face"])
-	to_save(S["flavor_texts_eyes"], pref.flavor_texts["eyes"])
-	to_save(S["flavor_texts_torso"], pref.flavor_texts["torso"])
-	to_save(S["flavor_texts_arms"], pref.flavor_texts["arms"])
-	to_save(S["flavor_texts_hands"], pref.flavor_texts["hands"])
-	to_save(S["flavor_texts_legs"], pref.flavor_texts["legs"])
-	to_save(S["flavor_texts_feet"], pref.flavor_texts["feet"])
+/datum/category_item/player_setup_item/physical/flavor/save_character(datum/pref_record_writer/W)
+	W.write("flavor_texts_general", pref.flavor_texts["general"])
+	W.write("flavor_texts_head", pref.flavor_texts["head"])
+	W.write("flavor_texts_face", pref.flavor_texts["face"])
+	W.write("flavor_texts_eyes", pref.flavor_texts["eyes"])
+	W.write("flavor_texts_torso", pref.flavor_texts["torso"])
+	W.write("flavor_texts_arms", pref.flavor_texts["arms"])
+	W.write("flavor_texts_hands", pref.flavor_texts["hands"])
+	W.write("flavor_texts_legs", pref.flavor_texts["legs"])
+	W.write("flavor_texts_feet", pref.flavor_texts["feet"])
 
-	to_save(S["flavour_texts_robot_Default"], pref.flavour_texts_robot["Default"])
+	W.write("flavour_texts_robot_Default", pref.flavour_texts_robot["Default"])
 	for(var/module in SSrobots.all_module_names)
-		to_save(S["flavour_texts_robot_[module]"], pref.flavour_texts_robot[module])
+		W.write("flavour_texts_robot_[module]", pref.flavour_texts_robot[module])
 
 /datum/category_item/player_setup_item/physical/flavor/sanitize_character()
 	if(!istype(pref.flavor_texts))        pref.flavor_texts = list()
 	if(!istype(pref.flavour_texts_robot)) pref.flavour_texts_robot = list()
 
-/datum/category_item/player_setup_item/physical/flavor/content(var/mob/user)
+/datum/category_item/player_setup_item/physical/flavor/content(mob/user)
 	. += "<b>Flavor:</b><br>"
 	. += "<a href='?src=\ref[src];flavor_text=open'>Set Flavor Text</a><br/>"
 	. += "<a href='?src=\ref[src];flavour_text_robot=open'>Set Robot Flavor Text</a><br/>"
 
-/datum/category_item/player_setup_item/physical/flavor/OnTopic(var/href,var/list/href_list, var/mob/user)
+/datum/category_item/player_setup_item/physical/flavor/OnTopic(href,list/href_list, mob/user)
 	if(href_list["flavor_text"])
 		switch(href_list["flavor_text"])
 			if("open")

@@ -4,7 +4,7 @@
 	var/last_cache_rebuild_time = 0
 	category = /datum/shuttle/autodock/multi
 
-/datum/shuttle/autodock/multi/proc/set_destination(var/destination_key, mob/user)
+/datum/shuttle/autodock/multi/proc/set_destination(destination_key, mob/user)
 	if(moving_status != SHUTTLE_IDLE)
 		return
 	next_location = destinations_cache[destination_key]
@@ -18,7 +18,7 @@
 	last_cache_rebuild_time = world.time
 	destinations_cache.Cut()
 	for(var/destination_tag in destination_tags)
-		var/obj/effect/shuttle_landmark/landmark = SSshuttle.get_landmark(destination_tag)
+		var/obj/shuttle_landmark/landmark = SSshuttle.get_landmark(destination_tag)
 		if (istype(landmark))
 			destinations_cache["[landmark.name]"] = landmark
 
@@ -26,7 +26,7 @@
 /datum/shuttle/autodock/multi/antag
 	warmup_time = 10 SECONDS //replaced the old move cooldown
 	 //This variable is type-abused initially: specify the landmark_tag, not the actual landmark.
-	var/obj/effect/shuttle_landmark/home_waypoint
+	var/obj/shuttle_landmark/home_waypoint
 
 	var/cloaked = 1
 	var/announcer

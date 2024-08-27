@@ -1,11 +1,11 @@
-/obj/item/weapon/book/manual/solgov_law
+/obj/item/book/manual/solgov_law
 	name = "Sol Central Government Law"
 	desc = "A brief overview of SolGov Law."
 	icon_state = "bookSolGovLaw"
 	author = "The Sol Central Government"
 	title = "Sol Central Government Law"
 
-/obj/item/weapon/book/manual/solgov_law/Initialize()
+/obj/item/book/manual/solgov_law/Initialize()
 	. = ..()
 	dat = {"
 
@@ -13,7 +13,7 @@
 		</head>
 
 		<body>
-		<iframe width='100%' height='97%' src="[config.wikiurl]Sol_Central_Government_Law&printable=yes&remove_links=1" frameborder="0" id="main_frame"></iframe>
+		<iframe width='100%' height='97%' src="[config.wiki_url]/index.php?title=Sol_Central_Government_Law" frameborder="0" id="main_frame"></iframe>
 		</body>
 
 		</html>
@@ -21,14 +21,14 @@
 		"}
 
 
-/obj/item/weapon/book/manual/military_law
+/obj/item/book/manual/military_law
 	name = "The Sol Code of Military Justice"
 	desc = "A brief overview of military law."
 	icon_state = "bookSolGovLaw"
 	author = "The Sol Central Government"
 	title = "The Sol Code of Military Justice"
 
-/obj/item/weapon/book/manual/military_law/Initialize()
+/obj/item/book/manual/military_law/Initialize()
 	. = ..()
 	dat = {"
 
@@ -36,21 +36,21 @@
 		</head>
 
 		<body>
-		<iframe width='100%' height='97%' src="[config.wikiurl]Sol_Gov_Military_Justice&printable=yes&remove_links=1" frameborder="0" id="main_frame"></iframe>
+		<iframe width='100%' height='97%' src="[config.wiki_url]/index.php?title=Sol_Code_of_Uniform_Justice" frameborder="0" id="main_frame"></iframe>
 		</body>
 
 		</html>
 
 		"}
 
-/obj/item/weapon/book/manual/sol_sop
+/obj/item/book/manual/sol_sop
 	name = "Standard Operating Procedure"
 	desc = "SOP aboard the CEV Zerzura."
 	icon_state = "booksolregs"
 	author = "The Sol Central Government"
 	title = "Standard Operating Procedure"
 
-/obj/item/weapon/book/manual/sol_sop/Initialize()
+/obj/item/book/manual/sol_sop/Initialize()
 	. = ..()
 	dat = {"
 
@@ -58,34 +58,26 @@
 		</head>
 
 		<body>
-		<iframe width='100%' height='97%' src="[config.wikiurl]Standard_Operating_Procedure&printable=yes&remove_links=1" frameborder="0" id="main_frame"></iframe>
+		<iframe width='100%' height='97%' src="[config.wiki_url]/index.php?title=Standard_Operating_Procedure" frameborder="0" id="main_frame"></iframe>
 		</body>
 
 		</html>
 
 		"}
 
-/obj/item/weapon/folder/nt/rd
+/obj/item/folder/nt/rd
 
-/obj/item/weapon/paper/liason_note
-	name = "note"
-	info = {"
-	<i>Here's your back-out plan.<br>
-	H.B.</i>
-	"}
-
-/obj/item/weapon/folder/envelope/captain
+/obj/item/folder/envelope/captain
 	desc = "A thick envelope. The SCG crest is stamped in the corner, along with 'TOP SECRET - ZERZURA UMBRA'."
 
-/obj/item/weapon/folder/envelope/captain/Initialize()
+/obj/item/folder/envelope/captain/Initialize()
 	..()
 	return INITIALIZE_HINT_LATELOAD
 
-/obj/item/weapon/folder/envelope/captain/LateInitialize()
-	..()
-	var/obj/effect/overmap/visitable/torch = map_sectors["[z]"]
+/obj/item/folder/envelope/captain/LateInitialize(mapload)
+	var/obj/overmap/visitable/torch = map_sectors["[z]"]
 	var/memo = {"
-	<tt><center><b><font color='red'>SECRET - CODE WORDS: TORCH</font></b>
+	<tt><center><b>[SPAN_COLOR("red", "SECRET - CODE WORDS: TORCH")]</b>
 	<h3>SOL CENTRAL GOVERNMENT EXPEDITIONARY COMMAND</h3>
 	<img src = sollogo.png>
 	</center>
@@ -115,20 +107,20 @@
 	<i>ADM Lau.</i></tt>
 	<i>This paper has been stamped with the stamp of SCG Expeditionary Command.</i>
 	"}
-	new/obj/item/weapon/paper(src, memo, "Standing Orders")
-	new/obj/item/weapon/paper/umbra(src)
+	new/obj/item/paper(src, memo, "Standing Orders")
+	new/obj/item/paper/umbra(src)
 
-/obj/item/weapon/folder/envelope/rep
-	desc = "A thick envelope. The SCG crest is stamped in the corner, along with 'TOP SECRET - UMBRA'."
+/obj/item/folder/envelope/rep
+	desc = "A thick envelope. The SCG crest is stamped in the corner, along with 'TOP SECRET - TORCH UMBRA'."
 
-/obj/item/weapon/folder/envelope/rep/Initialize()
+/obj/item/folder/envelope/rep/Initialize()
 	. = ..()
-	new/obj/item/weapon/paper/umbra(src)
+	new/obj/item/paper/umbra(src)
 
-/obj/item/weapon/paper/umbra
+/obj/item/paper/umbra
 	name = "UMBRA Protocol"
 	info = {"
-	<tt><center><b><font color='red'>TOP SECRET - CODE WORDS: TORCH UMBRA</font></b>
+	<tt><center><b><span style='color: red'>TOP SECRET - CODE WORDS: TORCH UMBRA</span></b>
 	<h3>OFFICE OF THE SECRETARY GENERAL OF SOL CENTRAL GOVERNMENT</h3>
 	<img src = sollogo.png>
 	</center>
@@ -149,3 +141,18 @@
 	<i>Regards, John.</i></tt>
 	<i>This paper has been stamped with the stamp of Office of the General Secretary of SCG.</i>
 	"}
+
+/obj/item/paper/newrust
+	name = "note - RUST Wiring Updates (Mandatory Reading)"
+	info = {"
+	<div style="text-align: center;">
+<h1>RUST Wiring Updates</h1>
+</div>
+<h2></h2>
+<p>Boys at the Observatory decided to upgrade the wiring of our fusion engine room. To adapt, we will need to adjust our normal procedures.</p>
+<ul>
+<li>You do NOT need to bypass the SMES in this antechamber. It is no longer irrelevant, it is the only thing separating RUST output from the main power grid.</li>
+<li>If you are running a standard setup, you SHOULD NOT run the gyrotron after the Hydrogen to Helium reaction starts. This was always a bad idea, as it isn't necessary and the gyrotron will eat 1.25 MW of power at the highest settings, but now it is on a subgrid that will struggle if that much power is being drained constantly.</li>
+</ul>
+<p><i>Chief Petty Officer Meng Jiao</i></p>
+"}

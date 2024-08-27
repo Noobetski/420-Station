@@ -1,7 +1,7 @@
 /////////////////////////////////////////////
 //Guest pass ////////////////////////////////
 /////////////////////////////////////////////
-/obj/item/weapon/card/id/guest
+/obj/item/card/id/guest
 	name = "guest pass"
 	desc = "Allows temporary access to restricted areas."
 	color = COLOR_PALE_GREEN_GRAY
@@ -12,17 +12,17 @@
 	var/expired = FALSE
 	var/reason = "NOT SPECIFIED"
 
-/obj/item/weapon/card/id/guest/GetAccess()
+/obj/item/card/id/guest/GetAccess()
 	return temp_access
 
-/obj/item/weapon/card/id/guest/examine(mob/user)
+/obj/item/card/id/guest/examine(mob/user)
 	. = ..()
 	if (!expired)
 		to_chat(user, SPAN_NOTICE("This pass expires at [worldtime2stationtime(expiration_time)]."))
 	else
 		to_chat(user, SPAN_WARNING("It expired at [worldtime2stationtime(expiration_time)]."))
 
-/obj/item/weapon/card/id/guest/read()
+/obj/item/card/id/guest/read()
 	if (expired)
 		to_chat(usr, SPAN_NOTICE("This pass expired at [worldtime2stationtime(expiration_time)]."))
 	else
@@ -33,9 +33,9 @@
 		to_chat(usr, SPAN_NOTICE("[get_access_desc(A)]."))
 	to_chat(usr, SPAN_NOTICE("Issuing reason: [reason]."))
 
-/obj/item/weapon/card/id/guest/proc/expire()
-	color = COLOR_BLACK
-	detail_color = COLOR_BLACK
+/obj/item/card/id/guest/proc/expire()
+	color = COLOR_GRAY20
+	detail_color = COLOR_GRAY15
 	update_icon()
 
 	expired = TRUE
@@ -50,9 +50,11 @@
 	icon_state = "guest"
 	icon_keyboard = null
 	icon_screen = "pass"
-	density = 0
+	density = FALSE
+	machine_name = "guest pass terminal"
+	machine_desc = "Guest passes are limited-time access passes that can be used to enter areas that would otherwise be inaccessible. This terminal allows them to be configured and created."
 
-	var/obj/item/weapon/card/id/giver
+	var/obj/item/card/id/giver
 	var/list/accesses = list()
 	var/giv_name = "NOT SPECIFIED"
 	var/reason = "NOT SPECIFIED"
@@ -65,22 +67,22 @@
 	..()
 	uid = "[random_id("guestpass_serial_number",100,999)]-G[rand(10,99)]"
 
-/obj/machinery/computer/guestpass/attackby(obj/O, mob/user)
-	if(istype(O, /obj/item/weapon/card/id))
+/obj/machinery/computer/guestpass/use_tool(obj/item/O, mob/living/user, list/click_params)
+	if (isid(O))
 		if(!giver && user.unEquip(O))
 			O.forceMove(src)
 			giver = O
 			updateUsrDialog()
 		else if(giver)
 			to_chat(user, SPAN_WARNING("There is already ID card inside."))
-		return
-	..()
+		return TRUE
+	return ..()
 
-/obj/machinery/computer/guestpass/interface_interact(var/mob/user)
+/obj/machinery/computer/guestpass/interface_interact(mob/user)
 	ui_interact(user)
 	return TRUE
 
-/obj/machinery/computer/guestpass/ui_interact(var/mob/user, ui_key = "main", var/datum/nanoui/ui = null, var/force_open=1)
+/obj/machinery/computer/guestpass/ui_interact(mob/user, ui_key = "main", datum/nanoui/ui = null, force_open=1)
 	var/list/data = list()
 
 	data["mode"] = mode
@@ -101,14 +103,14 @@
 				"selected" = (A in accesses))))
 
 		data["giver_access"] = giver_access
-		
+
 	ui = SSnano.try_update_ui(user, src, ui_key, ui, data, force_open)
 	if(!ui)
 		ui = new(user, src, ui_key, "guestpass.tmpl", "Guest Pass Terminal", 600, 800)
 		ui.set_initial_data(data)
 		ui.open()
 
-/obj/machinery/computer/guestpass/OnTopic(var/mob/user, href_list, state)
+/obj/machinery/computer/guestpass/OnTopic(mob/user, href_list, state)
 	if (href_list["mode"])
 		mode = text2num(href_list["mode"])
 		. = TOPIC_REFRESH
@@ -128,7 +130,7 @@
 	else if (href_list["duration"])
 		var/dur = input(user, "Duration (in minutes) during which pass is valid (up to 60 minutes).", "Duration") as num|null
 		if (dur && CanUseTopic(user, state))
-			if (dur > 0 && dur <= 30)
+			if (dur > 0 && dur <= 60)
 				duration = dur
 				. = TOPIC_REFRESH
 			else
@@ -151,7 +153,7 @@
 			accesses.Cut()
 		else
 			var/obj/item/I = user.get_active_hand()
-			if (istype(I, /obj/item/weapon/card/id) && user.unEquip(I))
+			if (istype(I, /obj/item/card/id) && user.unEquip(I))
 				I.forceMove(src)
 				giver = I
 		. = TOPIC_REFRESH
@@ -160,14 +162,14 @@
 		var/dat = "<h3>Activity log of guest pass terminal #[uid]</h3><br>"
 		for (var/entry in internal_log)
 			dat += "[entry]<br><hr>"
-		var/obj/item/weapon/paper/P = new/obj/item/weapon/paper( loc )
+		var/obj/item/paper/P = new/obj/item/paper( loc )
 		P.SetName("activity log")
 		P.info = dat
 		. = TOPIC_REFRESH
 
 	else if (href_list["issue"])
-		if (giver && accesses.len)
-			var/number = add_zero(random_id("guestpass_id_number",1000,9999), 4)
+		if (giver && length(accesses))
+			var/number = pad_left(random_id("guestpass_id_number", 1, 9999), 6, "0")
 			var/entry = "\[[stationtime2text()]\] Pass #[number] issued by [giver.registered_name] ([giver.assignment]) to [giv_name]. Reason: [reason]. Granted access to following areas: "
 			var/list/access_descriptors = list()
 			for (var/A in accesses)
@@ -177,17 +179,17 @@
 			entry += ". Expires at [worldtime2stationtime(world.time + duration MINUTES)]."
 			internal_log.Add(entry)
 
-			var/obj/item/weapon/card/id/guest/pass = new(src.loc)
+			var/obj/item/card/id/guest/pass = new(src.loc)
 			pass.temp_access = accesses.Copy()
 			pass.registered_name = giv_name
 			pass.expiration_time = world.time + duration MINUTES
 			pass.reason = reason
 			pass.SetName("guest pass #[number]")
 			pass.assignment = "Guest"
-			addtimer(CALLBACK(pass, /obj/item/weapon/card/id/guest/proc/expire), duration MINUTES, TIMER_UNIQUE)
+			addtimer(new Callback(pass, /obj/item/card/id/guest/proc/expire), duration MINUTES, TIMER_UNIQUE)
 			playsound(src.loc, 'sound/machines/ping.ogg', 25, 0)
 			. = TOPIC_REFRESH
 		else if(!giver)
 			to_chat(user, SPAN_WARNING("Cannot issue pass without issuing ID."))
-		else if(!accesses.len)
+		else if(!length(accesses))
 			to_chat(user, SPAN_WARNING("Cannot issue pass without at least one granted access permission."))

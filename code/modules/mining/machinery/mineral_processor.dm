@@ -5,10 +5,14 @@
 
 /obj/machinery/mineral/processing_unit
 	name = "mineral processor"
-	icon_state = "furnace"
+	icon = 'icons/obj/machines/mining/mining_machines.dmi'
+	icon_state = "furnace_0"
 	console = /obj/machinery/computer/mining
 	input_turf =  NORTH
 	output_turf = SOUTH
+
+	machine_name = "ore processor"
+	machine_desc = "Essentially a glorified furnace, ore processors can smelt, compress, or alloy raw minerals into new forms. Improper processing will result in useless slag!"
 
 	var/sheets_per_tick = 10
 	var/list/ores_processing
@@ -25,6 +29,9 @@
 	. = ..()
 
 /obj/machinery/mineral/processing_unit/Process()
+	if(!active)
+		return
+
 	//Grab some more ore to process this tick.
 	if(input_turf)
 		for(var/obj/item/I in recursive_content_check(input_turf, sight_check = FALSE, include_mobs = FALSE))
@@ -34,10 +41,7 @@
 				for(var/o_material in I.matter)
 					if(!isnull(ores_stored[o_material]))
 						ores_stored[o_material] += I.matter[o_material]
-			qdel(I)
-
-	if(!active)
-		return
+						qdel(I)
 
 	//Process our stored ores and spit out sheets.
 	if(output_turf)
@@ -59,7 +63,7 @@
 				if(SSmaterials.alloy_components[metal])
 					attempt_to_alloy[metal] = TRUE
 				else
-					result = min(sheets_per_tick - sheets, Floor(ores_processing[metal] / M.units_per_sheet))
+					result = min(sheets_per_tick - sheets, floor(ores_processing[metal] / M.units_per_sheet))
 					ores_processing[metal] -= result * M.units_per_sheet
 					result = -(result)
 			else if(ore_mode == ORE_COMPRESS)
@@ -69,7 +73,7 @@
 
 			sheets += abs(result)
 			while(result < 0)
-				new /obj/item/weapon/ore(output_turf, MATERIAL_WASTE)
+				new /obj/item/ore(output_turf, MATERIAL_WASTE)
 				result++
 
 		// Try to make any available alloys.
@@ -90,7 +94,7 @@
 				var/material/M = thing
 				var/making
 				for(var/otherthing in M.alloy_materials)
-					var/_make = Floor(ores_stored[otherthing] / M.alloy_materials[otherthing])
+					var/_make = floor(ores_stored[otherthing] / M.alloy_materials[otherthing])
 					if(isnull(making) || making > _make)
 						making = _make
 				making = min(sheets_per_tick-sheets, making)
@@ -100,8 +104,8 @@
 					M.place_sheet(output_turf, making)
 					break
 
-/obj/machinery/mineral/processing_unit/proc/attempt_smelt(var/material/metal, var/max_result)
-	. = Clamp(Floor(ores_stored[metal.name]/metal.units_per_sheet),1,max_result)
+/obj/machinery/mineral/processing_unit/proc/attempt_smelt(material/metal, max_result)
+	. = clamp(floor(ores_stored[metal.name]/metal.units_per_sheet),1,max_result)
 	ores_stored[metal.name] -= . * metal.units_per_sheet
 	var/material/M = SSmaterials.get_material_by_name(metal.ore_smelts_to)
 	if(istype(M))
@@ -109,11 +113,11 @@
 	else
 		. = -(.)
 
-/obj/machinery/mineral/processing_unit/proc/attempt_compression(var/material/metal, var/max_result)
-	var/making = Clamp(Floor(ores_stored[metal.name]/metal.units_per_sheet),1,max_result)
+/obj/machinery/mineral/processing_unit/proc/attempt_compression(material/metal, max_result)
+	var/making = clamp(floor(ores_stored[metal.name]/metal.units_per_sheet),1,max_result)
 	if(making >= 2)
 		ores_stored[metal.name] -= making * metal.units_per_sheet
-		. = Floor(making * 0.5)
+		. = floor(making * 0.5)
 		var/material/M = SSmaterials.get_material_by_name(metal.ore_compresses_to)
 		if(istype(M))
 			M.place_sheet(output_turf, .)
@@ -128,20 +132,20 @@
 	for(var/ore in ores_processing)
 		if(!ores_stored[ore] && !report_all_ores) continue
 		var/material/M = SSmaterials.get_material_by_name(ore)
-		var/line = "[capitalize(M.display_name)]</td><td>[Floor(ores_stored[ore] / M.units_per_sheet)] ([ores_stored[ore]]u)"
+		var/line = "[capitalize(M.display_name)]</td><td>[floor(ores_stored[ore] / M.units_per_sheet)] ([ores_stored[ore]]u)"
 		var/status_string
 		if(ores_processing[ore])
 			switch(ores_processing[ore])
 				if(ORE_DISABLED)
-					status_string = "<font color='red'>not processing</font>"
+					status_string = SPAN_COLOR("red", "not processing")
 				if(ORE_SMELT)
-					status_string = "<font color='orange'>smelting</font>"
+					status_string = SPAN_COLOR("orange", "smelting")
 				if(ORE_COMPRESS)
-					status_string = "<font color='blue'>compressing</font>"
+					status_string = SPAN_COLOR("blue", "compressing")
 				if(ORE_ALLOY)
-					status_string = "<font color='gray'>alloying</font>"
+					status_string = SPAN_COLOR("gray", "alloying")
 		else
-			status_string = "<font color='red'>not processing</font>"
+			status_string = SPAN_COLOR("red", "not processing")
 		result += "<tr><td>[line]</td><td><a href='?src=\ref[src];toggle_smelting=[ore]'>[status_string]</a></td></tr>"
 	. += "<table>[result]</table>"
 	. += "Currently displaying [report_all_ores ? "all ore types" : "only available ore types"]. <A href='?src=\ref[src];toggle_ores=1'>[report_all_ores ? "Show less" : "Show more"]</a>"
@@ -162,12 +166,20 @@
 		. = TRUE
 	else if(href_list["toggle_power"])
 		active = !active
+		update_icon()
 		. = TRUE
 	else if(href_list["toggle_ores"])
 		report_all_ores = !report_all_ores
 		. = TRUE
 	if(. && console)
 		console.updateUsrDialog()
+
+/obj/machinery/mineral/processing_unit/on_update_icon()
+	ClearOverlays()
+	if(active)
+		icon_state = "furnace_1"
+	else
+		icon_state = "furnace_0"
 
 #undef ORE_DISABLED
 #undef ORE_SMELT

@@ -1,8 +1,8 @@
 #include "yacht_areas.dm"
 
-/obj/effect/overmap/visitable/ship/yacht
+/obj/overmap/visitable/ship/yacht
 	name = "private yacht"
-	desc = "Sensor array is detecting a small vessel with unknown lifeforms on board"
+	desc = "Sensor array is detecting a small vessel with unknown lifeforms on board."
 	color = "#ffc966"
 	vessel_mass = 3000
 	max_speed = 1/(2 SECONDS)
@@ -13,7 +13,7 @@
 		"nav_yacht_antag"
 	)
 
-/obj/effect/overmap/visitable/ship/yacht/New(nloc, max_x, max_y)
+/obj/overmap/visitable/ship/yacht/New(nloc, max_x, max_y)
 	name = "IPV [pick("Razorshark", "Aurora", "Lighting", "Pequod", "Anansi")], \a [name]"
 	..()
 
@@ -22,21 +22,21 @@
 	id = "awaysite_yach"
 	description = "Tiny movable ship with spiders."
 	suffixes = list("yacht/yacht.dmm")
-	cost = 0.5
+	spawn_cost = 0.5
 	area_usage_test_exempted_root_areas = list(/area/yacht)
 
-/obj/effect/shuttle_landmark/nav_yacht/nav1
+/obj/shuttle_landmark/nav_yacht/nav1
 	name = "Small Yacht Navpoint #1"
 	landmark_tag = "nav_yacht_1"
 
-/obj/effect/shuttle_landmark/nav_yacht/nav2
+/obj/shuttle_landmark/nav_yacht/nav2
 	name = "Small Yacht Navpoint #2"
 	landmark_tag = "nav_yacht_2"
 
-/obj/effect/shuttle_landmark/nav_yacht/nav3
+/obj/shuttle_landmark/nav_yacht/nav3
 	name = "Small Yacht Navpoint #3"
 	landmark_tag = "nav_yacht_3"
 
-/obj/effect/shuttle_landmark/nav_yacht/nav4
+/obj/shuttle_landmark/nav_yacht/nav4
 	name = "Small Yacht Navpoint #4"
 	landmark_tag = "nav_yacht_antag"

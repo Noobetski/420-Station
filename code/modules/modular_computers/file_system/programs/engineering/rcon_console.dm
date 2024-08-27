@@ -7,7 +7,7 @@
 	program_menu_icon = "power"
 	extended_desc = "This program allows remote control of power distribution systems. This program can not be run on tablet computers."
 	required_access = access_engine
-	requires_ntnet = 1
+	requires_ntnet = TRUE
 	network_destination = "RCON remote control system"
 	requires_ntnet_feature = NTNET_SYSTEMCONTROL
 	usage_flags = PROGRAM_LAPTOP | PROGRAM_CONSOLE
@@ -23,7 +23,7 @@
 	var/hide_SMES_details = 0
 	var/hide_breakers = 0
 
-/datum/nano_module/rcon/ui_interact(mob/user, ui_key = "rcon", datum/nanoui/ui=null, force_open=1, var/datum/topic_state/state = GLOB.default_state)
+/datum/nano_module/rcon/ui_interact(mob/user, ui_key = "rcon", datum/nanoui/ui=null, force_open=1, datum/topic_state/state = GLOB.default_state)
 	FindDevices() // Update our devices list
 	var/list/data = host.initial_data()
 
@@ -111,7 +111,7 @@
 // Proc: GetSMESByTag()
 // Parameters: 1 (tag - RCON tag of SMES we want to look up)
 // Description: Looks up and returns SMES which has matching RCON tag
-/datum/nano_module/rcon/proc/GetSMESByTag(var/tag)
+/datum/nano_module/rcon/proc/GetSMESByTag(tag)
 	if(!tag)
 		return
 
@@ -123,12 +123,12 @@
 // Parameters: None
 // Description: Refreshes local list of known devices.
 /datum/nano_module/rcon/proc/FindDevices()
-	known_SMESs = new /list()
+	known_SMESs = list()
 	for(var/obj/machinery/power/smes/buildable/SMES in SSmachines.machinery)
 		if(AreConnectedZLevels(get_host_z(), get_z(SMES)) && SMES.RCon_tag && (SMES.RCon_tag != "NO_TAG") && SMES.RCon)
 			known_SMESs.Add(SMES)
 
-	known_breakers = new /list()
+	known_breakers = list()
 	for(var/obj/machinery/power/breakerbox/breaker in SSmachines.machinery)
 		if(AreConnectedZLevels(get_host_z(), get_z(breaker)) && breaker.RCon_tag != "NO_TAG")
 			known_breakers.Add(breaker)

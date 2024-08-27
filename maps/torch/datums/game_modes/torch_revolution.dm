@@ -14,10 +14,10 @@
 	role_text = "Head Mutineer"
 	role_text_plural = "Mutineers"
 
-	faction_welcome = "It's time to go home. Obey all instructions from the leaders of the mutiny, and ensure the mutiny succeeds."
-	welcome_text = "You've been out here for what feels like an eternity. Time passes awkwardly in space. You were getting ready to head back to Sol - everyone has - but now \
-					that's all changed, and tomorrow you're all getting canned up like sardines, and the AI is to pilot you even further away from home. Most everyone knows this isn't right, this wasn't \
-					in the deal, that this isn't fair. You and a few others have decided to do something about it, and get everyone back home, by any means neccessary."
+	faction_welcome = "That's it; you're done taking this crap. Obey all instructions from the leaders of the mutiny, and ensure the mutiny succeeds."
+	welcome_text = "You've been out here for what feels like an eternity. The time spent in space has worn away at your conscience, and \
+					you won't let yourself be canned up like a sardine for even one more jump. Take control of your situation and use the Torch for your own ends, or \
+					even just to return home."
 
 	victory_text = "The heads of staff were relieved of their posts. The Zerzura is finally heading home."
 	loss_text = "The heads of staff managed to quash the mutiny. The mission will continue as ordered."
@@ -28,9 +28,6 @@
 
 	faction = "mutiny"
 
-	blacklisted_jobs = list(/datum/job/ai, /datum/job/cyborg, /datum/job/submap)
-	restricted_jobs = list(/datum/job/captain, /datum/job/hop, /datum/job/hos, /datum/job/chief_engineer, /datum/job/rd, /datum/job/cmo)
-	protected_jobs = list(/datum/job/officer)
 
 /datum/antagonist/loyalists
 
@@ -38,9 +35,6 @@
 	victory_text = "The heads of staff remained at their posts; the mission will continue as ordered."
 	loss_text = "The heads of staff could not contain the mutiny, and the Zerzura is now heading home."
 
-	blacklisted_jobs = list(/datum/job/ai, /datum/job/cyborg, /datum/job/submap)
-	restricted_jobs = list(/datum/job/captain, /datum/job/hop, /datum/job/hos, /datum/job/chief_engineer, /datum/job/rd, /datum/job/cmo)
-	protected_jobs = list(/datum/job/officer)
 
 /datum/antagonist/loyalists/Initialize()
 	..()

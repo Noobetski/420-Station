@@ -1,34 +1,35 @@
 /obj/item/projectile/bullet
 	name = "bullet"
 	icon_state = "bullet"
-	fire_sound = 'sound/weapons/gunshot/gunshot_strong.ogg'
+	fire_sound = null
 	damage = 50
-	damage_type = BRUTE
-	damage_flags = DAM_BULLET | DAM_SHARP
-	nodamage = 0
-	embed = 1
+	damage_type = DAMAGE_BRUTE
+	damage_flags = DAMAGE_FLAG_BULLET | DAMAGE_FLAG_SHARP
+	embed = TRUE
 	penetration_modifier = 1.0
+	space_knockback = 1
 	var/mob_passthrough_check = 0
+	var/is_pellet = FALSE
 
-	muzzle_type = /obj/effect/projectile/bullet/muzzle
+	muzzle_type = /obj/projectile/bullet
 	miss_sounds = list('sound/weapons/guns/miss1.ogg','sound/weapons/guns/miss2.ogg','sound/weapons/guns/miss3.ogg','sound/weapons/guns/miss4.ogg')
 	ricochet_sounds = list('sound/weapons/guns/ricochet1.ogg', 'sound/weapons/guns/ricochet2.ogg',
 							'sound/weapons/guns/ricochet3.ogg', 'sound/weapons/guns/ricochet4.ogg')
 	impact_sounds = list(BULLET_IMPACT_MEAT = SOUNDS_BULLET_MEAT, BULLET_IMPACT_METAL = SOUNDS_BULLET_METAL)
 
-/obj/item/projectile/bullet/on_hit(var/atom/target, var/blocked = 0)
+/obj/item/projectile/bullet/on_hit(atom/target, blocked = 0)
 	if (..(target, blocked))
 		var/mob/living/L = target
 		shake_camera(L, 3, 2)
 
-/obj/item/projectile/bullet/attack_mob(var/mob/living/target_mob, var/distance, var/miss_modifier)
+/obj/item/projectile/bullet/attack_mob(mob/living/target_mob, distance, miss_modifier)
 	if(penetrating > 0 && damage > 20 && prob(damage))
 		mob_passthrough_check = 1
 	else
 		mob_passthrough_check = 0
 	. = ..()
 
-	if(. == 1 && iscarbon(target_mob))
+	if(. == 1 && iscarbon(target_mob) && !is_pellet)
 		damage *= 0.7 //squishy mobs absorb KE
 
 /obj/item/projectile/bullet/can_embed()
@@ -37,7 +38,7 @@
 		return 0
 	return ..()
 
-/obj/item/projectile/bullet/check_penetrate(var/atom/A)
+/obj/item/projectile/bullet/check_penetrate(atom/A)
 	if(QDELETED(A) || !A.density) return 1 //if whatever it was got destroyed when we hit it, then I guess we can just keep going
 
 	if(ismob(A))
@@ -53,7 +54,7 @@
 	if(prob(chance))
 		if(A.opacity)
 			//display a message so that people on the other side aren't so confused
-			A.visible_message("<span class='warning'>\The [src] pierces through \the [A]!</span>")
+			A.visible_message(SPAN_WARNING("\The [src] pierces through \the [A]!"))
 		return 1
 
 	return 0
@@ -67,16 +68,18 @@
 	var/range_step = 2		//projectile will lose a fragment each time it travels this distance. Can be a non-integer.
 	var/base_spread = 90	//lower means the pellets spread more across body parts. If zero then this is considered a shrapnel explosion instead of a shrapnel cone
 	var/spread_step = 10	//higher means the pellets spread more across body parts with distance
+	is_pellet = TRUE
 
 /obj/item/projectile/bullet/pellet/Bumped()
 	. = ..()
 	bumped = 0 //can hit all mobs in a tile. pellets is decremented inside attack_mob so this should be fine.
 
-/obj/item/projectile/bullet/pellet/proc/get_pellets(var/distance)
-	var/pellet_loss = round((distance - 1)/range_step) //pellets lost due to distance
+/obj/item/projectile/bullet/pellet/proc/get_pellets(distance)
+	/// pellets lost due to distance
+	var/pellet_loss = round(max(distance - 1, 0)/range_step)
 	return max(pellets - pellet_loss, 1)
 
-/obj/item/projectile/bullet/pellet/attack_mob(var/mob/living/target_mob, var/distance, var/miss_modifier)
+/obj/item/projectile/bullet/pellet/attack_mob(mob/living/target_mob, distance, miss_modifier)
 	if (pellets < 0) return 1
 
 	var/total_pellets = get_pellets(distance)
@@ -96,7 +99,8 @@
 		//whether the pellet actually hits the def_zone or a different zone should still be determined by the parent using get_zone_with_miss_chance().
 		var/old_zone = def_zone
 		def_zone = ran_zone(def_zone, spread)
-		if (..()) hits++
+		if (..())
+			hits++
 		def_zone = old_zone //restore the original zone the projectile was aimed at
 
 	pellets -= hits //each hit reduces the number of pellets left
@@ -121,7 +125,6 @@
 /* short-casing projectiles, like the kind used in pistols or SMGs */
 
 /obj/item/projectile/bullet/pistol
-	fire_sound = 'sound/weapons/gunshot/gunshot_pistol.ogg'
 	damage = 45
 	distance_falloff = 3
 
@@ -131,7 +134,6 @@
 	distance_falloff = 4
 
 /obj/item/projectile/bullet/pistol/strong
-	fire_sound = 'sound/weapons/gunshot/gunshot_strong.ogg'
 	damage = 50
 	penetration_modifier = 0.8
 	distance_falloff = 2.5
@@ -140,64 +142,71 @@
 /obj/item/projectile/bullet/pistol/rubber //"rubber" bullets
 	name = "rubber bullet"
 	damage_flags = 0
-	damage = 5
-	agony = 30
-	embed = 0
+	damage = 15
+	agony = 15
+	embed = FALSE
 
 /obj/item/projectile/bullet/pistol/rubber/holdout
-	agony = 20
+	agony = 10
+	damage = 10
 
 //4mm. Tiny, very low damage, does not embed, but has very high penetration. Only to be used for the experimental SMG.
 /obj/item/projectile/bullet/flechette
-	fire_sound = 'sound/weapons/gunshot/gunshot_4mm.ogg'
 	damage = 23
 	penetrating = 1
-	armor_penetration = 70
-	embed = 0
+	armor_penetration = 40
+	embed = FALSE
 	distance_falloff = 2
 
 /* shotgun projectiles */
 
 /obj/item/projectile/bullet/shotgun
 	name = "slug"
-	fire_sound = 'sound/weapons/gunshot/shotgun.ogg'
 	damage = 65
 	armor_penetration = 10
 
 /obj/item/projectile/bullet/shotgun/beanbag		//because beanbags are not bullets
 	name = "beanbag"
-	damage = 25
+	damage = 20
 	damage_flags = 0
-	agony = 60
-	embed = 0
+	agony = 30
+	embed = FALSE
 	armor_penetration = 0
 	distance_falloff = 3
 
-//Should do about 80 damage at 1 tile distance (adjacent), and 50 damage at 3 tiles distance.
+//Should do about 180 damage at 1 tile distance (adjacent), and 120 damage at 3 tiles distance.
 //Overall less damage than slugs in exchange for more damage at very close range and more embedding
 /obj/item/projectile/bullet/pellet/shotgun
 	name = "shrapnel"
-	fire_sound = 'sound/weapons/gunshot/shotgun.ogg'
+	icon_state = "pellet"
 	damage = 30
 	pellets = 6
 	range_step = 1
-	spread_step = 10
+	spread_step = 50
+
+/obj/item/projectile/bullet/pellet/shotgun/flechette
+	name = "flechette"
+	icon_state = "flechette"
+	damage = 30
+	armor_penetration = 25
+	pellets = 3
+	range_step = 3
+	base_spread = 99
+	spread_step = 2
+	penetration_modifier = 0.5
+	hitchance_mod = 5
 
 /* "Rifle" rounds */
 
 /obj/item/projectile/bullet/rifle
-	fire_sound = 'sound/weapons/gunshot/gunshot3.ogg'
 	damage = 45
 	armor_penetration = 25
-	penetration_modifier = 1.5
 	penetrating = 1
-	distance_falloff = 1.5
+	distance_falloff = 1
 
 /obj/item/projectile/bullet/rifle/military
-	fire_sound = 'sound/weapons/gunshot/gunshot2.ogg'
 	damage = 40
 	armor_penetration = 35
-	penetration_modifier = 1
 
 /obj/item/projectile/bullet/rifle/shell
 	fire_sound = 'sound/weapons/gunshot/sniper.ogg'
@@ -219,23 +228,25 @@
 /obj/item/projectile/bullet/gyro
 	name = "minirocket"
 	fire_sound = 'sound/effects/Explosion1.ogg'
-	var/gyro_devastation = -1
-	var/gyro_heavy_impact = 0
-	var/gyro_light_impact = 2
+	var/explosion_radius = 2
+	var/explosion_max_power = EX_ACT_LIGHT
 
-/obj/item/projectile/bullet/gyro/on_hit(var/atom/target, var/blocked = 0)
+/obj/item/projectile/bullet/gyro/on_hit(atom/target, blocked = 0)
 	if(isturf(target))
-		explosion(target, gyro_devastation, gyro_heavy_impact, gyro_light_impact)
+		explosion(target, explosion_radius, explosion_max_power)
 	..()
 
 /obj/item/projectile/bullet/blank
-	invisibility = 101
+	invisibility = INVISIBILITY_ABSTRACT
 	damage = 1
-	embed = 0
+	embed = FALSE
 
 /* Practice */
 
 /obj/item/projectile/bullet/pistol/practice
+	damage = 5
+
+/obj/item/projectile/bullet/rifle/practice
 	damage = 5
 
 /obj/item/projectile/bullet/rifle/military/practice
@@ -247,13 +258,13 @@
 
 /obj/item/projectile/bullet/pistol/cap
 	name = "cap"
-	invisibility = 101
+	invisibility = INVISIBILITY_ABSTRACT
 	fire_sound = null
-	damage_type = PAIN
+	damage_type = DAMAGE_PAIN
 	damage_flags = 0
 	damage = 0
-	nodamage = 1
-	embed = 0
+	nodamage = TRUE
+	embed = FALSE
 
 /obj/item/projectile/bullet/pistol/cap/Process()
 	qdel(src)

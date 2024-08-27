@@ -1,4 +1,4 @@
-/proc/send2irc(var/channel, var/msg)
+/proc/send2irc(channel, msg)
 	export2irc(list(type="msg", mesg=msg, chan=channel, pwd=config.comms_password))
 
 /proc/export2irc(params)
@@ -9,12 +9,12 @@
 /proc/runtimes2irc(runtimes, revision)
 	export2irc(list(pwd=config.comms_password, type="runtime", runtimes=runtimes, revision=revision))
 
-/proc/send2mainirc(var/msg)
+/proc/send2mainirc(msg)
 	if(config.main_irc)
 		send2irc(config.main_irc, msg)
 	return
 
-/proc/send2adminirc(var/msg)
+/proc/send2adminirc(msg)
 	if(config.admin_irc)
 		send2irc(config.admin_irc, msg)
 	return
@@ -37,7 +37,10 @@
 		else
 			params["type"] = "adminpm"
 			params["trg_key"] = target.key
-			params["trg_char"] = target.mob.real_name || target.mob.name
+			if (target.mob)
+				params["trg_char"] = target.mob.real_name || target.mob.name
+			else
+				params["trg_char"] = "\[NO CHARACTER\]"
 
 		export2irc(params)
 
@@ -49,6 +52,18 @@
 		. += config.server
 	else
 		. += "[world.address]:[world.port]"
+
+/proc/send_to_admin_discord(type, message)
+	if(config.admin_discord && config.excom_address)
+		var/list/params[0]
+
+		params["pwd"] = config.comms_password
+		params["chan"] = config.admin_discord
+		params["msg"] = message
+		params["type"] = type
+
+		spawn(-1)
+			world.Export("http://[config.excom_address]/data?[list2params(params)]")
 
 /hook/startup/proc/ircNotify()
 	send2mainirc("Server starting up on [get_world_url()]")

@@ -11,18 +11,18 @@
 /obj/structure/filingcabinet
 	name = "filing cabinet"
 	desc = "A large cabinet with drawers."
-	icon = 'icons/obj/bureaucracy.dmi'
+	icon = 'icons/obj/structures/drawers.dmi'
 	icon_state = "filingcabinet"
-	density = 1
-	anchored = 1
+	density = TRUE
+	anchored = TRUE
 	atom_flags = ATOM_FLAG_NO_TEMP_CHANGE | ATOM_FLAG_CLIMBABLE
 	obj_flags = OBJ_FLAG_ANCHORABLE
 	var/list/can_hold = list(
-		/obj/item/weapon/paper,
-		/obj/item/weapon/folder,
-		/obj/item/weapon/photo,
-		/obj/item/weapon/paper_bundle,
-		/obj/item/weapon/sample)
+		/obj/item/paper,
+		/obj/item/folder,
+		/obj/item/photo,
+		/obj/item/paper_bundle,
+		/obj/item/sample)
 
 /obj/structure/filingcabinet/chestdrawer
 	name = "chest drawer"
@@ -32,7 +32,7 @@
 	name = "wall-mounted filing cabinet"
 	desc = "A filing cabinet installed into a cavity in the wall to save space. Wow!"
 	icon_state = "wallcabinet"
-	density = 0
+	density = FALSE
 	obj_flags = 0
 
 
@@ -46,20 +46,27 @@
 			I.forceMove(src)
 	. = ..()
 
-/obj/structure/filingcabinet/attackby(obj/item/P as obj, mob/user as mob)
-	if(is_type_in_list(P, can_hold))
-		if(!user.unEquip(P, src))
+
+/obj/structure/filingcabinet/use_tool(obj/item/tool, mob/user, list/click_params)
+	// Any item - Attempt to put in cabinet
+	if (is_type_in_list(tool, can_hold))
+		if (!user.unEquip(tool, src))
+			FEEDBACK_UNEQUIP_FAILURE(tool, user)
 			return
-		add_fingerprint(user)
-		to_chat(user, "<span class='notice'>You put [P] in [src].</span>")
-		flick("[initial(icon_state)]-open",src)
+		flick("[initial(icon_state)]-open", src)
+		user.visible_message(
+			SPAN_NOTICE("\The [user] puts \a [tool] in \the [src]."),
+			SPAN_NOTICE("You put \the [tool] in \the [src].")
+		)
 		updateUsrDialog()
-	else
-		..()
+		return TRUE
+
+	return ..()
+
 
 /obj/structure/filingcabinet/attack_hand(mob/user as mob)
-	if(contents.len <= 0)
-		to_chat(user, "<span class='notice'>\The [src] is empty.</span>")
+	if(length(contents) <= 0)
+		to_chat(user, SPAN_NOTICE("\The [src] is empty."))
 		return
 
 	user.set_machine(src)

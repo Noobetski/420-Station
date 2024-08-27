@@ -60,7 +60,7 @@ That's `maps/away_sites_testing/away_sites_testing.dm`, and probably `maps/torch
 
 That means don't have any of your away map stuff checked in Dream Maker. It'll get included, as if by magic, via the work you did in the previous step!
 
-That's it! You're probably done! Unless Travis explodes at you.
+That's it! You're probably done! Unless the unit tests explode on you.
 
 ### Some of the stuff I put in my map isn't behaving properly!
 

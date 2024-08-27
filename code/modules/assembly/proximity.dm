@@ -26,8 +26,8 @@
 	return 0
 
 
-/obj/item/device/assembly/prox_sensor/toggle_secure()
-	secured = !secured
+/obj/item/device/assembly/prox_sensor/set_secure(make_secure)
+	..()
 	if(secured)
 		START_PROCESSING(SSobj, src)
 	else
@@ -38,13 +38,13 @@
 	return secured
 
 
-/obj/item/device/assembly/prox_sensor/HasProximity(atom/movable/AM as mob|obj)
-	if(!istype(AM))
-		log_debug("DEBUG: HasProximity called with [AM] on [src] ([usr]).")
+/obj/item/device/assembly/prox_sensor/HasProximity(atom/movable/movable)
+	if (ismob(movable) && !isliving(movable))
 		return
-	if (istype(AM, /obj/effect/beam))	return
-	if (AM.move_speed < 12)	sense()
-	return
+	if (istype(movable, /obj/beam))
+		return
+	if (movable.move_speed < 12)
+		sense()
 
 
 /obj/item/device/assembly/prox_sensor/sense()
@@ -92,18 +92,18 @@
 
 
 /obj/item/device/assembly/prox_sensor/on_update_icon()
-	overlays.Cut()
+	ClearOverlays()
 	attached_overlays = list()
 	if(timing)
-		overlays += "prox_timing"
+		AddOverlays("prox_timing")
 		attached_overlays += "prox_timing"
 	if(scanning)
-		overlays += "prox_scanning"
+		AddOverlays("prox_scanning")
 		attached_overlays += "prox_scanning"
 	if(holder)
 		holder.update_icon()
-	if(holder && istype(holder.loc,/obj/item/weapon/grenade/chem_grenade))
-		var/obj/item/weapon/grenade/chem_grenade/grenade = holder.loc
+	if(holder && istype(holder.loc,/obj/item/grenade/chem_grenade))
+		var/obj/item/grenade/chem_grenade/grenade = holder.loc
 		grenade.primed(scanning)
 	return
 
@@ -116,7 +116,7 @@
 
 /obj/item/device/assembly/prox_sensor/interact(mob/user as mob)//TODO: Change this to the wires thingy
 	if(!secured)
-		user.show_message("<span class='warning'>The [name] is unsecured!</span>")
+		user.show_message(SPAN_WARNING("The [name] is unsecured!"))
 		return 0
 	var/second = time % 60
 	var/minute = (time - second) / 60

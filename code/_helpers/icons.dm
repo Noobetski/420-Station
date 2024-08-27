@@ -330,7 +330,7 @@
 
 //Uses a list of values to overwrite HSV components of a color
 //A null entry won't overwrite anything
-proc/set_HSV(var/color, var/list/values)
+proc/set_HSV(color, list/values)
 	if (!color) return "#FFFFFF"
 	if (!values || !values.len) return color
 

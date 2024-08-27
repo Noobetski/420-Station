@@ -1,5 +1,5 @@
 /var/server_name = "420-Station"
-=======
+// =======
 #define RECOMMENDED_VERSION 515
 #define FAILED_DB_CONNECTION_CUTOFF 5
 #define THROTTLE_MAX_BURST 15 SECONDS

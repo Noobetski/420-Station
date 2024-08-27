@@ -87,7 +87,8 @@
 	return sin(x) / cos(x)
 
 /proc/Csc(x)
-	return 1 / sin(x)
+	cscresult = 1 / sin(x)
+	return cscresult
 
 /proc/Sec(x)
 	return 1 / cos(x)
